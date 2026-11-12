@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#eef3ee">
+<title>뒤집어! 과일 카드 — 최종 개선판</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="app">
+<header class="brand"><span class="brandmark">🍐 과일 기억 상점</span><span class="tag">MEMORY GAME · V2</span></header>
+<section class="heading"><span class="eyebrow">A LITTLE BRAIN BREAK</span><h1>뒤집어! 과일 카드</h1><p class="subtitle">똑같은 과일을 찾아보세요.<br>작은 카드 속에 숨은 8쌍의 달콤한 기억!</p></section>
+<section class="stats" aria-label="게임 상태">
+<div class="stat" id="timeStat"><span class="stat-label">남은 시간</span><strong class="stat-value" id="timeValue">60</strong><span class="unit">초</span></div>
+<div class="stat"><span class="stat-label">찾은 과일</span><strong class="stat-value" id="pairsValue">0</strong><span class="unit">/ 8쌍</span></div>
+<div class="stat"><span class="stat-label">시도 횟수</span><strong class="stat-value" id="movesValue">0</strong><span class="unit">회</span></div>
+</section>
+<div class="time-track" id="timeTrack" aria-hidden="true"><div class="time-fill" id="timeFill"></div></div>
+<div class="board-wrap"><div class="board" id="board" aria-label="과일 카드 16장"></div></div>
+<div class="underboard"><p class="tip">같은 과일 두 장을 콕!<br>방향키로 카드 이동 · P로 쉬어가기</p><div class="controls"><button class="small-btn" id="pauseButton" type="button" disabled>Ⅱ 일시 정지</button><button class="small-btn" id="restartButton" type="button" disabled>↻ 새로 시작</button></div></div>
+<p class="status" id="status" role="status" aria-live="polite"></p>
+<footer class="footer">FLIP · REMEMBER · MATCH</footer>
+</main>
+<div class="overlay" id="overlay">
+<section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle" aria-describedby="dialogText">
+<div class="dialog-icon" id="dialogIcon" aria-hidden="true">🍓</div>
+<div class="eyebrow" id="dialogEyebrow">READY TO FLIP?</div>
+<h2 id="dialogTitle">기억력을 깨워볼까요?</h2>
+<p id="dialogText">카드를 뒤집어 같은 과일을 찾아요.
+60초 안에 8쌍을 모두 찾으면 성공!</p>
+<div class="rules" id="rules">① 카드 두 장을 클릭하거나 터치하세요.<br>② 같은 과일이면 카드가 열린 채로 남아요.<br>③ 다르면 잠깐 후 다시 뒤집혀요.<br>키보드: Tab / 방향키로 이동 · Enter / Space로 선택<br>P: 일시 정지 / 이어서 하기</div>
+<div class="result-details" id="resultDetails" hidden><div><span id="resultLabel">걸린 시간</span><strong id="resultTime"></strong></div><div><span>시도 횟수</span><strong id="resultMoves"></strong></div></div>
+<button class="primary" id="mainButton" type="button">게임 시작하기</button>
+<span class="dialog-note" id="dialogNote">설치 없이, 가볍게 즐기는 기억력 게임</span>
+</section>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

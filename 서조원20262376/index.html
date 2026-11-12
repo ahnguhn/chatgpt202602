@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff6e8">
+  <title>60초 카페</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <div class="page">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow"><span class="open-dot"></span> 햇살과 커피 향이 머무는 곳</p>
+        <h1>60초 <span>카페</span><span class="title-cup" aria-hidden="true">☕</span></h1>
+        <p class="subtitle">창가의 햇살, 설레는 한 잔. 오늘의 이야기를 시작해요.</p>
+      </div>
+      <div class="header-stamp" aria-hidden="true">햇살 가득한<br><strong>오후의 카페</strong><span>✦</span></div>
+    </header>
+
+    <main>
+      <section class="stats" aria-label="게임 현황">
+        <div class="stat"><span class="stat-icon" aria-hidden="true">⭐</span><div><span class="stat-label">현재 점수</span><strong><span id="score">0</span><small>점</small></strong></div></div>
+        <div class="stat"><span class="stat-icon" aria-hidden="true">🧾</span><div><span class="stat-label">성공 주문</span><strong><span id="completed">0</span><small>잔</small></strong></div></div>
+        <div class="stat timer-stat"><span class="stat-icon" aria-hidden="true">⏳</span><div><span class="stat-label">남은 시간</span><strong><span id="time">60</span><small>초</small></strong></div><span class="timer-tag" id="timer-tag">영업 준비</span></div>
+      </section>
+      <div class="time-track" aria-hidden="true"><div id="time-bar"></div></div>
+
+      <div class="workspace">
+        <section class="cafe-scene" aria-label="손님과 주문">
+          <div class="awning" aria-hidden="true"></div>
+          <div class="scene-topline"><span>✧ 햇살이 머무는 카페</span><span id="shop-state">영업 준비 중</span></div>
+          <div class="scene-content">
+            <div class="speech-area">
+              <div id="welcome-panel" class="speech-card">
+                <span class="card-kicker">어서 오세요!</span>
+                <h2>오늘의 한 잔을<br>부탁해요.</h2>
+                <p><span id="intro-duration">60</span>초 동안 손님의 주문에 맞춰<br>재료를 고르고 음료를 만들어 주세요.</p>
+                <button id="start-button" class="primary start-button" type="button">카페 문 열기 <span aria-hidden="true">→</span></button>
+              </div>
+              <div id="order-panel" class="speech-card order-card" hidden>
+                <span class="card-kicker" id="order-number">첫 번째 손님</span>
+                <div id="order-announcement" aria-live="polite" aria-atomic="true">
+                  <h2 id="order-name">아메리카노</h2>
+                  <p>한 잔 부탁드려요! <span aria-hidden="true">♡</span></p>
+                </div>
+                <div class="order-note">아래에서 재료를 골라 주세요.</div>
+              </div>
+              <div id="result-panel" class="speech-card result-card" hidden>
+                <span class="card-kicker">오늘의 영업 끝!</span>
+                <h2>수고했어요,<br>바리스타님!</h2>
+                <p>최종 점수 <strong id="final-score">0점</strong><br>성공 주문 <strong id="final-completed">0잔</strong></p>
+                <button id="restart-button" class="primary start-button" type="button">다시 시작하기 <span aria-hidden="true">↻</span></button>
+              </div>
+            </div>
+            <!-- 사용자가 제공한 캐릭터와 CSS 카페 배경을 함께 배치합니다. -->
+            <div class="customer-area" aria-hidden="true">
+              <div class="cafe-window"><span class="window-cloud"></span><span class="window-hill"></span><span class="window-frame"></span></div>
+              <span class="scene-sparkle sparkle-one">✧</span><span class="scene-sparkle sparkle-two">✦</span>
+              <!-- 사용자 제공 원본을 그대로 포함합니다. 배치는 CSS로만 조정합니다. -->
+              <div class="customer uploaded-customer">
+                <img class="character-image" src="./assets/character.jpeg" alt=""
+                  width="1024" height="1024" draggable="false">
+              </div>
+              <div class="counter-cup"><i class="steam steam-one"></i><i class="steam steam-two"></i><i class="steam steam-three"></i><span>♥</span></div>
+              <div class="plant">🌿</div>
+            </div>
+          </div>
+          <div class="counter" aria-hidden="true"><span>정성을 담아 내리는 한 잔</span><span>✦</span></div>
+          <div id="points-layer" class="points-layer" aria-hidden="true"></div>
+        </section>
+
+        <aside class="recipe-card" aria-labelledby="recipe-heading">
+          <span class="recipe-pin" aria-hidden="true"></span>
+          <p class="card-kicker">오늘의 메뉴</p>
+          <h2 id="recipe-heading">한눈에 보는 레시피</h2>
+          <p class="recipe-intro">처음이라도 괜찮아요.<br>메뉴에 적힌 재료만 넣으면 완성!</p>
+          <div id="recipe-list"></div>
+          <div class="recipe-tip"><span aria-hidden="true">💡</span><p>순서는 상관없어요.<br><strong>필요한 재료만 정확하게!</strong></p></div>
+          <p class="score-note">정답 한 잔 = <strong id="points-guide">100점</strong><br>틀려도 감점은 없어요.</p>
+          <div class="menu-doodle" aria-hidden="true">☕ <span>마음을 담아, 한 잔.</span></div>
+        </aside>
+
+        <section class="workbench" aria-labelledby="workbench-heading">
+          <div class="section-heading"><h2 id="workbench-heading">나만의 한 잔 만들기</h2><span>누르면 선택 · 다시 누르면 취소</span></div>
+          <div class="selected-tray"><span class="tray-label">선택한 재료</span><div id="selected-ingredients"><span class="empty-selection">아직 담긴 재료가 없어요.</span></div></div>
+          <fieldset id="controls" disabled>
+            <legend class="sr-only">음료 재료 선택과 제출</legend>
+            <div class="ingredient-grid">
+              <button type="button" class="ingredient" data-ingredient="espresso" aria-pressed="false"><span class="check" aria-hidden="true">✓</span><span class="ingredient-icon" aria-hidden="true">☕</span><span>에스프레소</span></button>
+              <button type="button" class="ingredient" data-ingredient="water" aria-pressed="false"><span class="check" aria-hidden="true">✓</span><span class="ingredient-icon" aria-hidden="true">💧</span><span>물</span></button>
+              <button type="button" class="ingredient" data-ingredient="milk" aria-pressed="false"><span class="check" aria-hidden="true">✓</span><span class="ingredient-icon" aria-hidden="true">🥛</span><span>우유</span></button>
+              <button type="button" class="ingredient" data-ingredient="ice" aria-pressed="false"><span class="check" aria-hidden="true">✓</span><span class="ingredient-icon" aria-hidden="true">🧊</span><span>얼음</span></button>
+            </div>
+            <div class="action-row"><button id="clear-button" type="button" class="secondary">비우기</button><button id="submit-button" type="button" class="primary submit-button">음료 제출하기 <span aria-hidden="true">→</span></button></div>
+          </fieldset>
+          <div id="feedback" class="feedback" role="status" aria-live="polite" aria-atomic="true">카페 문을 열면 주문을 받을 수 있어요.</div>
+        </section>
+      </div>
+      <p class="bottom-note">재료 선택 → 음료 제출 → 행복한 손님 한 명 더 <span aria-hidden="true">♡</span></p>
+    </main>
+    <footer>잠깐의 여유를 담은, 60초 카페</footer>
+  </div>
+</body>
+</html>

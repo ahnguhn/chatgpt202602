@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#235a46">
+<title>딱 출발! | 외출 준비 도우미</title>
+<style>
+:root{--bg:#f6f6ef;--ink:#20392e;--muted:#68766b;--green:#265d48;--mint:#e8f1e7;--line:#dce3d8;--orange:#f2b579}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,"Malgun Gothic",sans-serif;color:var(--ink);line-height:1.6}button,input{font:inherit}button{cursor:pointer}button,input{min-height:44px}button:focus-visible,input:focus-visible{outline:3px solid #dd9a44;outline-offset:3px}button{border:0}input{width:100%;min-width:0;background:#fff;border:1px solid #cbd6c8;border-radius:9px;padding:10px 12px;color:var(--ink)}input:focus{border-color:var(--green)}input[aria-invalid=true]{border:2px solid #bd3846}
+.wrap{max-width:1140px;margin:auto;padding:28px 28px 24px}header{display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-weight:850;font-size:23px;letter-spacing:-1px;display:flex;align-items:center;gap:9px}.mark{width:29px;height:29px;border:2px solid var(--green);border-radius:50%;position:relative;display:inline-block}.mark:before{content:"";position:absolute;width:2px;height:8px;background:var(--green);top:5px;left:12px}.mark:after{content:"";position:absolute;width:8px;height:2px;background:var(--green);top:12px;left:12px}.pill{font-size:11px;color:#526c58;background:#e9eee2;padding:6px 10px;border-radius:20px}
+.hero{margin:37px 0 26px}.eyebrow{color:#647a58;font-size:11px;letter-spacing:2px;font-weight:800}h1{font-size:37px;line-height:1.35;letter-spacing:-1.9px;margin:9px 0 10px}h1 span{color:#397251}.hero p{font-size:14px;margin:0;color:var(--muted)}
+.layout{display:grid;grid-template-columns:1.08fr 1fr;gap:22px;align-items:start}.card{border:1px solid var(--line);background:white;border-radius:18px;padding:26px}.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}h2{font-size:17px;letter-spacing:-.5px;margin:0}.smallnumber{font-size:10px;color:#7d8b7b;letter-spacing:1.2px;font-weight:700}
+label,.fieldlabel{font-size:13px;font-weight:750;display:block;margin-bottom:7px}.dategrid{display:grid;grid-template-columns:1.2fr 1fr;gap:12px}.block{margin-bottom:23px}.hint{font-size:11px;color:var(--muted);margin:6px 0 0}.divider{border:0;border-top:1px solid #edf0e8;margin:22px 0}.taskshead{display:flex;justify-content:space-between;align-items:center;gap:12px}.taskshead .fieldlabel{margin:0}.count{font-size:11px;color:var(--muted)}.task{border:1px solid var(--line);border-radius:11px;padding:12px;margin-top:10px;background:#fbfcf9}.taskmeta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.tasknum{font-size:10px;color:#6a7d65;letter-spacing:.7px;font-weight:800}.tools{display:flex;gap:4px}.tool{background:transparent;color:#61705e;min-height:32px;padding:2px 8px;font-size:12px;border-radius:6px}.tool:hover{background:#e8eee2}.tool:disabled{opacity:.35;cursor:default}.taskinputs{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:10px}.taskinputs label{font-size:11px;font-weight:500;color:var(--muted);margin-bottom:4px}.taskinputs input{font-size:13px}.add{background:#eef3e9;border:1px dashed #bdcdb3;width:100%;border-radius:9px;color:#42633e;font-size:13px;font-weight:750;margin-top:12px;padding:9px}.buffer{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-top:21px}.buffer label{margin:0}.buffer p{margin:3px 0 0}.bufferentry{width:108px;flex-shrink:0;position:relative}.bufferentry input{padding-right:34px}.suffix{position:absolute;right:12px;top:10px;color:var(--muted);font-size:13px}.actions{display:flex;gap:9px;margin-top:24px}.primary{background:var(--green);color:#fff;flex:1;border-radius:9px;padding:12px;font-size:14px;font-weight:800}.primary:hover{background:#184b37}.secondary{background:#eff1e9;color:#65745c;border-radius:9px;font-size:13px;padding:10px 15px}.sample{background:none;padding:0;color:#55764c;text-decoration:underline;text-underline-offset:4px;font-size:12px;min-height:32px}.error{background:#fff0ef;color:#a82b3c;padding:12px;font-size:12px;border-radius:8px;margin-top:15px}.error[hidden]{display:none}.emptyTasks{font-size:13px;color:var(--muted);padding:15px 0}
+.resultcard{background:#214d3d;color:#fff;border:0;padding-bottom:23px}.resultcard .smallnumber{color:#b8ccb7}.tag{display:inline-block;background:#3c6650;color:#dfebd4;border-radius:5px;padding:4px 9px;font-size:11px;margin-top:3px}.timeLabel{margin:22px 0 0;color:#d2dfcb;font-size:12px}.starttime{font-size:58px;line-height:1.2;letter-spacing:-2px;font-weight:800;margin:3px 0 6px;font-variant-numeric:tabular-nums}.dateLabel{font-size:12px;color:#d0ddc7;min-height:22px;overflow-wrap:anywhere}.summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:23px;padding-top:16px;border-top:1px solid #ffffff2a}.summary span{display:block;font-size:11px;color:#bbcfb7}.summary strong{font-size:17px;font-weight:650}.timelinecard{margin-top:17px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:23px 25px}.timelinehead{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.timelinehead h2{font-size:15px}.empty{font-size:13px;color:var(--muted);padding:8px 0 11px}.timeline{list-style:none;padding:0;margin:0}.event{position:relative;padding:0 0 20px 22px;border-left:1px solid #d9e3d4;margin-left:5px}.event:last-child{padding-bottom:0;border-left-color:transparent}.event:before{content:"";width:9px;height:9px;border:2px solid #c8d7bc;background:white;border-radius:50%;position:absolute;left:-5px;top:5px}.event.depart:before{background:var(--green);border-color:var(--green)}.eventtimes{font-size:11px;color:#718269;line-height:1.5}.eventmain{display:flex;justify-content:space-between;gap:12px;margin-top:3px;align-items:start}.eventname{font-size:14px;font-weight:650;overflow-wrap:anywhere;min-width:0}.duration{font-size:11px;color:#718269;white-space:nowrap;flex-shrink:0}.daybadge{display:inline-block;border-radius:4px;padding:1px 5px;background:#fff0df;color:#925824;margin-left:5px;font-size:10px}.tip{font-size:11px;color:var(--muted);margin:14px 3px 0;line-height:1.8}.foot{display:flex;justify-content:space-between;gap:12px;font-size:11px;color:#7d8975;margin-top:28px;padding-top:18px;border-top:1px solid var(--line)}
+@media(max-width:760px){.wrap{padding:22px 16px}.hero{margin-top:29px}h1{font-size:30px}.layout{grid-template-columns:1fr;gap:18px}.card{padding:22px}.timelinecard{padding:22px}.starttime{font-size:53px}.pill{font-size:10px}.foot{flex-direction:column;gap:3px}.dategrid{grid-template-columns:1.15fr 1fr;gap:10px}.dategrid input{font-size:13px;padding:10px 8px}.taskinputs{grid-template-columns:minmax(0,1fr) 78px}}
+@media print{body{background:#fff}.wrap{max-width:none}.layout{grid-template-columns:1fr 1fr}.actions,.add,.tools,.sample{display:none}.resultcard{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+</style>
+</head>
+<body><div class="wrap">
+<header><div class="brand"><i class="mark" aria-hidden="true"></i>딱 출발!</div><span class="pill">오늘도 여유 있게, 가볍게.</span></header>
+<section class="hero"><div class="eyebrow">A LITTLE PLAN, A CALMER DAY</div><h1>몇 시부터 준비할까?<br><span>출발 시간부터 거꾸로.</span></h1><p>준비할 일을 적으면, 서두르지 않을 시작 시간을 알려드려요.</p></section>
+<main class="layout">
+<section class="card" aria-labelledby="inputTitle"><div class="sectionhead"><h2 id="inputTitle">외출 준비하기</h2><span class="smallnumber">01 / PLAN</span></div>
+<form id="planForm" novalidate>
+<div class="dategrid block"><div><label for="departDate">출발 날짜</label><input id="departDate" type="date" min="2000-01-01" max="2099-12-31" required></div><div><label for="departTime">집에서 나갈 시각</label><input id="departTime" type="time" step="60" required></div></div>
+<div class="taskshead"><span class="fieldlabel" id="tasksLabel">준비할 일</span><span class="count" id="taskCount"></span></div><p class="hint">위에서 아래 순서로 진행해요. 각 항목은 1~240분.</p>
+<div id="tasks" role="group" aria-labelledby="tasksLabel"></div>
+<button type="button" id="addTask" class="add">+ 준비할 일 추가</button>
+<div class="buffer"><div><label for="buffer">출발 전 여유 시간</label><p class="hint" id="bufferHint">마지막 준비 뒤, 숨 돌릴 시간이에요.</p></div><div class="bufferentry"><input id="buffer" type="number" inputmode="numeric" min="0" max="120" step="1" value="5" aria-describedby="bufferHint"><span class="suffix">분</span></div></div>
+<p class="hint">준비 + 여유 시간은 최대 24시간까지 설정할 수 있어요.</p>
+<div class="actions"><button type="submit" class="primary">준비 일정 보기</button><button type="button" id="reset" class="secondary">초기화</button></div>
+<div id="error" class="error" role="alert" hidden></div>
+<div style="text-align:center;margin-top:12px"><button type="button" id="sample" class="sample">처음이라면? 오후 2시 출발 예시 보기</button></div>
+</form></section>
+<div>
+<section class="card resultcard" aria-labelledby="resultTitle"><div class="sectionhead"><h2 id="resultTitle">나의 준비 시간</h2><span class="smallnumber">02 / READY</span></div><span class="tag">계획은 가볍게, 출발은 여유롭게</span>
+<div id="resultLive" role="status" aria-live="polite" aria-atomic="true"><p class="timeLabel">이 시각부터 시작하면 돼요</p><div id="startTime" class="starttime">— : —</div><div id="startDate" class="dateLabel">출발 시각을 정하고 일정을 확인해 보세요.</div><div class="summary"><div><span>필요한 시간 · 여유 포함</span><strong id="totalDuration">—</strong></div><div><span>집에서 나갈 시각</span><strong id="departDisplay">—</strong></div></div></div>
+</section>
+<section class="timelinecard" aria-labelledby="timelineTitle"><div class="timelinehead"><h2 id="timelineTitle">나만의 준비 순서</h2><span id="timelineCount" class="count">아직 계획 전</span></div><div id="timelineEmpty" class="empty">출발 시각과 준비할 일을 입력하면<br>시간표가 이곳에 차례대로 나타나요.</div><ol id="timeline" class="timeline"></ol></section>
+<p class="tip">입력을 바꾸면 이전 결과는 지워져요. 다시 계산해 주세요.<br>알림·자동 저장 없이, 지금 필요한 준비 계획만 만들어요.</p>
+</div>
+</main><footer class="foot"><span>딱 출발! · 작은 계획으로 만드는 느긋한 하루</span><span>설치 없음 · 외부 연결 없음 · 저장 없음</span></footer>
+</div>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const MINUTE=60000;
+let seq=0;
+let tasks=[];
+const defaults=()=>[{name:"씻기",minutes:"20"},{name:"옷 입기",minutes:"10"},{name:"가방 챙기기",minutes:"10"}];
+function localToday(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function makeTask(name="",minutes="10"){return {id:++seq,name,minutes};}
+function clearError(){
+ $("error").hidden=true;$("error").textContent="";
+ document.querySelectorAll("[aria-invalid]").forEach(el=>{el.removeAttribute("aria-invalid");el.removeAttribute("aria-errormessage");});
+}
+function showError(message,el){
+ $("error").textContent=message;$("error").hidden=false;
+ if(el){el.setAttribute("aria-invalid","true");el.setAttribute("aria-errormessage","error");el.focus();}
+}
+function clearResult(edited=true){
+ $("startTime").textContent="— : —";
+ $("startDate").textContent=edited?"입력이 바뀌었어요. 준비 일정을 다시 확인해 주세요.":"출발 시각을 정하고 일정을 확인해 보세요.";
+ $("totalDuration").textContent="—";$("departDisplay").textContent="—";
+ $("timeline").replaceChildren();$("timelineEmpty").hidden=false;$("timelineCount").textContent="아직 계획 전";
+}
+function invalidate(){clearError();clearResult(true);}
+function renderTasks(){
+ $("tasks").replaceChildren();
+ $("taskCount").textContent=tasks.length+" / 20개";
+ if(!tasks.length){const empty=document.createElement("p");empty.className="emptyTasks";empty.textContent="준비할 일을 하나 이상 추가해 주세요.";$("tasks").append(empty);}
+ tasks.forEach((task,index)=>{
+  const box=document.createElement("div");box.className="task";box.dataset.id=String(task.id);
+  const meta=document.createElement("div");meta.className="taskmeta";
+  const num=document.createElement("span");num.className="tasknum";num.textContent="STEP "+String(index+1).padStart(2,"0");meta.append(num);
+  const tools=document.createElement("div");tools.className="tools";
+  [["up","위로",index===0],["down","아래로",index===tasks.length-1],["delete","삭제",false]].forEach(([action,text,disabled])=>{
+   const b=document.createElement("button");b.type="button";b.className="tool";b.textContent=text;b.disabled=disabled;b.setAttribute("aria-label",(index+1)+"번째 항목 "+text);
+   b.addEventListener("click",()=>{
+    invalidate();
+    if(action==="delete"){tasks.splice(index,1);renderTasks();const next=tasks[Math.min(index,tasks.length-1)];(next?$("name-"+next.id):$("addTask")).focus();}
+    else{const other=index+(action==="up"?-1:1);[tasks[index],tasks[other]]=[tasks[other],tasks[index]];renderTasks();$("name-"+task.id).focus();}
+   });tools.append(b);
+  });meta.append(tools);box.append(meta);
+  const row=document.createElement("div");row.className="taskinputs";
+  [["name","할 일",task.name],["minutes","소요 시간 (분)",task.minutes]].forEach(([key,label,value])=>{
+   const wrap=document.createElement("div"),lab=document.createElement("label"),input=document.createElement("input");
+   input.id=key+"-"+task.id;input.value=value;input.required=true;
+   lab.htmlFor=input.id;lab.textContent=label;input.setAttribute("aria-label",(index+1)+"번째 "+label);
+   if(key==="name"){input.type="text";input.maxLength=30;input.placeholder="예: 머리 말리기";}
+   else{input.type="number";input.inputMode="numeric";input.min="1";input.max="240";input.step="1";}
+   input.addEventListener("input",()=>{task[key]=input.value;invalidate();});
+   wrap.append(lab,input);row.append(wrap);
+  });box.append(row);$("tasks").append(box);
+ });
+}
+function integer(raw,min,max,label,el){
+ if(raw.trim()==="")throw {message:label+"을(를) 입력해 주세요.",el};
+ const value=Number(raw);
+ if(!Number.isSafeInteger(value)||value<min||value>max)throw {message:label+"은(는) "+min+"~"+max+" 사이의 정수로 입력해 주세요.",el};
+ return value;
+}
+function parseDeparture(date,time){
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||date<"2000-01-01"||date>"2099-12-31")throw {message:"출발 날짜를 2000~2099년 범위에서 선택해 주세요.",el:$("departDate")};
+ const [y,m,d]=date.split("-").map(Number),dt=new Date(Date.UTC(y,m-1,d));
+ if(dt.getUTCFullYear()!==y||dt.getUTCMonth()!==m-1||dt.getUTCDate()!==d)throw {message:"올바른 출발 날짜를 선택해 주세요.",el:$("departDate")};
+ if(!/^\d{2}:\d{2}$/.test(time))throw {message:"집에서 나갈 시각을 입력해 주세요.",el:$("departTime")};
+ const [h,min]=time.split(":").map(Number);
+ if(h>23||min>59)throw {message:"올바른 출발 시각을 선택해 주세요.",el:$("departTime")};
+ return Date.UTC(y,m-1,d,h,min);
+}
+function buildPlan(departure,items,buffer){
+ const total=items.reduce((sum,t)=>sum+t.minutes,0)+buffer;
+ let cursor=departure-total*MINUTE;
+ const start=cursor;
+ const events=items.map(t=>{const e={name:t.name,minutes:t.minutes,start:cursor,end:cursor+t.minutes*MINUTE};cursor=e.end;return e;});
+ if(buffer>0)events.push({name:"여유 있게 마무리",minutes:buffer,start:cursor,end:departure,buffer:true});
+ return {start,total,events,departure};
+}
+function clock(ms){const d=new Date(ms);return String(d.getUTCHours()).padStart(2,"0")+":"+String(d.getUTCMinutes()).padStart(2,"0");}
+function dayText(ms){const d=new Date(ms);return d.getUTCFullYear()+"."+String(d.getUTCMonth()+1).padStart(2,"0")+"."+String(d.getUTCDate()).padStart(2,"0")+" ("+["일","월","화","수","목","금","토"][d.getUTCDay()]+")";}
+function differentDay(a,b){return Math.floor(a/(86400*1000))!==Math.floor(b/(86400*1000));}
+function rangeText(e,departure){
+ const a=differentDay(e.start,departure)?dayText(e.start)+" "+clock(e.start):clock(e.start);
+ const b=differentDay(e.start,e.end)?dayText(e.end)+" "+clock(e.end):clock(e.end);
+ return a+" – "+b;
+}
+function durationText(minutes){const hours=Math.floor(minutes/60),rest=minutes%60;return hours?(hours+"시간"+(rest?" "+rest+"분":"")):minutes+"분";}
+function showPlan(plan){
+ $("startTime").textContent=clock(plan.start);
+ $("startDate").textContent=dayText(plan.start)+(differentDay(plan.start,plan.departure)?" · 출발 전날 시작":" · 이때부터 차근차근");
+ $("totalDuration").textContent=durationText(plan.total);
+ $("departDisplay").textContent=clock(plan.departure);
+ $("timeline").replaceChildren();$("timelineEmpty").hidden=true;$("timelineCount").textContent=tasks.length+"가지 준비";
+ const events=[...plan.events,{name:"집에서 출발!",start:plan.departure,end:plan.departure,depart:true}];
+ events.forEach(e=>{
+  const li=document.createElement("li");li.className="event"+(e.depart?" depart":"");
+  const time=document.createElement("div");time.className="eventtimes";time.textContent=e.depart?dayText(e.start)+" "+clock(e.start):rangeText(e,plan.departure);
+  const main=document.createElement("div");main.className="eventmain";
+  const name=document.createElement("span");name.className="eventname";name.textContent=e.name;
+  const duration=document.createElement("span");duration.className="duration";duration.textContent=e.depart?"준비 끝":e.minutes+"분";
+  main.append(name,duration);li.append(time,main);$("timeline").append(li);
+ });
+}
+$("addTask").addEventListener("click",()=>{
+ invalidate();
+ if(tasks.length>=20){showError("준비할 일은 최대 20개까지 추가할 수 있어요.",$("addTask"));return;}
+ const task=makeTask();tasks.push(task);renderTasks();$("name-"+task.id).focus();
+});
+$("planForm").addEventListener("submit",e=>{
+ e.preventDefault();clearError();
+ try{
+  const departure=parseDeparture($("departDate").value,$("departTime").value);
+  if(!tasks.length)throw {message:"준비할 일을 하나 이상 추가해 주세요.",el:$("addTask")};
+  const items=tasks.map((t,index)=>{
+   if(!t.name.trim())throw {message:(index+1)+"번째 준비할 일의 이름을 입력해 주세요.",el:$("name-"+t.id)};
+   const minutes=integer(t.minutes,1,240,(index+1)+"번째 소요 시간",$("minutes-"+t.id));
+   return {name:t.name.trim(),minutes};
+  });
+  const buffer=integer($("buffer").value,0,120,"여유 시간",$("buffer"));
+  if(items.reduce((sum,t)=>sum+t.minutes,0)+buffer>1440)throw {message:"준비와 여유 시간의 합계는 24시간(1,440분) 이하여야 해요.",el:$("buffer")};
+  showPlan(buildPlan(departure,items,buffer));
+ }catch(err){clearResult(true);showError(err.message||"입력값을 확인해 주세요.",err.el);}
+});
+["departDate","departTime","buffer"].forEach(id=>$(id).addEventListener("input",invalidate));
+function resetApp(){
+ tasks=defaults().map(t=>makeTask(t.name,t.minutes));$("departDate").value=localToday();$("departTime").value="";$("buffer").value="5";renderTasks();clearError();clearResult(false);
+}
+$("reset").addEventListener("click",()=>{resetApp();$("departTime").focus();});
+$("sample").addEventListener("click",()=>{resetApp();$("departTime").value="14:00";$("planForm").requestSubmit();});
+resetApp();
+</script></body></html>

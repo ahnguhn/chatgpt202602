@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>과제 한눈에 · 대학생 과제 플래너</title>
+<style>
+:root{--ink:#182c32;--muted:#65777c;--green:#126859;--line:#dce6e3;--bg:#f4f7f5;--red:#b13335}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans CJK KR","Malgun Gothic",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ebaf46;outline-offset:3px}
+header{background:#163f36;color:white;padding:34px max(24px,calc((100vw - 1180px)/2))}
+.brand{font-size:12px;letter-spacing:2px;color:#b9d7cd}h1{font-size:32px;line-height:1.3;letter-spacing:-1px;margin:8px 0}header p{margin:0;color:#c9ddd5;font-size:14px}
+main{max-width:1228px;margin:0 auto;padding:28px 24px 40px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px}
+.date{display:flex;align-items:center;gap:10px;font-size:13px}.date input{width:160px}.sub{font-size:13px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}.stat{background:white;border:1px solid var(--line);padding:17px 20px;border-radius:12px}.stat span{font-size:12px;color:var(--muted)}.stat strong{display:block;font-size:26px;line-height:1.4}.stat small{font-size:13px;font-weight:400}
+.layout{display:grid;grid-template-columns:310px minmax(0,1fr);gap:24px;align-items:start}
+.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:23px}h2{margin:0 0 5px;font-size:19px;letter-spacing:-.4px}
+.field{margin-top:16px}label{display:block;font-size:13px;font-weight:650;margin-bottom:6px}input,select{width:100%;border:1px solid #bfcfca;border-radius:7px;padding:10px 11px;background:white;color:var(--ink);min-width:0}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.btn{border:1px solid var(--line);background:white;border-radius:7px;padding:9px 13px;color:var(--ink);font-size:13px;font-weight:600;min-height:40px}
+.primary{background:var(--green);color:white;border-color:var(--green)}.wide{width:100%;margin-top:20px}.textbtn{border:0;background:transparent;color:var(--green);padding:6px 0;font-size:13px;text-decoration:underline}
+.note{font-size:12px;color:var(--muted);margin:16px 0 0}.notice{border-left:3px solid #b8d2c6;padding-left:12px;margin-top:20px;font-size:12px;color:var(--muted)}
+.listhead{display:flex;justify-content:space-between;align-items:start;gap:12px;margin-bottom:15px}.tools{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.tools select{width:auto;flex:1;min-width:120px;font-size:13px;padding:8px}.list{display:grid;gap:12px}.task{background:white;border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:12px;align-items:start}
+.rank{background:#edf4f0;color:var(--green);font-size:14px;font-weight:700;width:32px;height:32px;display:grid;place-items:center;border-radius:8px}
+.task h3{margin:0;font-size:16px;overflow-wrap:anywhere}.meta{font-size:12px;color:var(--muted);margin-top:5px;overflow-wrap:anywhere}.actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;max-width:180px}.actions .btn{font-size:12px;padding:6px 9px;min-height:36px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.tag{font-size:11px;border-radius:4px;padding:2px 7px;background:#edf4f0;color:var(--green)}.urgent{background:#fff0e6;color:#a14a14}.overdue{background:#fbe9e9;color:#a52e35}.done{opacity:.7}.done h3{text-decoration:line-through}
+.empty{text-align:center;background:white;border:1px dashed #b8cbc3;border-radius:12px;padding:44px 20px;color:var(--muted)}.empty strong{display:block;color:var(--ink);font-size:18px;margin-bottom:8px}
+#error{color:var(--red);font-size:13px;margin:12px 0 0;min-height:0}#status{font-size:13px;color:var(--green);min-height:25px;margin-top:12px}.legend{font-size:12px;color:var(--muted);margin-top:18px;border-top:1px solid var(--line);padding-top:14px}footer{margin-top:28px;font-size:12px;color:var(--muted)}
+@media(max-width:900px){.layout{grid-template-columns:280px minmax(0,1fr)}.task{grid-template-columns:32px minmax(0,1fr)}.actions{grid-column:2;max-width:none;justify-content:flex-start}.panel{padding:18px}}
+@media(max-width:650px){header{padding:25px 20px}h1{font-size:27px}main{padding:20px 16px}.top{align-items:flex-start;flex-direction:column;gap:10px}.stats{grid-template-columns:repeat(2,1fr);gap:8px}.stat{padding:13px 15px}.layout{grid-template-columns:1fr;gap:24px}.task{padding:16px}.listhead{align-items:center}.date input{width:155px}}
+</style>
+</head>
+<body>
+<header><div class="brand">CAMPUS / STUDY TOOLS</div><h1>과제 한눈에</h1><p>마감은 놓치지 않게, 시작은 덜 막막하게.</p></header>
+<main>
+<div class="top"><div><strong>오늘의 학습 대시보드</strong><div class="sub">할 일을 정리하면, 다음 한 걸음이 보입니다.</div></div><div class="date"><label for="baseDate" style="margin:0">기준 날짜</label><input id="baseDate" type="date" required min="2000-01-01" max="2100-12-31"></div></div>
+<section class="stats" aria-label="과제 요약">
+<div class="stat"><span>남은 과제</span><strong id="remaining">0 <small>개</small></strong></div>
+<div class="stat"><span>3일 이내 마감 · 지연 포함</span><strong id="urgentCount">0 <small>개</small></strong></div>
+<div class="stat"><span>남은 예상 시간</span><strong id="totalHours">0 <small>시간</small></strong></div>
+<div class="stat"><span>전체 완료율</span><strong id="progress">0 <small>%</small></strong></div>
+</section>
+<div class="layout">
+<section class="panel" aria-labelledby="formTitle"><h2 id="formTitle">새 과제 추가</h2><div class="sub">작은 할 일부터 하나씩 적어보세요.</div>
+<form id="taskForm" novalidate>
+<div class="field"><label for="title">과제명 *</label><input id="title" maxlength="60" placeholder="예: 교양 글쓰기 보고서" required autocomplete="off"></div>
+<div class="field"><label for="course">과목명 · 선택</label><input id="course" maxlength="30" placeholder="예: 대학 글쓰기" autocomplete="off"></div>
+<div class="field"><label for="due">마감 날짜 *</label><input id="due" type="date" min="2000-01-01" max="2100-12-31" required></div>
+<div class="row"><div class="field"><label for="importance">중요도 *</label><select id="importance"><option value="1">낮음 · 1</option><option value="2" selected>보통 · 2</option><option value="3">높음 · 3</option></select></div><div class="field"><label for="hours">예상 시간 *</label><input id="hours" type="number" min="0.5" max="100" step="0.5" placeholder="시간" required></div></div>
+<p id="error" role="alert"></p><button class="btn primary wide" id="submitBtn" type="submit">과제 추가하기</button><button class="textbtn" id="cancelEdit" type="button" hidden>수정 취소</button>
+</form><div class="notice">예상 시간: 0.5~100시간, 0.5시간 단위<br>최대 50개까지 등록할 수 있습니다.<br>지난 마감도 등록해 지연 과제를 관리하세요.</div>
+<p class="note">저장 기능이 없습니다. 새로고침하거나 창을 닫으면 입력한 과제가 사라집니다.</p></section>
+<section aria-labelledby="listTitle"><div class="listhead"><div><h2 id="listTitle">나의 과제 목록</h2><div class="sub">중요하고 급한 일부터 차근차근.</div></div><button id="examples" class="btn" type="button">예시 불러오기</button></div>
+<div class="tools"><select id="filter" aria-label="과제 필터"><option value="all">전체 과제</option><option value="active">미완료만</option><option value="done">완료만</option></select><select id="sort" aria-label="정렬 방식"><option value="priority">우선순위순</option><option value="due">마감일순</option><option value="hours">예상 시간순</option></select><button id="reset" class="btn" type="button">전체 초기화</button></div>
+<div id="list" class="list"></div><div id="status" role="status" aria-live="polite"></div>
+<div class="legend"><strong>우선순위 계산 안내</strong><br>점수 = 중요도 × 10 + 긴급도. 긴급도는 지연·오늘 40점, 1~3일 30점, 4~7일 20점, 8일 이후 10점입니다. 점수가 같으면 마감이 빠른 순서로, 완료 과제는 마지막에 표시합니다.</div></section>
+</div><footer>과제 한눈에 · HTML / CSS / JavaScript · 오프라인 실행 · 데이터는 현재 탭에서만 유지</footer>
+</main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+let tasks=[], editingId=null, nextId=1;
+const localDate=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
+function dayNumber(value){
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(value))return NaN;
+ const [y,m,d]=value.split('-').map(Number), date=new Date(Date.UTC(y,m-1,d));
+ if(y<2000||y>2100||date.getUTCFullYear()!==y||date.getUTCMonth()!==m-1||date.getUTCDate()!==d)return NaN;
+ return date.getTime()/86400000;
+}
+let baseValue=localDate(); $('baseDate').value=baseValue;
+function days(t){return dayNumber(t.due)-dayNumber(baseValue);}
+function score(t){const n=days(t);return t.importance*10+(n<=0?40:n<=3?30:n<=7?20:10);}
+function say(msg){$('status').textContent=msg;}
+function error(msg,id){$('error').textContent=msg;if(id)$(id).focus();}
+function clearForm(){editingId=null;$('taskForm').reset();$('error').textContent='';$('formTitle').textContent='새 과제 추가';$('submitBtn').textContent='과제 추가하기';$('cancelEdit').hidden=true;}
+function node(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;}
+function render(){
+ const active=tasks.filter(t=>!t.done);
+ $('remaining').innerHTML=`${active.length} <small>개</small>`;
+ $('urgentCount').innerHTML=`${active.filter(t=>days(t)<=3).length} <small>개</small>`;
+ $('totalHours').innerHTML=`${active.reduce((sum,t)=>sum+t.hours,0)} <small>시간</small>`;
+ $('progress').innerHTML=`${tasks.length?Math.round((tasks.length-active.length)/tasks.length*100):0} <small>%</small>`;
+ let visible=tasks.filter(t=>$('filter').value==='all'||($('filter').value==='done'?t.done:!t.done));
+ visible.sort((a,b)=>Number(a.done)-Number(b.done)||($('sort').value==='hours'?a.hours-b.hours:$('sort').value==='due'?dayNumber(a.due)-dayNumber(b.due):score(b)-score(a))||dayNumber(a.due)-dayNumber(b.due)||a.id-b.id);
+ const list=$('list');list.replaceChildren();
+ if(!visible.length){const e=node('div','empty');e.append(node('strong','',tasks.length?'조건에 맞는 과제가 없어요':'아직 등록된 과제가 없어요'),node('div','',tasks.length?'필터를 바꿔 다른 과제를 확인하세요.':'왼쪽 입력란에서 추가하거나 예시를 불러보세요.'));list.append(e);return;}
+ visible.forEach((t,i)=>{
+ const card=node('article','task'+(t.done?' done':''));card.dataset.id=t.id;
+ card.append(node('div','rank',t.done?'✓':String(i+1)));
+ const body=node('div');body.append(node('h3','',t.title),node('div','meta',`${t.course||'과목 미지정'} · ${t.due} · 예상 ${t.hours}시간`));
+ const tags=node('div','tags'),d=days(t),label=t.done?'완료':d<0?`${-d}일 지연`:d===0?'오늘 마감':`D-${d}`;
+ tags.append(node('span','tag'+(!t.done?(d<0?' overdue':d<=3?' urgent':''):''),label),node('span','tag',`중요도 ${['','낮음','보통','높음'][t.importance]}`),node('span','tag',`우선순위 ${score(t)}점`));body.append(tags);card.append(body);
+ const actions=node('div','actions');
+ [['toggle',t.done?'완료 취소':'완료'],['edit','수정'],['delete','삭제']].forEach(([action,label])=>{const b=node('button','btn',label);b.type='button';b.dataset.action=action;b.setAttribute('aria-label',`${t.title} ${label}`);actions.append(b);});
+ card.append(actions);list.append(card);
+ });
+}
+$('taskForm').addEventListener('submit',e=>{
+ e.preventDefault();const title=$('title').value.trim(),course=$('course').value.trim(),due=$('due').value,raw=$('hours').value,hours=Number(raw),importance=Number($('importance').value);
+ if(!title && $('title').value==='')return error('과제명을 입력해 주세요. 공백만 입력할 수 없습니다.','title');
+ if(title.length>60||course.length>30)return error('과제명은 60자, 과목명은 30자 이내로 입력해 주세요.','title');
+ if(!Number.isFinite(dayNumber(due)))return error('마감 날짜를 2000~2100년 범위에서 선택해 주세요.','due');
+ if(raw===''||!Number.isFinite(hours)||hours<0.5||hours>100||!Number.isInteger(hours*2))return error('예상 시간은 0.5~100 사이에서 0.5 단위로 입력해 주세요.','hours');
+ if(![1,2,3].includes(importance))return error('중요도를 선택해 주세요.','importance');
+ if(false)return error('같은 과제명·과목·마감일의 과제가 이미 있습니다.','title');
+ if(editingId===null&&tasks.length>=50)return error('최대 50개까지 등록할 수 있습니다. 기존 과제를 삭제해 주세요.','title');
+ if(editingId!==null){const t=tasks.find(t=>t.id===editingId);Object.assign(t,{title,course,due,hours,importance});say('과제를 수정했습니다.');}
+ else{tasks.push({id:nextId++,title,course,due,hours,importance,done:false});say('과제를 추가했습니다.');}
+ clearForm();render();
+});
+$('list').addEventListener('click',e=>{
+ const b=e.target.closest('button[data-action]');if(!b)return;
+ const id=Number(b.closest('.task').dataset.id),t=tasks.find(t=>t.id===id);if(!t)return;
+ if(b.dataset.action==='toggle'){t.done=!t.done;say(t.done?'과제를 완료했습니다.':'완료를 취소했습니다.');}
+ if(b.dataset.action==='delete'){if(!confirm(`"${t.title}" 과제를 삭제할까요?`))return;tasks=tasks.filter(x=>x.id!==id);if(editingId===id)clearForm();say('과제를 삭제했습니다.');}
+ if(b.dataset.action==='edit'){editingId=id;for(const key of ['title','course','due','importance','hours'])$(key).value=t[key];$('formTitle').textContent='과제 수정';$('submitBtn').textContent='수정 저장하기';$('cancelEdit').hidden=false;$('error').textContent='';$('title').focus();say('수정 후 저장 버튼을 눌러 주세요.');}
+ render();
+});
+$('cancelEdit').addEventListener('click',()=>{clearForm();say('수정을 취소했습니다.');});
+$('filter').addEventListener('change',render);$('sort').addEventListener('change',render);
+$('baseDate').addEventListener('change',()=>{if(!Number.isFinite(dayNumber($('baseDate').value))){$('baseDate').value=baseValue;say('유효한 기준 날짜를 선택해 주세요. 기존 날짜를 유지합니다.');return;}baseValue=$('baseDate').value;render();say('기준 날짜에 맞춰 우선순위를 다시 계산했습니다.');});
+$('reset').addEventListener('click',()=>{if(!confirm('모든 과제를 삭제할까요? 이 작업은 되돌릴 수 없습니다.'))return;tasks=[];nextId=1;clearForm();$('filter').value='all';$('sort').value='priority';render();say('모든 과제를 초기화했습니다.');});
+$('examples').addEventListener('click',()=>{
+ if(tasks.length&&!confirm('현재 목록을 지우고 예시 과제로 바꿀까요?'))return;
+ const relative=n=>{const d=new Date((dayNumber(baseValue)+n)*86400000);return d.toISOString().slice(0,10);};
+ const specs=[['자료구조 실습 보고서','자료구조',1,3,2,false],['교양 글쓰기 초안','대학 글쓰기',3,2,3.5,false],['발표 자료 디자인','팀 프로젝트',6,3,4,false],['영어 단어 복습','대학 영어',0,1,0.5,true]];
+ tasks=specs.map(([title,course,n,importance,hours,done])=>({id:nextId++,title,course,due:relative(n),importance,hours,done}));
+ clearForm();$('filter').value='all';$('sort').value='priority';render();say('예시 4개를 불러왔습니다. 실제 과제에 맞게 수정해 보세요.');
+});
+render();
+</script>
+</body>
+</html>

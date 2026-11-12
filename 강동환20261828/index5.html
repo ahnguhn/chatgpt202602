@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a101b">
+<title>네온 닷지 — 캐릭터·타일 컬러 에디션</title>
+<style>
+:root{color-scheme:dark;--bg:#080d16;--panel:#101a29;--line:#26344a;--text:#ecf5ff;--muted:#91a1b9;--mint:#68f4c5;--orange:#ff9978}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;min-height:100svh;background:radial-gradient(ellipse at 50% 0%,#18283d 0%,var(--bg) 65%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI","Malgun Gothic",sans-serif;padding:28px 20px 24px}
+button{font:inherit;cursor:pointer;touch-action:manipulation}
+button:focus-visible{outline:3px solid #fff;outline-offset:5px}
+.shell{max-width:1040px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:40px;height:40px;background:#68f4c514;border:1px solid #68f4c54a;border-radius:12px;display:grid;place-items:center;color:var(--mint);font-size:23px;font-weight:900}
+h1{font-size:21px;letter-spacing:.09em;margin:0;font-weight:850}
+.subtitle{font-size:11px;letter-spacing:.19em;color:var(--muted);margin:4px 0 0}
+.best{flex-shrink:0;font-size:11px;letter-spacing:.08em;color:var(--muted);text-align:right}
+.best strong{display:block;color:var(--mint);font-size:22px;letter-spacing:.02em;font-variant-numeric:tabular-nums;margin-top:3px}
+.hud{display:flex;align-items:center;gap:0;background:#101a29d9;border:1px solid var(--line);border-bottom:0;border-radius:17px 17px 0 0;padding:16px 22px}
+.stat{min-width:135px;border-right:1px solid var(--line);padding-right:26px;margin-right:26px}
+.stat:nth-child(3){border:0}
+.label{display:block;color:var(--muted);font-size:10px;letter-spacing:.13em;margin-bottom:5px}
+.value{font-size:23px;font-weight:750;font-variant-numeric:tabular-nums;line-height:1}
+#score{color:var(--mint)}
+#level{color:var(--orange)}
+.hud-actions{margin-left:auto;display:flex;align-items:center;gap:12px}
+.live{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--muted);letter-spacing:.08em}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--muted)}
+.playing .dot{background:var(--mint);box-shadow:0 0 10px #68f4c570}
+.icon-button{width:35px;height:35px;border:1px solid #34435b;border-radius:9px;background:#182439;color:#cddcef;font-size:16px;display:grid;place-items:center}
+.icon-button:disabled{opacity:.35;cursor:default}
+.arena{position:relative;width:100%;aspect-ratio:16/10;border:1px solid var(--line);border-radius:0 0 17px 17px;overflow:hidden;background:#0b1422;isolation:isolate;touch-action:none}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,#09111c22,#09111cca);padding:24px;z-index:2}
+.overlay[hidden]{display:none}
+.card{max-height:100%;overflow-y:auto;max-width:490px;width:100%;padding:26px 28px;background:#101b2beF;border:1px solid #35465d;border-radius:22px;box-shadow:0 28px 90px #0006;backdrop-filter:blur(10px)}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--mint);font-size:10px;font-weight:700;letter-spacing:.2em;margin-bottom:18px}
+.eyebrow:before{content:"";width:17px;height:2px;background:var(--mint)}
+.card h2{font-size:clamp(28px,4vw,43px);line-height:1.2;letter-spacing:-.05em;margin:0 0 14px}
+.card h2 em{color:var(--mint);font-style:normal}
+.desc{color:#a6b6cb;font-size:13px;line-height:1.9;margin:0 0 21px;word-break:keep-all}
+.mini-controls{display:flex;justify-content:center;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin-bottom:24px}
+kbd{font-family:inherit;display:inline-block;border:1px solid #3e506c;border-bottom-width:3px;border-radius:5px;min-width:24px;padding:3px 5px;background:#1b2a40;color:#dce7f5;font-size:11px}
+.primary{width:100%;padding:15px;border:0;border-radius:10px;background:var(--mint);color:#102c28;font-weight:850;transition:background .15s,transform .15s}
+.primary:hover{background:#93ffda;transform:translateY(-1px)}
+.primary:active{transform:translateY(0)}
+.small-note{color:#73869f;font-size:10px;margin:13px 0 0}
+.results{display:flex;gap:12px;margin:19px 0 22px}
+.result{flex:1;background:#091321;border:1px solid #293b52;border-radius:10px;padding:13px 8px}
+.result span{color:var(--muted);font-size:10px;display:block;margin-bottom:7px}
+.result strong{font-size:25px;color:var(--mint);font-variant-numeric:tabular-nums}
+footer{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#8395af;font-size:11px;padding:15px 3px}
+.legend{display:flex;align-items:center;gap:15px}
+.legend span{display:flex;align-items:center;gap:6px}
+.swatch{width:8px;height:8px;border-radius:2px;background:var(--mint)}
+.swatch.danger{background:var(--orange)}
+.footer-help{line-height:1.8;text-align:right}
+.progress{position:absolute;left:0;bottom:0;height:3px;width:0;background:var(--mint);opacity:.75;transition:width .15s linear;pointer-events:none}
+.toast{position:absolute;top:18px;left:50%;transform:translateX(-50%);background:#182b3deb;border:1px solid #375571;border-radius:20px;padding:8px 17px;color:#c9e9ff;font-size:12px;white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none;z-index:1}
+.toast.show{opacity:1}
+.touch-note{display:none}
+@media(max-width:650px){
+ body{padding:18px 12px}header{margin-bottom:16px}h1{font-size:18px}.subtitle{font-size:9px}.logo{width:35px;height:35px}.best strong{font-size:19px}
+ .hud{padding:13px 12px}.stat{min-width:0;flex:1;padding-right:12px;margin-right:12px}.value{font-size:20px}.label{font-size:9px}.hud-actions{gap:0}.live{display:none}
+ .arena{aspect-ratio:3/4}.card{padding:24px 20px}.card h2{font-size:32px}.desc{font-size:12px}.mini-controls{gap:6px;font-size:10px}kbd{min-width:20px;padding:3px}
+ footer{font-size:10px;align-items:flex-start}.footer-help{max-width:180px}.touch-note{display:inline}.keyboard-note{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.color-picker{margin:0 0 20px;padding:14px;background:#0b1523;border:1px solid #2a3b52;border-radius:12px;text-align:left}
+.color-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:11px;font-size:11px;color:#a6b6cb}
+.color-heading strong{color:#e6f2ff;font-size:11px;font-weight:650}
+.color-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:8px}
+.color-choice{position:relative;display:grid;place-items:center;width:100%;aspect-ratio:1;border:2px solid transparent;border-radius:7px;background:var(--chip);padding:0;color:#06101c;font-size:16px;font-weight:900;box-shadow:inset 0 0 0 1px #ffffff25}
+.color-choice[aria-pressed="true"]{outline:2px solid #f4f8ff;outline-offset:2px}
+.color-choice:hover{filter:brightness(1.15)}
+.color-choice .check{opacity:0}
+.color-choice[aria-pressed="true"] .check{opacity:1}
+.color-tip{font-size:10px;color:#748aa5;margin:10px 0 0;line-height:1.6}
+@media(max-width:650px){.color-grid{gap:7px}.color-picker{padding:12px}.overlay{padding:16px}.card{padding:22px 18px}.color-choice{font-size:13px}}
+
+.panel-setting{margin:0 0 18px;padding:13px 14px;border:1px solid #2a3b52;border-radius:12px;background:#0b1523;text-align:left}
+.panel-setting-title{display:block;font-size:11px;color:#a6b6cb;margin-bottom:10px}
+.side-options{display:flex;gap:8px}
+.side-option{flex:1;border:1px solid #344760;border-radius:8px;padding:10px 8px;background:#172438;color:#a6b6cb;font-size:12px;font-weight:700}
+.side-option[aria-pressed="true"]{background:#163b36;border-color:#68f4c5;color:#9affdb}
+.panel-tip{margin:8px 0 0;color:#748aa5;font-size:10px;line-height:1.6}
+.mobile-panel{display:none;position:absolute;bottom:max(14px,env(safe-area-inset-bottom));left:14px;z-index:1;user-select:none;-webkit-user-select:none;touch-action:none;width:116px;padding:7px 6px 6px;background:#0b1626bb;border:1px solid #91b7df35;border-radius:19px;box-shadow:0 5px 20px #0003}
+.mobile-panel[data-side="right"]{left:auto;right:14px}
+.joystick{position:relative;width:102px;height:102px;border:1px solid #7897b63d;border-radius:50%;background:radial-gradient(circle,#20384c77,#0d1c2dbb);touch-action:none;cursor:grab}
+.joystick:active{cursor:grabbing}
+.joystick::before,.joystick::after{content:"";position:absolute;background:#7394b01c;pointer-events:none}
+.joystick::before{left:50%;top:12%;width:1px;height:76%}
+.joystick::after{top:50%;left:12%;height:1px;width:76%}
+.stick-arrow{position:absolute;color:#90abc5;line-height:1;font-size:13px;pointer-events:none}
+.stick-up{left:calc(50% - 5px);top:8px}.stick-down{left:calc(50% - 5px);bottom:8px}
+.stick-left{left:8px;top:calc(50% - 6px)}.stick-right{right:8px;top:calc(50% - 6px)}
+.stick-knob{position:absolute;left:calc(50% - 18px);top:calc(50% - 18px);width:36px;height:36px;border-radius:50%;background:linear-gradient(145deg,#94ffdc,#36bc99);border:1px solid #b9ffe8;box-shadow:0 3px 13px #0007;pointer-events:none;z-index:1;will-change:transform}
+.mobile-panel.is-active{border-color:#68f4c588}
+.stick-label{text-align:center;font-size:9px;color:#abc3d8;letter-spacing:.1em;margin-top:5px;pointer-events:none}
+@media(pointer:coarse),(max-width:850px){body.playing .mobile-panel{display:block}}
+@media(max-width:650px){.panel-setting{padding:11px 12px}.card h2{font-size:29px}.mini-controls{margin-bottom:16px}.color-picker{margin-bottom:14px}.desc{margin-bottom:15px}}
+</style>
+</head>
+<body>
+<main class="shell">
+<header>
+ <div class="brand"><div class="logo" aria-hidden="true">↟</div><div><h1>NEON DODGE</h1><p class="subtitle">OFFLINE READY. KEEP MOVING.</p></div></div>
+ <div class="best" aria-label="저장된 최고 기록">BEST SCORE · 최고 기록<strong id="best">00000</strong></div>
+</header>
+<section class="hud" aria-label="게임 현황">
+ <div class="stat"><span class="label">SCORE · 점수</span><span class="value" id="score">00000</span></div>
+ <div class="stat"><span class="label">TIME · 생존</span><span class="value" id="time">00:00</span></div>
+ <div class="stat"><span class="label">LEVEL · 난이도</span><span class="value" id="level">01</span></div>
+ <div class="hud-actions"><span class="live"><span class="dot"></span><span id="status">READY</span></span><button class="icon-button" id="pause" aria-label="일시정지" title="일시정지 (P / Esc)" disabled>Ⅱ</button></div>
+</section>
+<div class="arena" id="arena">
+ <canvas id="game" aria-label="위에서 내려오는 장애물 타일을 피하는 게임. WASD 또는 화살표 키로 민트색 캐릭터를 움직이세요."></canvas>
+ <div class="toast" id="toast" aria-live="polite"></div>
+ <div class="progress" id="progress"></div>
+ <div class="mobile-panel" id="mobilePanel" data-side="left" aria-label="모바일 이동 패널">
+  <div class="joystick" id="joystick" role="group" aria-label="이동 조이스틱. 누른 채 원하는 방향으로 끌어 이동하세요.">
+   <span class="stick-arrow stick-up" aria-hidden="true">↑</span><span class="stick-arrow stick-down" aria-hidden="true">↓</span>
+   <span class="stick-arrow stick-left" aria-hidden="true">←</span><span class="stick-arrow stick-right" aria-hidden="true">→</span>
+   <span class="stick-knob" id="stickKnob" aria-hidden="true"></span>
+  </div>
+  <div class="stick-label">DRAG TO MOVE</div>
+ </div>
+ <div class="overlay" id="overlay">
+  <div class="card">
+   <div class="eyebrow" id="eyebrow">A LITTLE FOCUS. A LONG SURVIVAL.</div>
+   <h2 id="title">피하고, 버티고,<br><em>기록을 넘어서.</em></h2>
+   <p class="desc" id="desc">위에서 쏟아지는 장애물을 피하세요.<br>오래 버틸수록 점수는 오르고, 위험은 커집니다.</p>
+   <div class="mini-controls" id="controls"><span><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></span><span>또는</span><span><kbd>↑</kbd> <kbd>←</kbd> <kbd>↓</kbd> <kbd>→</kbd></span></div>
+   <div class="results" id="results" hidden style="display:none">
+    <div class="result"><span>최종 점수</span><strong id="finalScore">0</strong></div>
+    <div class="result"><span>생존 시간</span><strong id="finalTime">00:00</strong></div>
+   </div>
+   <section class="color-picker" id="colorPicker" aria-label="캐릭터 색상 선택">
+    <div class="color-heading"><span>캐릭터 색상 · 20 COLORS</span><strong id="colorName" aria-live="polite">민트</strong></div>
+    <div class="color-grid" id="colorGrid" role="group" aria-label="20가지 캐릭터 색상"></div>
+    <p class="color-tip">인터넷 없이 실행됩니다. 색상과 최고 기록은 이 브라우저에 자동 저장됩니다.</p>
+   </section>
+   <section class="color-picker" id="tileColorPicker" aria-label="떨어지는 타일 색상 선택">
+    <div class="color-heading"><span>장애물 타일 색상 · 20 COLORS</span><strong id="tileColorName" aria-live="polite">코랄</strong></div>
+    <div class="color-grid" id="tileColorGrid" role="group" aria-label="20가지 장애물 타일 색상"></div>
+    <p class="color-tip">일반 타일·움직이는 타일·가로 장벽에 적용되며 자동 저장됩니다.</p>
+   </section>
+   <section class="panel-setting" id="panelSetting" aria-label="모바일 조종 패널 위치 설정">
+    <span class="panel-setting-title">모바일 조종 패널 위치</span>
+    <div class="side-options" role="group" aria-label="조종 패널 위치 선택">
+     <button type="button" class="side-option" id="sideLeft" aria-pressed="true">← 왼쪽</button>
+     <button type="button" class="side-option" id="sideRight" aria-pressed="false">오른쪽 →</button>
+    </div>
+    <p class="panel-tip">스틱을 누른 채 움직이면 이동합니다. 위치는 자동 저장됩니다.</p>
+   </section>
+   <button class="primary" id="start">게임 시작 →</button>
+   <p class="small-note" id="note">모바일은 조이스틱 또는 화면 드래그로 이동하세요.</p>
+  </div>
+ </div>
+</div>
+<footer>
+ <div class="legend"><span><i class="swatch" id="playerSwatch"></i> 나</span><span><i class="swatch danger" id="tileSwatch"></i> 장애물</span></div>
+ <div class="footer-help"><span class="keyboard-note">WASD / 방향키 이동 &nbsp;·&nbsp; P / Esc 일시정지<br></span><span class="touch-note">조이스틱 / 화면 드래그 이동 &nbsp;·&nbsp; </span>15초마다 난이도가 올라갑니다.</div>
+</footer>
+</main>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const canvas = $('game'), ctx = canvas.getContext('2d');
+const arena = $('arena'), overlay = $('overlay');
+const W = 960, H = 600;
+let dpr = 1, state = 'ready', last = 0, elapsed = 0, score = 0, level = 1;
+const palette = [
+ {name:'민트',hex:'#68F4C5'}, {name:'크림슨',hex:'#F04464'},
+ {name:'코발트 블루',hex:'#527BFF'}, {name:'선샤인 옐로',hex:'#FFE04D'},
+ {name:'바이올렛',hex:'#A66CFF'}, {name:'탠저린',hex:'#FF8C32'},
+ {name:'아이스 시안',hex:'#42DEFF'}, {name:'핑크',hex:'#FF82C4'},
+ {name:'라임',hex:'#BEF247'}, {name:'스노우 화이트',hex:'#F4F7FF'},
+ {name:'터쿼이즈',hex:'#16ADA8'}, {name:'버건디',hex:'#B84970'},
+ {name:'스틸 블루',hex:'#82A5CD'}, {name:'샌드 베이지',hex:'#CDB487'},
+ {name:'플럼',hex:'#C15CBD'}, {name:'코퍼',hex:'#BA7955'},
+ {name:'에메랄드',hex:'#24BE67'}, {name:'라벤더',hex:'#C7BCFF'},
+ {name:'살몬',hex:'#FFA895'}, {name:'슬레이트',hex:'#929EAE'}
+];
+let playerColor = palette[0].hex;
+let best = 0, spawnIn = .45, gateIn = 13, toastUntil = 0, shake = 0;
+let obstacles = [], particles = [], trails = [], gates = [];
+let keys = new Set(), pointer = null, lastTrail = 0, newRecord = false;
+const player = {x:W/2,y:H-95,w:25,h:29,vx:0,vy:0};
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const stars = Array.from({length:65}, () => ({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+.35,a:Math.random()*.4+.12}));
+const rand = (a,b) => a+Math.random()*(b-a);
+const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+const pad = n => String(n).padStart(2,'0');
+const clock = t => pad(Math.floor(t/60))+':'+pad(Math.floor(t)%60);
+try { best = Math.max(0, Number(localStorage.getItem('neon-dodge-best-v1')) || 0); } catch(e) {}
+$('best').textContent = String(best).padStart(5,'0');
+try {
+ const savedColor=localStorage.getItem('neon-dodge-player-color-v1');
+ if(palette.some(c=>c.hex===savedColor))playerColor=savedColor;
+} catch(e) {}
+function selectColor(hex,save=true) {
+ const selected=palette.find(c=>c.hex===hex);
+ if(!selected)return;
+ playerColor=selected.hex;
+ $('colorName').textContent=selected.name;
+ $('playerSwatch').style.background=playerColor;
+ document.querySelectorAll('#colorGrid .color-choice').forEach(button=>{
+  button.setAttribute('aria-pressed',String(button.dataset.color===playerColor));
+ });
+ if(save){try{localStorage.setItem('neon-dodge-player-color-v1',playerColor);}catch(e){}}
+}
+for(const color of palette) {
+ const button=document.createElement('button');
+ button.type='button';button.className='color-choice';
+ button.dataset.color=color.hex;
+ button.style.setProperty('--chip',color.hex);
+ button.title=color.name;button.setAttribute('aria-label',color.name+' 색상 선택');
+ button.setAttribute('aria-pressed','false');
+ const mark=document.createElement('span');mark.className='check';mark.textContent='✓';mark.setAttribute('aria-hidden','true');
+ button.appendChild(mark);
+ button.addEventListener('click',()=>selectColor(color.hex));
+ $('colorGrid').appendChild(button);
+}
+selectColor(playerColor,false);
+const tilePalette=[
+ {name:'코랄',hex:'#FF9978'}, {name:'체리 레드',hex:'#FF4562'},
+ {name:'앰버',hex:'#FFBF3F'}, {name:'레몬',hex:'#F3EE54'},
+ {name:'애플 그린',hex:'#9DE54B'}, {name:'제이드',hex:'#35C68B'},
+ {name:'아쿠아',hex:'#4CE3D0'}, {name:'스카이',hex:'#58CAFF'},
+ {name:'로열 블루',hex:'#6385FF'}, {name:'아이리스',hex:'#9582FF'},
+ {name:'퍼플',hex:'#BA6DF4'}, {name:'마젠타',hex:'#E75ADE'},
+ {name:'로즈 핑크',hex:'#FF80AD'}, {name:'피치',hex:'#FFD0AE'},
+ {name:'골드 브라운',hex:'#CFA55F'}, {name:'올리브',hex:'#B4BF6B'},
+ {name:'블루 그레이',hex:'#84A9BF'}, {name:'모브',hex:'#BC90AC'},
+ {name:'실버',hex:'#BFC9D5'}, {name:'아이보리',hex:'#FFF3D6'}
+];
+let tileColor=tilePalette[0].hex;
+try {
+ const saved=localStorage.getItem('neon-dodge-tile-color-v1');
+ if(tilePalette.some(c=>c.hex===saved))tileColor=saved;
+} catch(e) {}
+function selectTileColor(hex,save=true) {
+ const selected=tilePalette.find(c=>c.hex===hex);
+ if(!selected)return;
+ tileColor=selected.hex;
+ $('tileColorName').textContent=selected.name;
+ $('tileSwatch').style.background=tileColor;
+ document.querySelectorAll('#tileColorGrid .color-choice').forEach(button=>{
+  button.setAttribute('aria-pressed',String(button.dataset.color===tileColor));
+ });
+ if(save){try{localStorage.setItem('neon-dodge-tile-color-v1',tileColor);}catch(e){}}
+}
+for(const color of tilePalette) {
+ const button=document.createElement('button');
+ button.type='button';button.className='color-choice';button.dataset.color=color.hex;
+ button.style.setProperty('--chip',color.hex);
+ button.title=color.name;button.setAttribute('aria-label','장애물 타일 '+color.name+' 색상 선택');
+ button.setAttribute('aria-pressed','false');
+ const mark=document.createElement('span');mark.className='check';mark.textContent='✓';mark.setAttribute('aria-hidden','true');
+ button.appendChild(mark);
+ button.addEventListener('click',()=>selectTileColor(color.hex));
+ $('tileColorGrid').appendChild(button);
+}
+selectTileColor(tileColor,false);
+
+// Independent pointer state keeps the virtual stick reliable during multi-touch.
+const stick={x:0,y:0,id:null};
+let panelSide='left';
+try {
+ const savedSide=localStorage.getItem('neon-dodge-panel-side-v1');
+ if(savedSide==='left'||savedSide==='right')panelSide=savedSide;
+} catch(e) {}
+function setPanelSide(side,save=true) {
+ panelSide=side;
+ $('mobilePanel').dataset.side=side;
+ $('sideLeft').setAttribute('aria-pressed',String(side==='left'));
+ $('sideRight').setAttribute('aria-pressed',String(side==='right'));
+ if(save){try{localStorage.setItem('neon-dodge-panel-side-v1',side);}catch(e){}}
+}
+$('sideLeft').addEventListener('click',()=>setPanelSide('left'));
+$('sideRight').addEventListener('click',()=>setPanelSide('right'));
+setPanelSide(panelSide,false);
+function resetStick() {
+ const id=stick.id;
+ stick.x=0;stick.y=0;stick.id=null;
+ $('stickKnob').style.transform='translate(0px,0px)';
+ $('mobilePanel').classList.remove('is-active');
+ if(id!==null&&$('joystick').hasPointerCapture(id))$('joystick').releasePointerCapture(id);
+}
+function moveStick(e) {
+ const r=$('joystick').getBoundingClientRect();
+ const radius=r.width*.31;
+ let x=(e.clientX-(r.left+r.width/2))/radius;
+ let y=(e.clientY-(r.top+r.height/2))/radius;
+ const distance=Math.hypot(x,y);
+ if(distance>1){x/=distance;y/=distance;}
+ $('stickKnob').style.transform=`translate(${x*radius}px,${y*radius}px)`;
+ const magnitude=Math.min(distance,1);
+ if(magnitude<.12){stick.x=0;stick.y=0;}
+ else {
+  const amount=(magnitude-.12)/.88;
+  const length=Math.hypot(x,y);
+  stick.x=x/length*amount;stick.y=y/length*amount;
+ }
+}
+$('joystick').addEventListener('pointerdown',e=>{
+ if(state!=='playing'||stick.id!==null)return;
+ e.preventDefault();e.stopPropagation();
+ pointer=null;keys.clear();stick.id=e.pointerId;
+ $('joystick').setPointerCapture(e.pointerId);
+ $('mobilePanel').classList.add('is-active');
+ moveStick(e);
+});
+$('joystick').addEventListener('pointermove',e=>{
+ if(stick.id!==e.pointerId)return;
+ e.preventDefault();e.stopPropagation();moveStick(e);
+});
+for(const event of ['pointerup','pointercancel','lostpointercapture']){
+ $('joystick').addEventListener(event,e=>{
+  if(stick.id===e.pointerId){e.preventDefault();e.stopPropagation();resetStick();}
+ });
+}
+
+
+
+function resize() {
+ dpr = Math.min(window.devicePixelRatio || 1, 2);
+ const r = arena.getBoundingClientRect();
+ canvas.width = Math.round(r.width*dpr);
+ canvas.height = Math.round(r.height*dpr);
+ // Logical coordinates stay fixed, including on mobile or window resize.
+ ctx.setTransform(canvas.width/W,0,0,canvas.height/H,0,0);
+}
+window.addEventListener('resize',()=>{resize();resetStick();});
+resize();
+
+function updateHUD() {
+ if(score>best) {
+  newRecord=true;best=score;
+  $('best').textContent=String(best).padStart(5,'0');
+  try{localStorage.setItem('neon-dodge-best-v1',String(best));}catch(e){}
+ }
+ $('score').textContent = String(score).padStart(5,'0');
+ $('time').textContent = clock(elapsed);
+ $('level').textContent = pad(level);
+ $('progress').style.width = ((elapsed%15)/15*100)+'%';
+}
+function showToast(text) {
+ $('toast').textContent = text;
+ $('toast').classList.add('show');
+ toastUntil = elapsed + 2.2;
+}
+function setStatus(text,active) {
+ $('status').textContent=text;
+ document.body.classList.toggle('playing',active);
+}
+function startGame() {
+ resetStick();
+ state='playing'; elapsed=0; score=0; level=1; spawnIn=.5; gateIn=13;
+ obstacles=[];particles=[];trails=[];gates=[];keys.clear();pointer=null;
+ player.x=W/2;player.y=H-95;player.vx=0;player.vy=0;lastTrail=0;
+ shake=0;newRecord=false;
+ overlay.hidden=true;
+ $('colorPicker').hidden=false;$('tileColorPicker').hidden=false;$('panelSetting').hidden=false;
+ $('toast').classList.remove('show');
+ $('pause').disabled=false;$('pause').textContent='Ⅱ';$('pause').setAttribute('aria-label','일시정지');
+ setStatus('LIVE',true);updateHUD();
+ last=performance.now();
+ canvas.focus({preventScroll:true});
+}
+canvas.tabIndex=0;
+function pauseGame() {
+ if(state!=='playing')return;
+ state='paused';keys.clear();pointer=null;resetStick();
+ setStatus('PAUSED',false);
+ $('colorPicker').hidden=true;$('tileColorPicker').hidden=true;$('panelSetting').hidden=true;
+ $('eyebrow').textContent='TAKE A BREATH';
+ $('title').innerHTML='잠깐, <em>숨 고르기.</em>';
+ $('desc').innerHTML='시간과 장애물이 모두 멈췄어요.<br>준비되면 이어서 도전하세요.';
+ $('controls').style.display='none';$('results').style.display='none';
+ $('start').textContent='이어서 하기 →';$('note').textContent='P 또는 Esc 키로도 계속할 수 있어요.';
+ $('pause').textContent='▶';$('pause').setAttribute('aria-label','계속하기');
+ overlay.hidden=false;
+}
+function resumeGame() {
+ if(state!=='paused')return;
+ state='playing';overlay.hidden=true;keys.clear();pointer=null;resetStick();
+ $('pause').textContent='Ⅱ';$('pause').setAttribute('aria-label','일시정지');
+ setStatus('LIVE',true);last=performance.now();canvas.focus({preventScroll:true});
+}
+function endGame() {
+ state='over';keys.clear();pointer=null;resetStick();shake=reducedMotion?0:8;
+ burst(player.x,player.y,playerColor,30);
+ $('colorPicker').hidden=false;$('tileColorPicker').hidden=false;$('panelSetting').hidden=false;
+ newRecord=newRecord||score>best;
+ if(newRecord) {
+  best=score;$('best').textContent=String(best).padStart(5,'0');
+  try {localStorage.setItem('neon-dodge-best-v1',String(best));}catch(e){}
+ }
+ $('pause').disabled=true;setStatus('GAME OVER',false);
+ $('toast').classList.remove('show');
+ $('eyebrow').textContent=newRecord?'NEW PERSONAL BEST':'ONE MORE TRY?';
+ $('title').innerHTML=newRecord?'새로운 <em>최고 기록!</em>':'아깝다! <em>한 번 더?</em>';
+ $('desc').textContent=newRecord?'방금 나만의 기록을 넘어섰어요. 다음 목표는 더 높게!':'작은 움직임으로 틈을 찾아보세요. 다음엔 더 오래 버틸 수 있어요.';
+ $('controls').style.display='none';$('results').style.display='flex';
+ $('finalScore').textContent=score.toLocaleString('ko-KR');
+ $('finalTime').textContent=clock(elapsed);
+ $('start').textContent='다시 도전 →';$('note').textContent='Enter 키로도 다시 시작할 수 있어요.';
+ overlay.hidden=false;
+}
+$('start').addEventListener('click',()=>state==='paused'?resumeGame():startGame());
+$('pause').addEventListener('click',()=>state==='playing'?pauseGame():resumeGame());
+
+const movement=['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowLeft','ArrowDown','ArrowRight'];
+window.addEventListener('keydown',e=>{
+ if(movement.includes(e.code)||['Space','Escape','KeyP'].includes(e.code))e.preventDefault();
+ if(document.activeElement && (document.activeElement.classList.contains('color-choice')||document.activeElement.classList.contains('side-option')) &&
+    (e.code==='Space'||e.code==='Enter')) {
+  e.preventDefault();
+  if(!e.repeat)document.activeElement.click();
+  return;
+ }
+ if(e.repeat){if(state==='playing'&&movement.includes(e.code))keys.add(e.code);return;}
+ if(e.code==='KeyP'||e.code==='Escape') {
+  if(state==='playing')pauseGame();else if(state==='paused')resumeGame();
+  return;
+ }
+ if(e.code==='Enter'||e.code==='Space') {
+  // Native button activation handles Enter/Space when a button has focus.
+  if(document.activeElement.tagName==='BUTTON'&&e.code==='Enter')return;
+  e.preventDefault();
+  if(state==='ready'||state==='over')startGame();else if(state==='paused')resumeGame();else pauseGame();
+  return;
+ }
+ if(state==='playing'&&movement.includes(e.code)){keys.add(e.code);pointer=null;}
+});
+window.addEventListener('keyup',e=>keys.delete(e.code));
+window.addEventListener('blur',()=>{keys.clear();if(state==='playing')pauseGame();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='playing')pauseGame();});
+
+function pointerPosition(e) {
+ const r=canvas.getBoundingClientRect();
+ return {x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H,id:e.pointerId};
+}
+canvas.addEventListener('pointerdown',e=>{
+ if(state!=='playing')return;
+ e.preventDefault();pointer=pointerPosition(e);keys.clear();canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove',e=>{
+ if(pointer&&pointer.id===e.pointerId&&state==='playing'){e.preventDefault();pointer=pointerPosition(e);}
+});
+function release(e){if(pointer&&pointer.id===e.pointerId)pointer=null;}
+canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',release);
+canvas.addEventListener('lostpointercapture',release);
+
+function burst(x,y,color,count) {
+ for(let i=0;i<count;i++)particles.push({x,y,vx:rand(-190,190),vy:rand(-180,180),life:rand(.25,.75),max:.75,size:rand(2,5),color});
+}
+function spawnObstacle() {
+ const t=elapsed;
+ const width=rand(28,Math.min(95,48+t*.42));
+ const height=rand(22,48);
+ const x=rand(20,W-width-20);
+ let type='straight';
+ if(t>16&&Math.random()<.25)type='slant';
+ if(t>34&&Math.random()<.2)type='wave';
+ obstacles.push({x,y:-height-12,w:width,h:height,
+  vy:rand(135,200)+Math.min(t*2.4,285),
+  vx:type==='slant'?rand(-105,105):0,
+  type,phase:rand(0,Math.PI*2),freq:rand(1.5,2.6),amp:rand(28,64),baseX:x,age:0,
+  color:tileColor});
+}
+function spawnGate() {
+ const gap=clamp(195-elapsed*.6,120,195);
+ const center=rand(125+gap/2,W-125-gap/2);
+ gates.push({left:center-gap/2,right:center+gap/2,wait:.9});
+ showToast('주의 · 빈틈으로 이동하세요');
+}
+function update(dt) {
+ elapsed+=dt;score=Math.floor(elapsed*10);
+ const nextLevel=Math.floor(elapsed/15)+1;
+ if(nextLevel!==level){level=nextLevel;showToast('LEVEL '+pad(level)+' · 속도와 장애물 증가');}
+ if(elapsed>toastUntil)$('toast').classList.remove('show');
+ let mx=(keys.has('KeyD')||keys.has('ArrowRight')?1:0)-(keys.has('KeyA')||keys.has('ArrowLeft')?1:0);
+ let my=(keys.has('KeyS')||keys.has('ArrowDown')?1:0)-(keys.has('KeyW')||keys.has('ArrowUp')?1:0);
+ const speed=345;
+ const stickActive=Math.hypot(stick.x,stick.y)>.001;
+ if(pointer&&!stickActive) {
+  const dx=pointer.x-player.x,dy=pointer.y-player.y,dist=Math.hypot(dx,dy);
+  if(dist>2){const step=Math.min(speed*dt,dist);player.x+=dx/dist*step;player.y+=dy/dist*step;}
+ } else {
+  if(stickActive){player.x+=stick.x*speed*dt;player.y+=stick.y*speed*dt;}
+  else {
+   const length=Math.hypot(mx,my);
+   if(length){player.x+=mx/length*speed*dt;player.y+=my/length*speed*dt;}
+  }
+ }
+ player.x=clamp(player.x,player.w/2+8,W-player.w/2-8);
+ player.y=clamp(player.y,player.h/2+8,H-player.h/2-8);
+ lastTrail+=dt;
+ if(lastTrail>.035&&!reducedMotion){trails.push({x:player.x,y:player.y,life:.22});lastTrail=0;}
+ trails.forEach(p=>p.life-=dt);trails=trails.filter(p=>p.life>0);
+ spawnIn-=dt;
+ if(spawnIn<=0){
+  if(obstacles.length<70) {
+   spawnObstacle();
+   if(elapsed>40&&Math.random()<Math.min(.4,(elapsed-40)/180))spawnObstacle();
+  }
+  spawnIn=Math.max(.19,.85-elapsed*.006)*rand(.8,1.2);
+ }
+ gateIn-=dt;
+ if(gateIn<=0){spawnGate();gateIn=Math.max(7,15-elapsed*.035);}
+ for(const gate of gates) {
+  gate.wait-=dt;
+  if(gate.wait<=0&&!gate.spawned){
+   gate.spawned=true;
+   const base={y:-24,h:23,vy:185+Math.min(elapsed*1.8,240),vx:0,type:'gate',age:0,color:tileColor};
+   obstacles.push({...base,x:0,w:gate.left},{...base,x:gate.right,w:W-gate.right});
+  }
+ }
+ gates=gates.filter(g=>g.wait>0);
+ for(const o of obstacles) {
+  o.age+=dt;o.y+=o.vy*dt;
+  if(o.type==='wave')o.x=clamp(o.baseX+Math.sin(o.age*o.freq+o.phase)*o.amp,0,W-o.w);
+  else if(o.type==='slant'){o.x+=o.vx*dt;if(o.x<0){o.x=0;o.vx=Math.abs(o.vx);}if(o.x>W-o.w){o.x=W-o.w;o.vx=-Math.abs(o.vx);}}
+  // A slightly inset player hitbox keeps narrow escapes fair.
+  const px=player.x-player.w/2+4,py=player.y-player.h/2+4;
+  if(px<o.x+o.w-2&&px+player.w-8>o.x+2&&py<o.y+o.h-2&&py+player.h-8>o.y+2){
+   updateHUD();endGame();return;
+  }
+ }
+ obstacles=obstacles.filter(o=>o.y<H+80);
+ updateHUD();
+}
+function roundRect(x,y,w,h,r) {
+ ctx.beginPath();ctx.roundRect(x,y,w,h,Math.min(r,w/2,h/2));
+}
+function drawBackground(t) {
+ ctx.fillStyle='#0b1422';ctx.fillRect(0,0,W,H);
+ const glow=ctx.createRadialGradient(W/2,H*.65,20,W/2,H*.65,570);
+ glow.addColorStop(0,'#11263a');glow.addColorStop(1,'#0b1422');
+ ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
+ ctx.lineWidth=1;ctx.strokeStyle='#31446120';
+ const offset=(t*13)%48;
+ ctx.beginPath();
+ for(let x=0;x<=W;x+=48){ctx.moveTo(x,0);ctx.lineTo(x,H);}
+ for(let y=offset-48;y<H;y+=48){ctx.moveTo(0,y);ctx.lineTo(W,y);}
+ ctx.stroke();
+ for(const s of stars){ctx.globalAlpha=s.a;ctx.fillStyle='#a4c7e9';ctx.beginPath();ctx.arc(s.x,(s.y+t*8)%H,s.r,0,Math.PI*2);ctx.fill();}
+ ctx.globalAlpha=1;
+ // Gentle danger glow along the incoming edge.
+ const edge=ctx.createLinearGradient(0,0,0,110);edge.addColorStop(0,tileColor+'0B');edge.addColorStop(1,tileColor+'00');
+ ctx.fillStyle=edge;ctx.fillRect(0,0,W,110);
+ ctx.fillStyle='#7391ad66';ctx.font='9px system-ui';ctx.textAlign='left';ctx.fillText('INCOMING ↓',20,25);
+}
+function drawObstacle(o) {
+ ctx.save();
+ ctx.shadowColor=tileColor;ctx.shadowBlur=reducedMotion?0:10;
+ ctx.fillStyle=tileColor+(o.type==='gate'?'4A':'36');
+ roundRect(o.x,o.y,o.w,o.h,5);ctx.fill();
+ ctx.shadowBlur=0;ctx.lineWidth=1.5;ctx.strokeStyle=tileColor;ctx.stroke();
+ ctx.fillStyle=tileColor;ctx.globalAlpha=.9;
+ roundRect(o.x+4,o.y+4,Math.max(2,o.w-8),3,1);ctx.fill();
+ ctx.globalAlpha=.35;
+ if(o.w>37&&o.type!=='gate') {
+  ctx.beginPath();ctx.moveTo(o.x+o.w/2-5,o.y+o.h/2-2);ctx.lineTo(o.x+o.w/2,o.y+o.h/2+3);ctx.lineTo(o.x+o.w/2+5,o.y+o.h/2-2);ctx.stroke();
+ }
+ ctx.restore();
+}
+function drawPlayer() {
+ for(const p of trails){ctx.globalAlpha=p.life/.22*.15;ctx.fillStyle=playerColor;roundRect(p.x-player.w/2,p.y-player.h/2,player.w,player.h,7);ctx.fill();}
+ ctx.globalAlpha=1;
+ ctx.save();ctx.translate(player.x,player.y);
+ ctx.shadowColor=playerColor;ctx.shadowBlur=reducedMotion?0:20;
+ ctx.fillStyle=playerColor;roundRect(-player.w/2,-player.h/2,player.w,player.h,7);ctx.fill();
+ ctx.shadowBlur=0;ctx.fillStyle='#143f3c';roundRect(-7,-7,14,8,3);ctx.fill();
+ ctx.fillStyle='#e2fff5';roundRect(-6,-6,4,3,1);ctx.fill();
+ ctx.fillStyle='#c8ffed';roundRect(-7,8,14,2,1);ctx.fill();
+ ctx.restore();
+}
+function render(dt) {
+ ctx.setTransform(canvas.width/W,0,0,canvas.height/H,0,0);
+ ctx.save();
+ if(shake>0){ctx.translate(rand(-shake,shake),rand(-shake,shake));shake=Math.max(0,shake-dt*30);}
+ drawBackground(elapsed);
+ for(const gate of gates) {
+  ctx.globalAlpha=.25+.2*Math.sin(gate.wait*25);
+  ctx.fillStyle=tileColor;ctx.fillRect(0,0,gate.left,6);ctx.fillRect(gate.right,0,W-gate.right,6);
+  ctx.globalAlpha=.06;ctx.fillRect(0,0,gate.left,85);ctx.fillRect(gate.right,0,W-gate.right,85);ctx.globalAlpha=1;
+  ctx.strokeStyle='#68f4c5';ctx.lineWidth=2;ctx.setLineDash([5,6]);ctx.strokeRect(gate.left+6,8,gate.right-gate.left-12,35);ctx.setLineDash([]);
+ }
+ for(const o of obstacles)drawObstacle(o);
+ if(state!=='over')drawPlayer();
+ for(const p of particles) {
+  if(state!=='paused'){p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=180*dt;}
+  ctx.globalAlpha=Math.max(0,p.life/p.max);ctx.fillStyle=p.color;ctx.fillRect(p.x,p.y,p.size,p.size);
+ }
+ particles=particles.filter(p=>p.life>0);ctx.globalAlpha=1;
+ ctx.restore();
+}
+function frame(now) {
+ const dt=Math.min(Math.max((now-last)/1000,0),.035);last=now;
+ if(state==='playing')update(dt);
+ render(dt);
+ requestAnimationFrame(frame);
+}
+updateHUD();requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

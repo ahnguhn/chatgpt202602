@@ -1,0 +1,102 @@
+{
+  "assets": {
+    "skier": {
+      "w": 1024,
+      "h": 1536,
+      "alpha": 0,
+      "relative": false
+    },
+    "tree": {
+      "w": 1024,
+      "h": 1536,
+      "alpha": 0,
+      "relative": false
+    },
+    "rock": {
+      "w": 1536,
+      "h": 1024,
+      "alpha": 0,
+      "relative": false
+    }
+  },
+  "natural_start": {
+    "state": "playing",
+    "distance": 40.275724501221696,
+    "elapsed": 3.2066666666666603,
+    "lives": 3
+  },
+  "natural_end": {
+    "state": "lost",
+    "distance": 116.94038345058169,
+    "elapsed": 9.226600000000039,
+    "lives": 0,
+    "frames": 320
+  },
+  "restart": {
+    "state": "playing",
+    "lives": 3,
+    "distance": 0.1687499999994202,
+    "elapsed": 0.013499999999953615,
+    "obstacles": 0
+  },
+  "left_move": true,
+  "left_boundary": true,
+  "right_boundary": true,
+  "both_keys": true,
+  "pause": true,
+  "resume": true,
+  "damage": true,
+  "immunity": true,
+  "endless": true,
+  "distribution": {
+    "two": 286,
+    "three": 714,
+    "max": 3,
+    "gapOK": true
+  },
+  "rapid": true,
+  "blur_pause": true,
+  "mobile_touch": true,
+  "touch_release": true,
+  "layouts": [
+    {
+      "viewport": [
+        320,
+        568
+      ],
+      "overflow": false,
+      "playerInBounds": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "overflow": false,
+      "playerInBounds": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "overflow": false,
+      "playerInBounds": true
+    },
+    {
+      "viewport": [
+        1440,
+        900
+      ],
+      "overflow": false,
+      "playerInBounds": true
+    }
+  ],
+  "requests": [],
+  "errors": [],
+  "mobile_capture": {
+    "state": "playing",
+    "distance": 39.77095198698323,
+    "lives": 3
+  }
+}

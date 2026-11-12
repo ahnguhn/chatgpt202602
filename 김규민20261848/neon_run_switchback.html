@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1018">
+<title>NEON RUN · SWITCHBACK 지그재그 추격</title>
+<style>
+:root{color-scheme:dark;--bg:#090e16;--panel:#111b29;--line:#263546;--muted:#94a6b9;--mint:#85f5ca;--white:#eff6fc}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--white);font-family:system-ui,-apple-system,"Malgun Gothic",sans-serif;overflow:hidden}
+button,select{font:inherit}button{cursor:pointer;color:inherit}button:focus-visible,select:focus-visible{outline:3px solid var(--mint);outline-offset:4px}
+.shell{max-width:1480px;height:100dvh;min-height:420px;margin:auto;padding:22px 30px 15px;display:flex;flex-direction:column;gap:16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:12px}.logo{width:36px;height:36px;background:var(--mint);color:#101d20;display:grid;place-items:center;font-size:20px;font-weight:1000;transform:skew(-9deg)}
+h1{font-size:21px;letter-spacing:3px;margin:0;font-weight:900}.tag{font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:3px}.topRight{display:flex;align-items:center;gap:12px}.pill{font-size:11px;color:var(--mint);padding:7px 10px;border:1px solid #2a514a;letter-spacing:1px}.iconBtn{border:1px solid var(--line);background:#111b29;border-radius:8px;padding:8px 12px;font-size:12px}.iconBtn:disabled{opacity:.4;cursor:default}
+.dashboard{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 22px;gap:22px}
+.metric{min-width:0}.metric+.metric{border-left:1px solid var(--line);padding-left:24px}.label{font-size:10px;letter-spacing:1.5px;color:var(--muted);display:flex;align-items:center;gap:7px}.dot{width:5px;height:5px;display:inline-block;background:var(--mint);border-radius:50%}.value{font-variant-numeric:tabular-nums;font-size:27px;line-height:1.3;font-weight:750;margin:4px 0}.value small{font-size:12px;font-weight:500;color:var(--muted)}.bar{height:4px;background:#29384b;border-radius:9px;overflow:hidden}.fill{height:100%;width:100%;background:var(--mint);transition:width .1s linear}.fill.blue{background:#72baff}.value .unit{font-size:13px;color:var(--muted)}
+.game{position:relative;flex:1;min-height:0;border:1px solid #304051;border-radius:14px;overflow:hidden;background:#172431;box-shadow:0 20px 80px #0005}
+canvas{display:block;width:100%;height:100%;touch-action:none}.game:focus{outline:0}.corner{position:absolute;top:18px;left:20px;pointer-events:none;display:flex;flex-direction:column;gap:7px}.live{font:10px ui-monospace,monospace;letter-spacing:2px;color:#c8e0e6;display:flex;gap:7px;align-items:center}.live i{width:6px;height:6px;border-radius:100%;background:#ff7f7f;box-shadow:0 0 10px #ff7f7f}.district{font-size:10px;color:#8fa9b8;letter-spacing:2px}.notice{position:absolute;left:50%;top:22px;transform:translateX(-50%);padding:9px 16px;background:#111d2beF;border:1px solid #365261;border-radius:7px;font-size:12px;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}.notice.show{opacity:1}
+.overlay{position:absolute;inset:0;display:flex;align-items:safe center;justify-content:center;background:linear-gradient(100deg,#08101af5 0%,#08101ae5 40%,#0a15216e 100%);padding:26px;z-index:10;overflow:auto}.overlay.hidden{display:none}.intro{width:100%;max-width:1020px;display:grid;grid-template-columns:1.2fr 0.8fr;gap:50px;align-items:center}.eyebrow{font-size:10px;letter-spacing:3px;color:var(--mint);margin-bottom:14px}.big{font-size:clamp(36px,4.6vw,64px);line-height:1.12;letter-spacing:-2.8px;font-weight:900;margin:0 0 18px}.big em{color:var(--mint);font-style:normal}.desc{color:#9db0c1;font-size:13px;line-height:1.9;margin:0 0 22px;word-break:keep-all}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.primary{background:var(--mint);color:#0b2622;border:0;border-radius:7px;font-weight:800;padding:14px 26px;min-height:48px;font-size:14px}.primary:hover{background:#b1ffdf}.secondary{background:#182536;border:1px solid #385065;border-radius:7px;padding:13px 18px;font-size:13px}.difficulty{background:#152231;color:#dfedf6;border:1px solid #3b5265;border-radius:7px;padding:13px 11px;font-size:13px;min-height:48px}
+.controlCard{background:#12202bd9;border:1px solid #344b59;border-radius:12px;padding:23px}.controlCard h3{font-size:12px;margin:0 0 20px;color:#ecf7fa;letter-spacing:2px}.controlRow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 0;color:#a8bac7;font-size:12px}.key{display:inline-block;padding:5px 8px;border:1px solid #425569;background:#213343;border-radius:5px;color:#e9f5fc;font:11px ui-monospace,monospace;box-shadow:0 2px 0 #07101b}.legend{border-top:1px solid #2c4351;margin-top:20px;padding-top:15px;font-size:11px;color:#95aebc;line-height:1.9}.legend b{color:var(--mint)}.legend .red{color:#ff939b}
+.endBox{max-width:490px;text-align:center}.endBox .big{font-size:47px}.results{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:24px 0}.result{background:#152331;border:1px solid #2f4656;border-radius:8px;padding:16px}.result strong{font-size:28px;display:block;margin-top:6px;font-variant-numeric:tabular-nums}.result span{font-size:11px;color:var(--muted)}.endBox .actions{justify-content:center}.pauseBox{max-width:450px;text-align:center}.pauseBox h2{font-size:32px;margin:10px}.pauseBox p{font-size:13px;color:var(--muted);line-height:1.8}
+.bottom{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#7f95a8;gap:12px}.bottom b{color:#bbcbd7;font-weight:500}.keysHelp{display:flex;gap:20px}.bottom .key{font-size:9px;padding:2px 5px}.miniHint{letter-spacing:1px;font-size:10px}
+.touchUI{position:absolute;inset:0;pointer-events:none;z-index:5;display:none}.joystick{position:absolute;left:24px;bottom:22px;width:112px;height:112px;border-radius:50%;border:1px solid #b9ecff44;background:#10223066;pointer-events:auto;touch-action:none;user-select:none}.joystick:after{content:"";position:absolute;inset:15px;border:1px dashed #b9ecff25;border-radius:50%;pointer-events:none}.stick{position:absolute;left:34px;top:34px;width:42px;height:42px;border:1px solid #b9f9e6a0;background:#77ecc84a;border-radius:50%;box-shadow:0 0 22px #6cffb51a;pointer-events:none}.boostTouch{position:absolute;right:24px;bottom:30px;width:84px;height:84px;border-radius:50%;border:1px solid #85f5ca8c;background:#184d46b8;color:#c2ffe9;font-size:12px;font-weight:900;pointer-events:auto;touch-action:none;user-select:none}.boostTouch.active{background:#85f5ca;color:#0b2420}.touchLabel{position:absolute;left:44px;bottom:8px;font-size:8px;letter-spacing:3px;color:#aac7d1;pointer-events:none}.game:not(.running) .touchUI{display:none}
+@media (pointer:coarse),(max-width:850px){.touchUI{display:block}.keysHelp{display:none}.miniHint{font-size:9px}.shell{padding:12px;gap:10px}.dashboard{padding:12px 14px;gap:12px}.metric+.metric{padding-left:14px}.value{font-size:23px}.intro{gap:25px}.controlCard{padding:18px}.big{font-size:44px}}
+@media(max-width:600px){.shell{padding:10px 9px 8px;min-height:360px;gap:9px}.top{gap:6px}.logo{width:28px;height:28px;font-size:17px}.brand{gap:8px}h1{font-size:16px;letter-spacing:2px}.tag{font-size:8px;letter-spacing:1px}.topRight{gap:6px}.pill{display:none}.iconBtn{font-size:10px;padding:8px}.dashboard{gap:8px;padding:10px 12px;grid-template-columns:1.1fr 1fr 1fr .85fr}.metric+.metric{padding-left:9px}.label{font-size:8px;letter-spacing:.3px}.value{font-size:21px}.value small{font-size:9px}.value .unit{font-size:10px}.game{border-radius:10px}.overlay{padding:22px 20px;background:#08101ae3}.intro{display:block;max-width:360px}.eyebrow{margin-bottom:10px;font-size:9px}.big{font-size:42px;margin-bottom:12px;letter-spacing:-2px}.desc{font-size:12px;line-height:1.8;margin-bottom:17px}.controlCard{margin-top:20px;padding:13px 15px}.controlCard h3{display:none}.controlRow{margin:7px 0;font-size:11px}.controlCard .desktopOnly{display:none}.legend{margin-top:10px;padding-top:8px;font-size:10px}.primary{padding:13px 20px;font-size:13px}.difficulty{font-size:12px;padding:12px 8px}.bottom{font-size:9px}.bottom .miniHint{display:none}.corner{top:12px;left:12px}.district{font-size:8px}.live{font-size:9px}.notice{font-size:10px;top:46px}.endBox .big{font-size:39px}.joystick{width:100px;height:100px;left:18px;bottom:23px}.stick{left:28px;top:28px}.boostTouch{width:76px;height:76px;right:18px;bottom:28px}.touchLabel{left:33px}}
+@media(max-height:540px){.shell{padding:8px 14px;gap:7px;min-height:300px}.tag,.bottom{display:none}.top .logo{height:26px;width:26px}.top h1{font-size:16px}.dashboard{padding:7px 14px}.value{font-size:19px;margin:1px 0}.label{font-size:8px}.overlay{padding:16px 26px}.intro{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:850px}.big{font-size:32px;margin-bottom:8px}.eyebrow{margin-bottom:8px}.desc{font-size:11px;margin-bottom:10px;line-height:1.6}.controlCard{margin:0;padding:12px 18px}.controlCard h3{margin-bottom:9px}.controlRow{margin:7px 0;font-size:10px}.legend{padding-top:8px;margin-top:10px;font-size:10px}.primary,.difficulty{min-height:38px;padding:9px 14px;font-size:12px}.results{margin:12px 0}.result{padding:8px}.endBox .big{font-size:30px}.endBox .desc{margin:0}.result strong{font-size:22px}.corner{top:10px;left:12px}}
+</style>
+</head>
+<body>
+<main class="shell">
+<header class="top">
+ <div class="brand"><div class="logo" aria-hidden="true">N</div><div><h1>NEON RUN</h1><div class="tag">SWITCHBACK / 지그재그 추격</div></div></div>
+ <div class="topRight"><span class="pill">SWITCHBACK EDITION</span><button class="iconBtn" id="soundBtn" aria-pressed="false" aria-label="효과음 켜기">소리 OFF</button><button class="iconBtn" id="pauseBtn" disabled>일시정지</button></div>
+</header>
+<section class="dashboard" aria-label="게임 상태">
+ <div class="metric"><div class="label"><span class="dot"></span>차량 내구도</div><div class="value"><span id="health">100</span> <small>/ 100</small></div><div class="bar"><div id="healthBar" class="fill"></div></div></div>
+ <div class="metric"><div class="label">탈출까지</div><div class="value"><span id="time">90.0</span> <span class="unit">s</span></div><div class="bar"><div id="timeBar" class="fill blue"></div></div></div>
+ <div class="metric"><div class="label">부스트 에너지</div><div class="value"><span id="energy">100</span> <span class="unit">%</span></div><div class="bar"><div id="energyBar" class="fill blue"></div></div></div>
+ <div class="metric"><div class="label">현재 점수</div><div class="value" id="score">0000</div><div class="label" id="levelLabel">추격 LV. 1</div></div>
+</section>
+<section class="game" id="game" aria-label="도심 추격 게임 영역" tabindex="0">
+ <canvas id="canvas" role="img" aria-label="위에서 내려다본 도심 도로. 민트색 자동차를 조작하여 경찰차를 피하세요."></canvas>
+ <div class="corner" aria-hidden="true"><div class="live"><i></i> SWITCHBACK DISTRICT</div><div class="district" id="district">GRID 03 / 03 · NIGHT RUN</div></div>
+ <div class="notice" id="notice" role="status" aria-live="polite"></div>
+ <div class="touchUI" id="touchUI"><div class="joystick" id="joystick" role="group" aria-label="방향 조이스틱"><div class="stick" id="stick"></div></div><span class="touchLabel" aria-hidden="true">MOVE</span><button class="boostTouch" id="boostTouch" aria-label="누르고 있는 동안 부스트">BOOST<br>↑↑</button></div>
+ <div class="overlay" id="startOverlay">
+  <div class="intro"><div><div class="eyebrow">SLOW RECHARGE. SHARP TURNS.</div><h2 class="big">꺾이는 도로,<br><em>계산하는 부스트.</em></h2><p class="desc"><strong>도로 자체가 꺾이는 지그재그 구간 3곳!</strong><br>부스트는 천천히 회복돼요. 직선에서 아껴 쓰세요.<br>경찰과 차단벽을 피해 90초를 버티면 탈출 성공.</p><div class="actions"><button class="primary" id="startBtn">추격 시작하기 &nbsp; →</button><select class="difficulty" id="difficulty" aria-label="난이도"><option value="easy">연습 · 6 → 14대</option><option value="normal" selected>보통 · 8 → 18대</option><option value="hard">도전 · 10 → 22대</option></select></div></div>
+  <div class="controlCard"><h3>HOW TO ESCAPE</h3><div class="controlRow desktopOnly"><span>자동차 이동</span><span><kbd class="key">W A S D</kbd> / <kbd class="key">↑ ↓ ← →</kbd></span></div><div class="controlRow desktopOnly"><span>부스트 / 일시정지</span><span><kbd class="key">SPACE</kbd> / <kbd class="key">P</kbd></span></div><div class="controlRow"><span>모바일 조작</span><span>왼쪽 조이스틱 · 오른쪽 BOOST</span></div><div class="legend"><b>＋ 수리 키트</b> 내구도 +25 · 점수 +120<br><span class="red">경찰 충돌 −22</span> / 빠른 장애물 충돌 −8<br>주황 차단벽은 통행 불가 · 경찰도 우회<br>내구도 0이면 종료 · 90초 생존 시 성공<br>부스트 회복 초당 7% · 완충 약 14.3초<br>충돌 피해는 보통 모드 기준 · 모드별 차등 적용</div></div>
+ </div></div>
+ <div class="overlay hidden" id="pauseOverlay"><div class="pauseBox"><div class="eyebrow">TAKE A BREATH</div><h2>잠시, 정차 중</h2><p>시간과 추격이 모두 멈췄어요.<br>다시 출발할 준비가 되셨나요?</p><div class="actions" style="justify-content:center"><button id="resumeBtn" class="primary">계속 달리기</button><button id="pauseHomeBtn" class="secondary">처음으로</button></div></div></div>
+ <div class="overlay hidden" id="endOverlay"><div class="endBox"><div class="eyebrow" id="endTag">RUN COMPLETE</div><h2 class="big" id="endTitle">탈출 성공!</h2><p class="desc" id="endDesc"></p><div class="results"><div class="result"><span>최종 점수</span><strong id="finalScore">0</strong></div><div class="result"><span>생존 시간</span><strong id="finalTime">0.0 s</strong></div></div><div class="actions"><button id="restartBtn" class="primary">다시 도전하기 ↗</button><button id="homeBtn" class="secondary">모드 선택</button></div></div></div>
+</section>
+<footer class="bottom"><div class="keysHelp"><span><kbd class="key">WASD</kbd> / <kbd class="key">↑↓←→</kbd> 이동</span><span><kbd class="key">SPACE</kbd> 부스트</span><span><kbd class="key">P</kbd> 일시정지</span></div><span class="miniHint">KEEP MOVING. STAY UNCAUGHT.</span><span>외부 설치 없이 · <b>오프라인 플레이</b></span></footer>
+</main>
+<script>
+'use strict';
+(() => {
+const $=id=>document.getElementById(id);
+const canvas=$('canvas'),ctx=canvas.getContext('2d'),game=$('game');
+const WORLD=1600, STEP=320, ROAD=104, TARGET=90, R=14;
+const BOOST_REGEN=7,BOOST_DRAIN=35;
+const centers=Array.from({length:5},(_,i)=>160+i*STEP);
+const modes={easy:{speed:124,initial:6,max:14,damage:.75},normal:{speed:147,initial:8,max:18,damage:1},hard:{speed:168,initial:10,max:22,damage:1.15}};
+let state='ready',mode='normal', elapsed=0, health=100,energy=100,score=0,bonus=0,level=1;
+let player={x:800,y:800,vx:0,vy:0,a:-Math.PI/2}, cops=[],kits=[],particles=[],tracks=[];
+let invincible=0,wallCooldown=0,pickTimer=0,policeTimer=0,visualTime=0,shake=0,noticeTimer=0;
+let view={w:100,h:100,scale:1,cx:800,cy:800},keys=new Set(),joy={x:0,y:0,id:null},boostPointer=null;
+let muted=true,audio=null,frame=0,last=0,drawCount=0;
+const buildings=[],parks=[],obstacles=[],rng=(a,b)=>a+Math.random()*(b-a),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+function seeded(n){const s=Math.sin(n*127.1+311.7)*43758.5453;return s-Math.floor(s);}
+for(let x=0;x<4;x++)for(let y=0;y<4;y++){
+ const b={x:centers[x]+ROAD/2+12,y:centers[y]+ROAD/2+12,w:STEP-ROAD-24,h:STEP-ROAD-24,seed:x*7+y+1};
+ if((x===0&&y===2)||(x===3&&y===1)){parks.push(b);buildings.push({...b,park:true});}else buildings.push(b);
+}
+
+// Four complete closures, five alternating construction chicanes,
+// and twelve parked vehicles. Every obstacle participates in collisions and navigation.
+const closureSpecs=[
+ {axis:'h',x:320,y:480},{axis:'v',x:1120,y:320},
+ {axis:'h',x:1280,y:1120},{axis:'v',x:480,y:1280}
+];
+for(const s of closureSpecs)obstacles.push({x:s.x-(s.axis==='h'?15:64),y:s.y-(s.axis==='h'?64:15),w:s.axis==='h'?30:128,h:s.axis==='h'?128:30,type:'closure'});
+const chicaneSpecs=[
+ {axis:'v',x:480,y:160},{axis:'h',x:800,y:480},
+ {axis:'v',x:1120,y:800},{axis:'h',x:160,y:1120},
+ {axis:'v',x:1440,y:1120}
+];
+for(const s of chicaneSpecs)for(let i=0;i<2;i++){
+ const along=i===0?92:208,side=i===0?-64:18;
+ obstacles.push(s.axis==='v'?{x:s.x+side,y:s.y+along,w:46,h:42,type:'construction'}:{x:s.x+along,y:s.y+side,w:42,h:46,type:'construction'});
+}
+const parkedSpecs=[
+ [160,330,'v'],[800,330,'v'],[1440,670,'v'],[480,970,'v'],
+ [800,1300,'v'],[1120,1290,'v'],[330,160,'h'],[650,800,'h'],
+ [1280,800,'h'],[970,1440,'h'],[320,1440,'h'],[1280,160,'h']
+];
+for(let i=0;i<parkedSpecs.length;i++){
+ const [x,y,axis]=parkedSpecs[i],side=i%2===0?-43:21;
+ obstacles.push(axis==='v'?{x:x+side,y:y-24,w:22,h:48,type:'parked',seed:i}:{x:x-24,y:y+side,w:48,h:22,type:'parked',seed:i});
+}
+
+// Real switchback roads: three straight street segments are replaced
+// by connected, 72-unit-wide orthogonal roads. Walls close the old straight shortcuts.
+const switchbacks=[
+ {name:'S-01',axis:'v',area:{x:640,y:536,w:320,h:208},width:72,
+  points:[{x:800,y:480},{x:800,y:560},{x:896,y:560},{x:896,y:640},{x:704,y:640},{x:704,y:720},{x:800,y:720},{x:800,y:800}]},
+ {name:'S-02',axis:'h',area:{x:536,y:960,w:208,h:320},width:72,
+  points:[{x:480,y:1120},{x:560,y:1120},{x:560,y:1216},{x:640,y:1216},{x:640,y:1024},{x:720,y:1024},{x:720,y:1120},{x:800,y:1120}]},
+ {name:'S-03',axis:'h',area:{x:1176,y:320,w:208,h:320},width:72,
+  points:[{x:1120,y:480},{x:1200,y:480},{x:1200,y:576},{x:1280,y:576},{x:1280,y:384},{x:1360,y:384},{x:1360,y:480},{x:1440,y:480}]}
+];
+function rectSubtract(a,b){
+ const x=Math.max(a.x,b.x),y=Math.max(a.y,b.y),r=Math.min(a.x+a.w,b.x+b.w),d=Math.min(a.y+a.h,b.y+b.h);
+ if(x>=r||y>=d)return[a];
+ const out=[];
+ if(y>a.y)out.push({...a,x:a.x,y:a.y,w:a.w,h:y-a.y});
+ if(d<a.y+a.h)out.push({...a,x:a.x,y:d,w:a.w,h:a.y+a.h-d});
+ if(x>a.x)out.push({...a,x:a.x,y,w:x-a.x,h:d-y});
+ if(r<a.x+a.w)out.push({...a,x:r,y,w:a.x+a.w-r,h:d-y});
+ return out;
+}
+let terrainBuildings=buildings.map(b=>({...b})),switchbackWalls=[];
+for(const s of switchbacks){
+ const corridors=[];
+ for(let i=1;i<s.points.length;i++){
+  const a=s.points[i-1],b=s.points[i],half=s.width/2;
+  corridors.push({x:Math.min(a.x,b.x)-half,y:Math.min(a.y,b.y)-half,w:Math.abs(b.x-a.x)+s.width,h:Math.abs(b.y-a.y)+s.width});
+ }
+ terrainBuildings=terrainBuildings.flatMap(b=>rectSubtract(b,s.area));
+ let walls=[{...s.area}];
+ for(const c of corridors)walls=walls.flatMap(w=>rectSubtract(w,c));
+ s.walls=walls;switchbackWalls.push(...walls);
+}
+const solids=[...terrainBuildings,...switchbackWalls,...obstacles];
+
+function blockedAt(x,y,r=20){
+ if(x<24||x>WORLD-24||y<24||y>WORLD-24)return true;
+ return solids.some(b=>x>b.x-r&&x<b.x+b.w+r&&y>b.y-r&&y<b.y+b.h+r);
+}
+// Shared navigation field: police can route around closures AND partial-lane obstacles.
+const CELL=16,NAV=100,free=new Uint8Array(NAV*NAV),flow=new Float32Array(NAV*NAV);
+const offsets=[[-1,0,1],[1,0,1],[0,-1,1],[0,1,1],[-1,-1,1.4142],[1,-1,1.4142],[-1,1,1.4142],[1,1,1.4142]];
+for(let y=0;y<NAV;y++)for(let x=0;x<NAV;x++)free[y*NAV+x]=!blockedAt(x*CELL+8,y*CELL+8);
+const links=Array.from({length:NAV*NAV},()=>[]);
+for(let y=0;y<NAV;y++)for(let x=0;x<NAV;x++){
+ const i=y*NAV+x;if(!free[i])continue;
+ for(const [dx,dy,cost] of offsets){
+  const xx=x+dx,yy=y+dy,j=yy*NAV+xx;
+  if(xx<0||xx>=NAV||yy<0||yy>=NAV||!free[j])continue;
+  if(dx&&dy&&(!free[y*NAV+xx]||!free[yy*NAV+x]))continue;
+  links[i].push([j,cost]);
+ }
+}
+function navPoint(i){return{x:(i%NAV)*CELL+8,y:Math.floor(i/NAV)*CELL+8};}
+function nearestFree(o){
+ const gx=clamp(Math.floor(o.x/CELL),0,NAV-1),gy=clamp(Math.floor(o.y/CELL),0,NAV-1);
+ if(free[gy*NAV+gx])return gy*NAV+gx;
+ let best=-1,md=Infinity;
+ for(let r=1;r<=12;r++){
+  for(let yy=Math.max(0,gy-r);yy<=Math.min(NAV-1,gy+r);yy++)for(let xx=Math.max(0,gx-r);xx<=Math.min(NAV-1,gx+r);xx++){
+   if(Math.abs(xx-gx)!==r&&Math.abs(yy-gy)!==r)continue;
+   const i=yy*NAV+xx;if(!free[i])continue;
+   const p=navPoint(i),d=(p.x-o.x)**2+(p.y-o.y)**2;
+   if(d<md){best=i;md=d;}
+  }
+  if(best>=0)return best;
+ }
+ return -1;
+}
+let flowTimer=0,flowTarget=-1;
+function makeFlow(){
+ flowTarget=nearestFree(player);flow.fill(Infinity);if(flowTarget<0)return;
+ const heap=[];
+ const push=(id,d)=>{let i=heap.length;heap.push([id,d]);while(i>0){const p=(i-1)>>1;if(heap[p][1]<=d)break;heap[i]=heap[p];i=p;}heap[i]=[id,d];};
+ const pop=()=>{const first=heap[0],last=heap.pop();if(heap.length){let i=0;while(i*2+1<heap.length){let c=i*2+1;if(c+1<heap.length&&heap[c+1][1]<heap[c][1])c++;if(heap[c][1]>=last[1])break;heap[i]=heap[c];i=c;}heap[i]=last;}return first;};
+ flow[flowTarget]=0;push(flowTarget,0);
+ while(heap.length){
+  const [i,d]=pop();if(d>flow[i]+.0001)continue;
+  for(const [j,cost] of links[i]){const nd=d+cost;if(nd+.0001<flow[j]){flow[j]=nd;push(j,nd);}}
+ }
+}
+function policeTarget(c){
+ let id=nearestFree(c);if(id<0||!Number.isFinite(flow[id]))return{x:c.x,y:c.y};
+ let best=navPoint(id);
+ // Look ahead without cutting through solid corners.
+ for(let k=0;k<7;k++){
+  let next=id;for(const [j] of links[id])if(flow[j]<flow[next])next=j;
+  if(next===id)break;
+  const p=navPoint(next);if(!clearLine(c,p,18))break;
+  best=p;id=next;
+ }
+ return best;
+}
+
+const mapCanvas=document.createElement('canvas');mapCanvas.width=WORLD;mapCanvas.height=WORLD;
+const m=mapCanvas.getContext('2d');
+function round(c,x,y,w,h,r=6){c.beginPath();c.roundRect(x,y,w,h,r);}
+function buildMap(){
+ m.fillStyle='#14232d';m.fillRect(0,0,WORLD,WORLD);
+ m.fillStyle='#25323e';
+ for(const c of centers){m.fillRect(c-ROAD/2,0,ROAD,WORLD);m.fillRect(0,c-ROAD/2,WORLD,ROAD);}
+ // Paved road edges and broken lane markings.
+ m.lineWidth=1;m.strokeStyle='#49606d';
+ for(const c of centers){m.beginPath();m.moveTo(c-ROAD/2+5,0);m.lineTo(c-ROAD/2+5,WORLD);m.moveTo(c+ROAD/2-5,0);m.lineTo(c+ROAD/2-5,WORLD);m.moveTo(0,c-ROAD/2+5);m.lineTo(WORLD,c-ROAD/2+5);m.moveTo(0,c+ROAD/2-5);m.lineTo(WORLD,c+ROAD/2-5);m.stroke();}
+ m.strokeStyle='#b3c0a947';m.lineWidth=2;m.setLineDash([15,22]);
+ for(const c of centers)for(let i=-1;i<5;i++){
+  const a=i<0?0:centers[i]+ROAD/2,b=i===4?WORLD:centers[i+1]-ROAD/2;
+  m.beginPath();m.moveTo(c,a);m.lineTo(c,b);m.moveTo(a,c);m.lineTo(b,c);m.stroke();
+ }
+ m.setLineDash([]);
+ for(const x of centers)for(const y of centers){
+  m.fillStyle='#c3d7d538';
+  for(let i=-3;i<4;i++){m.fillRect(x+i*12-4,y-ROAD/2+8,7,16);m.fillRect(x+i*12-4,y+ROAD/2-24,7,16);m.fillRect(x-ROAD/2+8,y+i*12-4,16,7);m.fillRect(x+ROAD/2-24,y+i*12-4,16,7);}
+  // Small intersection corner lamps.
+  for(const sx of [-1,1])for(const sy of [-1,1]){
+   m.fillStyle='#95e9cf';m.fillRect(x+sx*(ROAD/2+6)-2,y+sy*(ROAD/2+6)-2,4,4);
+  }
+ }
+ for(const b of buildings){
+  m.fillStyle='#0c141d66';round(m,b.x+8,b.y+11,b.w,b.h,6);m.fill();
+  if(b.park){
+   m.fillStyle='#19392f';round(m,b.x,b.y,b.w,b.h,8);m.fill();m.strokeStyle='#395446';m.stroke();
+   m.strokeStyle='#7b907944';m.lineWidth=11;m.beginPath();m.moveTo(b.x+15,b.y+b.h/2);m.lineTo(b.x+b.w-15,b.y+b.h/2);m.moveTo(b.x+b.w/2,b.y+15);m.lineTo(b.x+b.w/2,b.y+b.h-15);m.stroke();
+   for(let i=0;i<10;i++){let tx=b.x+15+seeded(i+b.seed*12)*(b.w-30),ty=b.y+15+seeded(i+88+b.seed)*(b.h-30);m.fillStyle='#214e3b';m.beginPath();m.arc(tx,ty,12,0,7);m.fill();m.fillStyle='#31634b';m.beginPath();m.arc(tx-2,ty-3,8,0,7);m.fill();}
+  }else{
+   const palette=['#2a3e50','#2c4150','#303e51','#2a4148'];
+   m.fillStyle=palette[b.seed%4];round(m,b.x,b.y,b.w,b.h,5);m.fill();
+   m.strokeStyle='#56717b';m.lineWidth=1;m.stroke();
+   m.fillStyle='#192a38';round(m,b.x+9,b.y+9,b.w-18,b.h-18,3);m.fill();
+   for(let ix=0;ix<10;ix++)for(let iy=0;iy<10;iy++){
+    m.fillStyle=seeded(ix*7+iy+b.seed*33)>.64?(b.seed%3===0?'#e5bd755c':'#76b6d363'):'#2e4554';m.fillRect(b.x+15+ix*17,b.y+15+iy*17,8,6);
+   }
+   m.fillStyle='#344e5d';round(m,b.x+49,b.y+44,42,34,3);m.fill();m.strokeStyle='#5e7881';m.stroke();
+   for(let k=0;k<3;k++){m.strokeStyle='#142934';m.beginPath();m.moveTo(b.x+55,b.y+52+k*8);m.lineTo(b.x+85,b.y+52+k*8);m.stroke();}
+   m.fillStyle=b.seed%3===0?'#e3a779':'#71e1c2';m.fillRect(b.x+12,b.y+b.h-4,34,3);
+  }
+ }
+
+
+ // Draw genuine road bends using the same wall geometry used for collisions.
+ for(const s of switchbacks){
+  const a=s.area;m.save();m.beginPath();m.rect(a.x,a.y,a.w,a.h);m.clip();
+  m.fillStyle='#263742';m.fillRect(a.x,a.y,a.w,a.h);
+  for(const b of s.walls){
+   m.fillStyle='#243e4d';m.fillRect(b.x,b.y,b.w,b.h);
+   m.strokeStyle='#77c7c1';m.lineWidth=2;m.strokeRect(b.x,b.y,b.w,b.h);
+   if(b.w>22&&b.h>22){
+    m.fillStyle='#162c3b';m.fillRect(b.x+6,b.y+6,b.w-12,b.h-12);
+    for(let x=b.x+12;x<b.x+b.w-9;x+=18)for(let y=b.y+12;y<b.y+b.h-9;y+=18){
+     m.fillStyle='#5e9caa66';m.fillRect(x,y,6,5);
+    }
+   }
+  }
+  m.lineWidth=2;m.strokeStyle='#f4db8eaa';m.setLineDash([10,10]);m.beginPath();
+  s.points.forEach((p,i)=>i===0?m.moveTo(p.x,p.y):m.lineTo(p.x,p.y));m.stroke();m.setLineDash([]);
+  // Direction chevrons lead through the middle of each bend.
+  for(let i=1;i<s.points.length;i++){
+   const p=s.points[i-1],q=s.points[i],x=(p.x+q.x)/2,y=(p.y+q.y)/2;
+   m.save();m.translate(x,y);m.rotate(Math.atan2(q.y-p.y,q.x-p.x));
+   m.strokeStyle='#d1f3e699';m.lineWidth=2;m.beginPath();m.moveTo(-5,-7);m.lineTo(2,0);m.lineTo(-5,7);m.stroke();m.restore();
+  }
+  m.restore();
+  const p=s.points[0];m.save();m.translate(p.x,p.y);m.fillStyle='#102c39e8';round(m,-43,-12,86,24,4);m.fill();m.strokeStyle='#8adfc4';m.lineWidth=1;m.stroke();m.fillStyle='#c8fff0';m.font='bold 10px monospace';m.textAlign='center';m.textBaseline='middle';m.fillText('ZIGZAG '+s.name,0,0);m.restore();
+ }
+
+ for(const o of obstacles){
+  m.save();m.fillStyle='#07101799';round(m,o.x+4,o.y+5,o.w,o.h,3);m.fill();
+  if(o.type==='parked'){
+   const vert=o.h>o.w;m.fillStyle=['#795368','#786449','#526b7f'][o.seed%3];round(m,o.x,o.y,o.w,o.h,4);m.fill();
+   m.fillStyle='#172b3a';round(m,o.x+(vert?3:12),o.y+(vert?12:3),vert?o.w-6:o.w-24,vert?o.h-24:o.h-6,2);m.fill();
+   m.fillStyle='#ecb772';m.fillRect(o.x+2,o.y+2,4,3);m.fillStyle='#ff7284';m.fillRect(o.x+o.w-6,o.y+o.h-5,4,3);
+  }else{
+   m.fillStyle=o.type==='closure'?'#a95b32':'#926231';round(m,o.x,o.y,o.w,o.h,3);m.fill();
+   m.save();round(m,o.x+2,o.y+2,o.w-4,o.h-4,2);m.clip();
+   m.strokeStyle='#ffd48b';m.lineWidth=7;
+   for(let k=-o.h;k<o.w+o.h;k+=19){m.beginPath();m.moveTo(o.x+k,o.y);m.lineTo(o.x+k+o.h,o.y+o.h);m.stroke();}
+   m.restore();m.strokeStyle='#ffa876';m.lineWidth=2;round(m,o.x,o.y,o.w,o.h,3);m.stroke();
+   for(const [x,y] of [[o.x+3,o.y+3],[o.x+o.w-3,o.y+o.h-3]]){m.fillStyle='#ffbc6c';m.beginPath();m.arc(x,y,3,0,7);m.fill();}
+   if(o.type==='closure'){
+    const cx=o.x+o.w/2,cy=o.y+o.h/2;m.fillStyle='#722d32';m.beginPath();m.arc(cx,cy,11,0,7);m.fill();m.strokeStyle='#ffc4a0';m.lineWidth=2;m.stroke();m.fillStyle='#ffe7d4';m.fillRect(cx-7,cy-2,14,4);
+   }
+  }
+  m.restore();
+ }
+
+ // Boundary is a visible, solid barrier.
+ m.strokeStyle='#58717e';m.lineWidth=12;m.strokeRect(6,6,WORLD-12,WORLD-12);
+ m.strokeStyle='#c4b57d66';m.lineWidth=3;m.setLineDash([14,13]);m.strokeRect(14,14,WORLD-28,WORLD-28);m.setLineDash([]);
+}
+buildMap();
+function resize(){const r=canvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);view.w=r.width;view.h=r.height;canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);view.scale=clamp(Math.min(r.width/900,r.height/640),.59,1.08);ctx.setTransform(dpr,0,0,dpr,0,0);}
+new ResizeObserver(resize).observe(game);
+function sound(f=440,len=.08,type='sine',volume=.035){
+ if(muted)return;try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(f,audio.currentTime);o.frequency.exponentialRampToValueAtTime(f*.55,audio.currentTime+len);g.gain.setValueAtTime(volume,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+len);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+len);}catch(e){muted=true;$('soundBtn').textContent='소리 OFF';$('soundBtn').setAttribute('aria-pressed','false');}
+}
+function toast(msg){$('notice').textContent=msg;$('notice').classList.add('show');noticeTimer=2.4;}
+function clearInput(){keys.clear();joy.x=joy.y=0;joy.id=null;boostPointer=null;$('stick').style.transform='';$('boostTouch').classList.remove('active');}
+function overlays(which){for(const n of ['start','pause','end'])$(n+'Overlay').classList.toggle('hidden',which!==n);game.classList.toggle('running',state==='playing');$('pauseBtn').disabled=state!=='playing'&&state!=='paused';$('pauseBtn').textContent=state==='paused'?'계속하기':'일시정지';}
+function spawnCop(){
+ const options=[];
+ for(const c of centers)for(let v=96;v<=1504;v+=80)for(const vertical of [true,false]){
+  const p=vertical?{x:c,y:v}:{x:v,y:c};
+  if(dist(p,player)>520&&!blockedAt(p.x,p.y,24)&&cops.every(o=>dist(o,p)>70))options.push(p);
+ }
+ if(!options.length)return false;
+ const p=options[Math.floor(Math.random()*options.length)];
+ cops.push({x:p.x,y:p.y,vx:0,vy:0,a:Math.atan2(player.y-p.y,player.x-p.x),wobble:rng(0,7)});
+ return true;
+}
+function spawnKit(){
+ for(let n=0;n<30;n++){
+  const vertical=Math.random()<.5,c=centers[Math.floor(rng(0,5))],v=rng(90,1510);
+  const p=vertical?{x:c+(Math.random()<.5?-32:32),y:v}:{x:v,y:c+(Math.random()<.5?-32:32)};
+  if(dist(p,player)>130&&!blockedAt(p.x,p.y,30)&&kits.every(k=>dist(k,p)>120)){kits.push({...p,phase:rng(0,7)});return;}
+ }
+}
+function start(){
+ clearInput();mode=$('difficulty').value;elapsed=0;health=100;energy=100;bonus=0;score=0;level=1;invincible=0;wallCooldown=0;pickTimer=0;policeTimer=0;flowTimer=0;flowTarget=-1;shake=0;
+ player={x:800,y:800,vx:0,vy:0,a:-Math.PI/2};cops=[];kits=[];particles=[];tracks=[];
+ for(let i=0;i<modes[mode].initial;i++)spawnCop(true);
+ for(let i=0;i<4;i++)spawnKit();
+ state='playing';overlays('');updateHUD();game.focus({preventScroll:true});toast(`경찰 ${cops.length}대 · S-01 / 02 / 03 지그재그 도로 주의!`);sound(700,.12);
+}
+function pause(){if(state==='playing'){state='paused';clearInput();overlays('pause');$('resumeBtn').focus();}else if(state==='paused'){state='playing';overlays('');game.focus({preventScroll:true});}}
+function home(){state='ready';clearInput();elapsed=0;health=100;energy=100;score=0;level=1;player={x:800,y:800,vx:0,vy:0,a:-Math.PI/2};cops=[];kits=[];particles=[];tracks=[];overlays('start');updateHUD();$('startBtn').focus();$('notice').classList.remove('show');}
+function end(win){if(state!=='playing')return;state='ended';clearInput();updateHUD();overlays('end');$('endTag').textContent=win?'MISSION COMPLETE':'CHASE OVER';$('endTitle').textContent=win?'도심 탈출 성공!':'추격에 붙잡혔어요';$('endDesc').textContent=win?'90초의 추격을 버텼어요. 오늘 밤, 도시는 당신의 것입니다.':'급커브에서는 속도를 줄이고, 느리게 차는 부스트는 직선에서 쓰세요.';$('finalScore').textContent=score.toLocaleString();$('finalTime').textContent=elapsed.toFixed(1)+' s';$('restartBtn').focus();sound(win?880:150,.4,'triangle');}
+function updateHUD(){
+ $('health').textContent=Math.ceil(health);$('healthBar').style.width=health+'%';$('healthBar').style.background=health<30?'#ff7d8c':'#85f5ca';
+ $('time').textContent=Math.max(0,TARGET-elapsed).toFixed(1);$('timeBar').style.width=Math.max(0,(1-elapsed/TARGET)*100)+'%';
+ $('energy').textContent=Math.floor(energy);$('energyBar').style.width=energy+'%';$('score').textContent=String(score).padStart(4,'0');$('levelLabel').textContent='LV. '+level+' · 경찰 '+cops.length+'대';
+ $('district').textContent=`GRID ${String(clamp(Math.floor(player.x/320)+1,1,5)).padStart(2,'0')} / ${String(clamp(Math.floor(player.y/320)+1,1,5)).padStart(2,'0')} · NIGHT RUN`;
+}
+function collideCircleRect(o,b,r){
+ let nx=clamp(o.x,b.x,b.x+b.w),ny=clamp(o.y,b.y,b.y+b.h),dx=o.x-nx,dy=o.y-ny,d=Math.hypot(dx,dy);
+ if(d>=r)return false;
+ if(d>0.0001){o.x+=dx/d*(r-d);o.y+=dy/d*(r-d);}
+ else{
+  const sides=[{d:Math.abs(o.x-b.x),x:b.x-r,y:o.y},{d:Math.abs(b.x+b.w-o.x),x:b.x+b.w+r,y:o.y},{d:Math.abs(o.y-b.y),x:o.x,y:b.y-r},{d:Math.abs(b.y+b.h-o.y),x:o.x,y:b.y+b.h+r}].sort((a,b)=>a.d-b.d);o.x=sides[0].x;o.y=sides[0].y;
+ }
+ return true;
+}
+function resolve(o,r=R){
+ let hit=false;
+ const x=clamp(o.x,24,WORLD-24),y=clamp(o.y,24,WORLD-24);
+ if(x!==o.x||y!==o.y){hit=true;o.x=x;o.y=y;}
+ for(const b of solids)if(collideCircleRect(o,b,r))hit=true;
+ return hit;
+}
+function sparks(x,y,color,n=9){for(let i=0;i<n;i++)particles.push({x,y,vx:rng(-100,100),vy:rng(-100,100),life:rng(.2,.6),max:.6,color});}
+function damage(amount,police){
+ if(police&&invincible>0)return;if(!police&&wallCooldown>0)return;
+ health=Math.max(0,health-amount*modes[mode].damage);if(police)invincible=1.6;else wallCooldown=1.1;
+ shake=police?8:4;sparks(player.x,player.y,'#ffca8b',14);sound(police?110:180,.15,'sawtooth',.025);
+ toast(police?'경찰 충돌! 거리를 벌리세요.':'장애물 충돌! 차단벽과 주차 차량을 피하세요.');
+}
+function clearLine(a,b,padding=19){
+ const d=dist(a,b),steps=Math.max(1,Math.ceil(d/10));
+ for(let i=0;i<=steps;i++){
+  const x=a.x+(b.x-a.x)*i/steps,y=a.y+(b.y-a.y)*i/steps;
+  if(blockedAt(x,y,padding))return false;
+ }
+ return true;
+}
+function approachAngle(a,b,s){const delta=Math.atan2(Math.sin(b-a),Math.cos(b-a));return a+delta*Math.min(1,s);}
+function update(dt){
+ elapsed=Math.min(TARGET,elapsed+dt);invincible=Math.max(0,invincible-dt);wallCooldown=Math.max(0,wallCooldown-dt);shake=Math.max(0,shake-dt*18);
+ let x=(keys.has('KeyD')||keys.has('ArrowRight')?1:0)-(keys.has('KeyA')||keys.has('ArrowLeft')?1:0)+joy.x;
+ let y=(keys.has('KeyS')||keys.has('ArrowDown')?1:0)-(keys.has('KeyW')||keys.has('ArrowUp')?1:0)+joy.y;
+ let mag=Math.hypot(x,y);if(mag>1){x/=mag;y/=mag;mag=1;}
+ const wantsBoost=keys.has('Space')||boostPointer!==null;
+ const boosting=wantsBoost&&energy>3&&mag>.1;
+ const speed=boosting?355:225;
+ if(boosting)energy=Math.max(0,energy-dt*BOOST_DRAIN);else energy=Math.min(100,energy+dt*BOOST_REGEN);
+ const friction=1-Math.exp(-dt*7);
+ player.vx+=(x*speed-player.vx)*friction;player.vy+=(y*speed-player.vy)*friction;
+ if(Math.hypot(player.vx,player.vy)>10)player.a=approachAngle(player.a,Math.atan2(player.vy,player.vx),dt*10);
+ player.x+=player.vx*dt;player.y+=player.vy*dt;
+ const wall=resolve(player);
+ if(wall){if(Math.hypot(player.vx,player.vy)>115)damage(8,false);player.vx*=.45;player.vy*=.45;}
+ if(boosting&&Math.random()<.75){const a=player.a;sparks(player.x-Math.cos(a)*20,player.y-Math.sin(a)*20,'#8af9d2',1);}
+ if(Math.hypot(player.vx,player.vy)>60){tracks.push({x:player.x,y:player.y,a:player.a,life:1.5});}
+ tracks=tracks.filter(t=>(t.life-=dt)>0);
+ const newLevel=Math.min(4,1+Math.floor(elapsed/22.5));
+ if(newLevel!==level){level=newLevel;toast('추격 LV. '+level+' · 경찰이 더 빨라집니다');sound(420,.14,'triangle');}
+ policeTimer+=dt;
+ if(policeTimer>=10){
+  policeTimer=0;let added=0;
+  for(let k=0;k<2&&cops.length<modes[mode].max;k++)if(spawnCop())added++;
+  if(added)toast(`경찰 ${added}대 추가! 현재 ${cops.length}대 추격 중`);
+ }
+ flowTimer-=dt;
+ if(flowTimer<=0){makeFlow();flowTimer=.35;}
+ for(let i=0;i<cops.length;i++){
+  const c=cops[i];let target;
+  if(clearLine(c,player)){
+   const lead={x:clamp(player.x+player.vx*.12,24,WORLD-24),y:clamp(player.y+player.vy*.12,24,WORLD-24)};
+   target=clearLine(c,lead)?lead:player;
+  }else target=policeTarget(c);
+  let dx=target.x-c.x,dy=target.y-c.y,l=Math.hypot(dx,dy)||1;
+  let sepX=0,sepY=0;for(let j=0;j<cops.length;j++){if(j===i)continue;let sx=c.x-cops[j].x,sy=c.y-cops[j].y,d=Math.hypot(sx,sy);if(d>0&&d<44){sepX+=sx/d*(44-d)*2;sepY+=sy/d*(44-d)*2;}}
+  const speed=modes[mode].speed+(level-1)*12;
+  c.vx+=(dx/l*speed+sepX-c.vx)*Math.min(1,dt*5);c.vy+=(dy/l*speed+sepY-c.vy)*Math.min(1,dt*5);
+  c.a=approachAngle(c.a,Math.atan2(c.vy,c.vx),dt*7);
+  c.x+=c.vx*dt;c.y+=c.vy*dt;
+  if(resolve(c,15)){c.vx*=.5;c.vy*=.5;}
+  let d=dist(c,player);
+  if(d<30){
+   damage(22,true);
+   let nx=(player.x-c.x)/(d||1),ny=(player.y-c.y)/(d||1);if(d<.01){nx=1;ny=0;}
+   player.x+=nx*(30-d)*.7;player.y+=ny*(30-d)*.7;c.x-=nx*(30-d)*.3;c.y-=ny*(30-d)*.3;resolve(player);resolve(c,15);
+  }
+ }
+ for(let i=kits.length-1;i>=0;i--)if(dist(kits[i],player)<32){const p=kits.splice(i,1)[0];health=Math.min(100,health+25);bonus+=120;sparks(p.x,p.y,'#85f5ca',18);toast('수리 키트 +25 · 보너스 +120');sound(950,.16,'triangle');}
+ pickTimer+=dt;if(pickTimer>9){pickTimer=0;if(kits.length<6)spawnKit();}
+ score=Math.floor(elapsed*12)+bonus;
+ particles=particles.filter(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;return p.life>0;});
+ if(health<=0)end(false);else if(elapsed>=TARGET)end(true);
+}
+function car(o,isPolice=false){
+ ctx.save();ctx.translate(o.x,o.y);ctx.rotate(o.a);
+ if(!isPolice&&invincible>0&&Math.sin(visualTime*28)<0)ctx.globalAlpha=.45;
+ ctx.shadowColor='#0009';ctx.shadowBlur=6;ctx.shadowOffsetY=3;
+ ctx.fillStyle='#0b131b';round(ctx,-18,-12,36,24,5);ctx.fill();ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+ ctx.fillStyle=isPolice?'#dbe6ef':'#83f3c5';round(ctx,-19,-10,38,20,5);ctx.fill();
+ ctx.fillStyle=isPolice?'#223a53':'#266b60';round(ctx,-7,-8,18,16,3);ctx.fill();
+ ctx.fillStyle=isPolice?'#223247':'#163e40';round(ctx,-2,-7,9,14,2);ctx.fill();
+ ctx.fillStyle=isPolice?'#9ac8e8':'#b2ffdf';ctx.fillRect(12,-7,2,14);
+ ctx.fillStyle='#e8f9ff';ctx.fillRect(17,-8,3,5);ctx.fillRect(17,3,3,5);
+ ctx.fillStyle='#ff7f8d';ctx.fillRect(-20,-8,3,4);ctx.fillRect(-20,4,3,4);
+ if(isPolice){
+  ctx.fillStyle='#132435';ctx.fillRect(-3,-10,6,20);
+  const lit=Math.sin(visualTime*13+o.wobble)>0;
+  ctx.shadowBlur=lit?13:5;ctx.shadowColor='#ff657f';ctx.fillStyle=lit?'#ff7088':'#873347';ctx.fillRect(-2,-9,4,8);
+  ctx.shadowColor='#68b8ff';ctx.fillStyle=!lit?'#82c7ff':'#335c8c';ctx.fillRect(-2,1,4,8);ctx.shadowBlur=0;
+ }else{
+  ctx.fillStyle='#071e20';ctx.fillRect(-12,-7,2,14);ctx.fillStyle='#dafce933';ctx.beginPath();ctx.moveTo(20,-6);ctx.lineTo(66,-21);ctx.lineTo(66,21);ctx.lineTo(20,6);ctx.fill();
+ }
+ ctx.restore();
+}
+function miniMap(){
+ const size=view.w<600?88:116,pad=14,x=view.w-size-pad,y=pad,s=size/WORLD;
+ ctx.save();ctx.translate(x,y);ctx.fillStyle='#0a1724d9';round(ctx,0,0,size,size,7);ctx.fill();ctx.strokeStyle='#6c8d9e66';ctx.stroke();
+ ctx.save();round(ctx,3,3,size-6,size-6,4);ctx.clip();ctx.drawImage(mapCanvas,0,0,size,size);
+ ctx.fillStyle='#a0ffd9';for(const k of kits){ctx.fillRect(k.x*s-1.5,k.y*s-1.5,3,3);}
+ ctx.fillStyle='#ff7890';for(const c of cops){ctx.beginPath();ctx.arc(c.x*s,c.y*s,2.4,0,7);ctx.fill();}
+ ctx.fillStyle='#c7ffe9';ctx.beginPath();ctx.arc(player.x*s,player.y*s,3,0,7);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.stroke();ctx.restore();ctx.restore();
+}
+function draw(){
+ drawCount++;const w=view.w,h=view.h;
+ ctx.clearRect(0,0,w,h);ctx.fillStyle='#14232d';ctx.fillRect(0,0,w,h);
+ const halfW=w/(2*view.scale),halfH=h/(2*view.scale);
+ view.cx=halfW>WORLD/2?WORLD/2:clamp(player.x,halfW,WORLD-halfW);
+ view.cy=halfH>WORLD/2?WORLD/2:clamp(player.y,halfH,WORLD-halfH);
+ ctx.save();ctx.translate(w/2+(shake?rng(-shake,shake):0),h/2+(shake?rng(-shake,shake):0));ctx.scale(view.scale,view.scale);ctx.translate(-view.cx,-view.cy);
+ ctx.drawImage(mapCanvas,0,0);
+ for(const t of tracks){ctx.save();ctx.translate(t.x,t.y);ctx.rotate(t.a);ctx.globalAlpha=t.life/1.5*.16;ctx.fillStyle='#85f5ca';ctx.fillRect(-16,-7,12,2);ctx.fillRect(-16,5,12,2);ctx.restore();}
+ for(const k of kits){
+  const pulse=.7+Math.sin(visualTime*3+k.phase)*.15;ctx.save();ctx.translate(k.x,k.y);ctx.shadowColor='#7cfac7';ctx.shadowBlur=15*pulse;ctx.fillStyle='#27664f';round(ctx,-14,-14,28,28,6);ctx.fill();ctx.strokeStyle='#83f5c9';ctx.lineWidth=1.5;ctx.stroke();ctx.shadowBlur=0;ctx.fillStyle='#b3ffdb';ctx.fillRect(-8,-2,16,4);ctx.fillRect(-2,-8,4,16);ctx.restore();
+ }
+ for(const c of cops)car(c,true);car(player);
+ for(const p of particles){ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.fillStyle=p.color;ctx.fillRect(p.x-2,p.y-2,3,3);}ctx.globalAlpha=1;
+ // Direction indicators for nearby off-screen police (world space).
+ if(state==='playing')for(const c of cops){
+  const sx=(c.x-view.cx)*view.scale+w/2,sy=(c.y-view.cy)*view.scale+h/2;
+  if((sx<18||sx>w-18||sy<18||sy>h-18)&&dist(player,c)<600){
+   const dx=c.x-player.x,dy=c.y-player.y,a=Math.atan2(dy,dx);
+   const px=clamp(c.x,view.cx-halfW+28,view.cx+halfW-28),py=clamp(c.y,view.cy-halfH+28,view.cy+halfH-28);
+   ctx.save();ctx.translate(px,py);ctx.rotate(a);ctx.fillStyle='#ff7d8c';ctx.beginPath();ctx.moveTo(8,0);ctx.lineTo(-5,-5);ctx.lineTo(-5,5);ctx.closePath();ctx.fill();ctx.restore();
+  }
+ }
+ ctx.restore();
+ const vignette=ctx.createRadialGradient(w/2,h/2,Math.min(w,h)*.2,w/2,h/2,Math.max(w,h)*.65);vignette.addColorStop(0,'#00000000');vignette.addColorStop(1,'#020a1660');ctx.fillStyle=vignette;ctx.fillRect(0,0,w,h);
+ if(state!=='ready')miniMap();
+ if(health<28&&state==='playing'){ctx.strokeStyle='#ff667744';ctx.lineWidth=8;ctx.strokeRect(4,4,w-8,h-8);}
+}
+function loop(t){
+ const dt=Math.min((t-last)/1000||0,.05);last=t;visualTime+=dt;
+ if(state==='playing')update(dt);
+ if(noticeTimer>0){noticeTimer-=dt;if(noticeTimer<=0)$('notice').classList.remove('show');}
+ if(state==='playing'&&frame++%3===0)updateHUD();
+ draw();requestAnimationFrame(loop);
+}
+const gameKeys=new Set(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space']);
+window.addEventListener('keydown',e=>{
+ if(e.target instanceof HTMLSelectElement)return;
+ if(gameKeys.has(e.code)&&state==='playing'){e.preventDefault();keys.add(e.code);}
+ if((e.code==='KeyP'||e.code==='Escape')&&!e.repeat&&(state==='playing'||state==='paused')){e.preventDefault();pause();}
+});
+window.addEventListener('keyup',e=>keys.delete(e.code));
+window.addEventListener('blur',()=>{clearInput();if(state==='playing')pause();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='playing')pause();});
+$('startBtn').onclick=start;$('restartBtn').onclick=start;$('homeBtn').onclick=home;$('pauseHomeBtn').onclick=home;$('pauseBtn').onclick=pause;$('resumeBtn').onclick=pause;
+$('soundBtn').onclick=()=>{muted=!muted;$('soundBtn').textContent=muted?'소리 OFF':'소리 ON';$('soundBtn').setAttribute('aria-pressed',String(!muted));$('soundBtn').setAttribute('aria-label',muted?'효과음 켜기':'효과음 끄기');if(!muted)sound(660,.1);};
+const stick=$('joystick');
+function moveJoy(e){
+ const r=stick.getBoundingClientRect(),max=r.width*.34,dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2,l=Math.hypot(dx,dy),s=l>max?max/l:1;
+ joy.x=dx*s/max;joy.y=dy*s/max;if(l<7){joy.x=0;joy.y=0;}
+ $('stick').style.transform=`translate(${dx*s}px,${dy*s}px)`;
+}
+stick.addEventListener('pointerdown',e=>{if(state!=='playing'||joy.id!==null)return;e.preventDefault();joy.id=e.pointerId;stick.setPointerCapture(e.pointerId);moveJoy(e);});
+stick.addEventListener('pointermove',e=>{if(joy.id===e.pointerId)moveJoy(e);});
+function releaseJoy(e){if(joy.id!==e.pointerId)return;joy.id=null;joy.x=joy.y=0;$('stick').style.transform='';}
+for(const type of ['pointerup','pointercancel','lostpointercapture'])stick.addEventListener(type,releaseJoy);
+const boost=$('boostTouch');
+boost.addEventListener('pointerdown',e=>{if(state!=='playing'||boostPointer!==null)return;e.preventDefault();boostPointer=e.pointerId;boost.setPointerCapture(e.pointerId);boost.classList.add('active');});
+function releaseBoost(e){if(boostPointer===e.pointerId){boostPointer=null;boost.classList.remove('active');}}
+for(const type of ['pointerup','pointercancel','lostpointercapture'])boost.addEventListener(type,releaseBoost);
+window.addEventListener('contextmenu',e=>{if(e.target===canvas||e.target.closest('.touchUI'))e.preventDefault();});
+resize();updateHUD();requestAnimationFrame(loop);
+// Optional, read-only status hook for test automation. Not a gameplay cheat.
+Object.defineProperty(window,'neonRunStatus',{get:()=>({state,elapsed,health,energy,score,level,mode,player:{...player},cops:cops.map(c=>({x:c.x,y:c.y})),kits:kits.map(k=>({x:k.x,y:k.y})),world:WORLD,roadWidth:ROAD,boostRegen:BOOST_REGEN,boostDrain:BOOST_DRAIN,switchbacks:switchbacks.map(s=>({name:s.name,area:{...s.area},width:s.width,points:s.points.map(p=>({...p}))})),policeLimit:modes[mode].max,closures:closureSpecs.length,constructionSites:chicaneSpecs.length,obstacles:obstacles.map(o=>({...o})),canvasFrames:drawCount})});
+})();
+</script>
+</body>
+</html>

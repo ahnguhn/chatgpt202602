@@ -1,0 +1,14 @@
+{
+  "key_repeat": {
+    "expected_score_delta": 0,
+    "actual_score_delta": 1
+  },
+  "rapid_two_clicks": {
+    "expected_score": 1,
+    "actual_score": 2
+  },
+  "mobile_width": {
+    "scroll": 980,
+    "viewport": 390
+  }
+}

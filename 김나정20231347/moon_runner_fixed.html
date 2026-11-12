@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111329">
+<title>MOON RUNNER · 달빛 러너</title>
+<style>
+:root{color-scheme:dark;--bg:#0c1021;--ink:#f5f3ff;--muted:#9b9bb7;--mint:#a8ffdb;--violet:#b7a3ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 10%,#24213f,transparent 65%),var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100svh;display:flex;align-items:center;justify-content:center;padding:30px 24px}
+button{font:inherit;cursor:pointer}button:focus-visible{outline:3px solid var(--mint);outline-offset:5px}
+.app{width:min(1120px,100%)}header{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0 2px 22px}.brand{display:flex;align-items:center;gap:12px}.brandmark{width:36px;height:36px;border:1px solid #65617e;border-radius:11px;display:grid;place-items:center;color:var(--mint);font-size:23px;background:#26233d}.brandtext{font-size:16px;font-weight:850;letter-spacing:2px}.brandtext small{display:block;color:var(--muted);font-size:10px;letter-spacing:2.8px;font-weight:500;margin-top:4px}.tag{font-size:11px;color:#b5b2cb;border:1px solid #41405c;padding:8px 12px;border-radius:30px;letter-spacing:1px}
+.stage{position:relative;overflow:hidden;border-radius:22px;border:1px solid #4b456b;box-shadow:0 28px 100px #0006;background:#211b3d;isolation:isolate;aspect-ratio:16/9}canvas{width:100%;height:100%;display:block;touch-action:none}
+.hud{position:absolute;inset:26px 30px auto;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}.metrics{display:flex;gap:28px}.metric small{display:block;font-size:10px;letter-spacing:2px;color:#c2b8da;margin-bottom:3px}.metric strong{font-size:29px;font-variant-numeric:tabular-nums;letter-spacing:1px}.metric.best strong{font-size:19px;color:#c9bfdc}.metric.best{padding-top:3px}.hudright{display:flex;gap:9px;align-items:center}.speed{border:1px solid #ffffff20;background:#211b3d77;border-radius:10px;padding:9px 13px;font-size:12px;letter-spacing:.5px;color:var(--mint);font-variant-numeric:tabular-nums}.iconbtn{pointer-events:auto;width:36px;height:36px;color:#d8d0eb;background:#211b3d77;border:1px solid #ffffff26;border-radius:10px;display:grid;place-items:center}.iconbtn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8}
+.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(90deg,#18162e33,#19152c17);padding:25px}.overlay.hidden{display:none}.panel{width:min(530px,100%);padding:31px 36px 28px;border:1px solid #d9c6ff26;border-radius:22px;background:linear-gradient(145deg,#211c3eee,#1a1834e8);box-shadow:0 24px 60px #09061d66;backdrop-filter:blur(12px)}.eyebrow{color:var(--mint);font-size:10px;letter-spacing:3px;font-weight:750;margin-bottom:11px}h1{font-size:clamp(27px,4vw,46px);letter-spacing:-1.8px;line-height:1.1;margin:0 0 13px}h1 span{color:#c3b0ff}.desc{font-size:13px;color:#bcb5d1;line-height:1.8;margin:0 auto 20px}.play{border:0;background:var(--mint);color:#17382f;border-radius:11px;padding:14px 32px;font-size:14px;font-weight:850;box-shadow:0 5px 0 #578e7e;min-width:200px;transition:transform .15s,filter .15s}.play:hover{filter:brightness(1.08);transform:translateY(-2px)}.play:active{transform:translateY(3px);box-shadow:0 2px 0 #578e7e}.keys{margin:16px 0 0;font-size:11px;color:#a49cb9}kbd{font:10px system-ui;display:inline-block;border:1px solid #6f6587;border-bottom-width:3px;border-radius:5px;padding:3px 9px;margin-right:5px;color:#e8e2f5}.results{display:flex;justify-content:center;gap:32px;margin:15px 0 22px}.result small{display:block;color:#a9a0bf;font-size:10px;letter-spacing:1px;margin-bottom:5px}.result strong{font-size:32px;font-variant-numeric:tabular-nums}.newbest{color:var(--mint)!important}.hidden{display:none!important}
+footer{display:flex;justify-content:space-between;gap:20px;align-items:center;margin:20px 3px 0}.tips{display:flex;gap:22px;flex-wrap:wrap}.tip{display:flex;align-items:center;gap:9px;font-size:12px;color:#aaa5bd}.tip b{color:#ded7ec;font-weight:600}.tip-icon{display:inline-block;width:18px;height:18px;border-radius:4px;background:#f5a277;box-shadow:inset 0 -4px #c46f54}.tip-icon.air{background:#c5a4ff;border-radius:9px;box-shadow:inset 0 -4px #8264b3;height:12px}.footnote{font-size:10px;letter-spacing:1px;color:#77718e;text-align:right;white-space:nowrap}.toast{position:absolute;left:50%;bottom:30%;transform:translateX(-50%);font-size:14px;font-weight:750;color:var(--mint);text-shadow:0 2px 8px #000;pointer-events:none;opacity:0;transition:opacity .25s}.toast.show{opacity:1}
+@media(max-width:650px){body{padding:18px 12px;align-items:flex-start;padding-top:35px}.tag{display:none}.brandtext{font-size:13px}.stage{aspect-ratio:4/3;border-radius:15px}.hud{inset:15px 15px auto}.metric strong{font-size:24px}.metrics{gap:17px}.metric small{font-size:8px;letter-spacing:1px}.metric.best strong{font-size:15px}.speed{padding:7px;font-size:10px}.hudright{gap:5px}.iconbtn{width:30px;height:30px}.panel{padding:23px 18px;width:min(360px,100%)}.desc{font-size:12px;margin-bottom:14px}h1{font-size:30px}.play{padding:12px 22px}.keys{font-size:10px;margin-top:13px}.eyebrow{margin-bottom:8px}footer{display:block;margin-top:17px}.tips{gap:13px}.tip{font-size:10px;gap:6px}.footnote{text-align:left;margin-top:15px;font-size:9px}.results{margin:10px 0 16px}.result strong{font-size:27px}.toast{font-size:11px;bottom:25%}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app">
+<header><div class="brand"><div class="brandmark" aria-hidden="true">☾</div><div class="brandtext">MOON RUNNER<small>A LITTLE LEAP, A LONG JOURNEY</small></div></div><div class="tag">ONE BUTTON · ENDLESS RUN</div></header>
+<section class="stage" aria-label="달빛 러너 게임">
+<canvas id="game" width="1280" height="720" role="img" aria-label="스페이스바 또는 화면 터치로 점프하는 횡스크롤 게임"></canvas>
+<div class="hud"><div class="metrics"><div class="metric"><small>DISTANCE / SCORE</small><strong id="score">00000</strong></div><div class="metric best"><small>PERSONAL BEST</small><strong id="best">00000</strong></div></div><div class="hudright"><span class="speed" id="speed">1.00 ×</span><button class="iconbtn" id="soundBtn" aria-label="효과음 켜기" title="효과음 켜기"></button><button class="iconbtn" id="pauseBtn" aria-label="일시정지" title="일시정지 (P)" disabled><svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></button></div></div>
+<div class="overlay" id="overlay"><div class="panel">
+<div class="eyebrow" id="eyebrow">READY FOR A LITTLE ADVENTURE?</div>
+<h1 id="title">달빛 아래,<br><span>어디까지 달릴까?</span></h1>
+<p class="desc" id="desc">작은 로봇과 함께 떠나는 끝없는 밤 산책.<br>상자는 뛰어넘고, 드론 아래는 그대로 달리세요.</p>
+<div id="results" class="results hidden"><div class="result"><small>최종 점수</small><strong id="finalScore">0</strong></div><div class="result"><small id="bestLabel">최고 기록</small><strong id="finalBest">0</strong></div></div>
+<button class="play" id="playBtn">달리기 시작 →</button>
+<p class="keys" id="keyHint"><kbd>SPACE</kbd> 점프 / 시작 <span style="padding:0 7px;color:#625977">|</span> 모바일은 화면 터치</p>
+</div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+</section>
+<footer><div class="tips"><div class="tip"><i class="tip-icon" aria-hidden="true"></i><span>지상 상자 <b>점프해서 피하기</b></span></div><div class="tip"><i class="tip-icon air" aria-hidden="true"></i><span>공중 드론 <b>그대로 달리기</b></span></div></div><div class="footnote">SPACE / TAP TO JUMP &nbsp; · &nbsp; P TO PAUSE</div></footer>
+</main>
+<script>
+'use strict';
+(() => {
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+const $=id=>document.getElementById(id);
+const W=1280,H=720,G=553,PX=239,BASE=325;
+let state='ready',distance=0,score=0,best=0,speed=BASE,time=0,world=0,last=0,spawnIn=2.6,nextType=0,obstacles=[],particles=[],jumpBuffer=0,runTime=0,shake=0,muted=true,audio=null,toastTimer=0,milestone=0,deathTime=0;
+const player={y:G,vy:0,w:48,h:67,grounded:true,squash:0};
+try{best=Number(localStorage.getItem('moon-runner-best-v1'))||0;}catch(e){}
+$('best').textContent=pad(best);
+function pad(n){return String(Math.floor(n)).padStart(5,'0')}
+function rounded(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke()}}
+function soundIcon(){ $('soundBtn').innerHTML=muted?'<svg viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM16 9l6 6M22 9l-6 6"/></svg>':'<svg viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM15 8q5 4 0 8M18 5q8 7 0 14"/></svg>'; $('soundBtn').setAttribute('aria-label',muted?'효과음 켜기':'효과음 끄기');$('soundBtn').title=muted?'효과음 켜기':'효과음 끄기';}
+function unlockAudio(){if(!audio){const A=window.AudioContext||window.webkitAudioContext;if(A)audio=new A()}if(audio&&audio.state==='suspended')audio.resume().catch(()=>{})}
+function tone(freq,duration=.1,type='sine',volume=.06,end=null){if(muted)return;try{unlockAudio();if(!audio)return;const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,audio.currentTime);if(end)o.frequency.exponentialRampToValueAtTime(end,audio.currentTime+duration);g.gain.setValueAtTime(volume,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+duration)}catch(e){}}
+soundIcon();
+$('soundBtn').onclick=e=>{e.stopPropagation();muted=!muted;if(!muted){unlockAudio();tone(660)}soundIcon()};
+function start(){
+if(document.activeElement instanceof HTMLElement)document.activeElement.blur();
+distance=0;score=0;speed=BASE;world=0;runTime=0;spawnIn=2.7;nextType=0;obstacles=[];particles=[];jumpBuffer=0;milestone=0;shake=0;
+Object.assign(player,{y:G,vy:0,grounded:true,squash:0});state='running';$('overlay').classList.add('hidden');$('keyHint').innerHTML='<kbd>SPACE</kbd> 점프 / 시작 <span style="padding:0 7px;color:#625977">|</span> 모바일은 화면 터치';$('pauseBtn').disabled=false;$('score').textContent=pad(0);$('speed').textContent='1.00 ×';$('toast').classList.remove('show');tone(480,.12,'sine',.05,760);
+}
+function showToast(text){$('toast').textContent=text;$('toast').classList.add('show');toastTimer=2}
+function jump(){if(!player.grounded)return;player.vy=-900;player.grounded=false;player.squash=-.12;jumpBuffer=0;burst(PX+20,G-4,9,'#b4fae2',.7);tone(380,.15,'sine',.07,780)}
+function action(){if(state==='ready'){start();return}if(state==='over'){start();return}if(state==='paused'){pause();return}jumpBuffer=.12;if(player.grounded)jump()}
+$('playBtn').onclick=()=>{if(state==='paused')pause();else start()};
+function pause(){if(state==='running'){state='paused';$('overlay').classList.remove('hidden');$('eyebrow').textContent='TAKE A LITTLE BREATHER';$('title').innerHTML='잠깐,<br><span>쉬어 가도 괜찮아.</span>';$('desc').innerHTML='준비되면 이어서 달려요.<br>스페이스바 또는 P 키로 계속할 수 있어요.';$('results').classList.add('hidden');$('playBtn').textContent='계속 달리기 →';$('keyHint').innerHTML='<kbd>SPACE</kbd> 또는 <kbd>P</kbd> 계속 달리기';}else if(state==='paused'){state='running';$('overlay').classList.add('hidden');if(document.activeElement instanceof HTMLElement)document.activeElement.blur()}}
+$('pauseBtn').onclick=e=>{e.stopPropagation();pause()};
+window.addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();if(!e.repeat)action()}else if(e.code==='KeyP'||e.code==='Escape'){e.preventDefault();if(!e.repeat)pause()}});
+canvas.addEventListener('pointerdown',e=>{e.preventDefault();action()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='running')pause();last=0});
+function burst(x,y,count,color,mult=1){for(let i=0;i<count;i++)particles.push({x,y,vx:(Math.random()-.5)*240*mult,vy:(Math.random()-.8)*210*mult,life:.35+Math.random()*.35,max:.7,size:2+Math.random()*5,color})}
+function spawn(){
+const type=nextType;
+if(type===0){const w=47+Math.random()*13,h=44+Math.random()*8;obstacles.push({type,x:W+80,w,h,y:G-h,phase:Math.random()*6})}
+else obstacles.push({type,x:W+80,w:76,h:45,y:G-145,phase:Math.random()*6});
+nextType=obstacles.length<2&&runTime<10?1-type:(Math.random()<.5?0:1);
+spawnIn=1.75+Math.random()*.65;
+}
+function gameOver(){
+state='over';deathTime=performance.now();shake=12;tone(170,.35,'triangle',.1,50);burst(PX+25,player.y-35,26,'#b9ffe0',1.6);
+const isNew=score>best;if(isNew){best=score;try{localStorage.setItem('moon-runner-best-v1',String(best))}catch(e){}}
+$('best').textContent=pad(best);$('finalScore').textContent=score.toLocaleString();$('finalBest').textContent=best.toLocaleString();$('bestLabel').textContent=isNew?'NEW PERSONAL BEST':'최고 기록';$('finalBest').classList.toggle('newbest',isNew);
+$('eyebrow').textContent=isNew?'GAME OVER · NEW PERSONAL BEST!':'GAME OVER';
+$('title').innerHTML='멋진 달리기였어!<br><span>한 번 더 달려볼까?</span>';
+$('desc').innerHTML='상자는 점프로, 드론은 점프하지 않고 피하세요.<br>달릴수록 조금씩 더 빨라집니다.';
+$('results').classList.remove('hidden');$('playBtn').textContent='다시 달리기 ↻';$('keyHint').innerHTML='<kbd>SPACE</kbd> 다시 시작 <span style="padding:0 7px;color:#625977">|</span> 위 버튼으로도 재시작';$('pauseBtn').disabled=true;$('toast').classList.remove('show');
+$('overlay').classList.remove('hidden');
+}
+function update(dt){
+time+=dt;
+if(state!=='paused'){
+for(const p of particles){p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=500*dt}particles=particles.filter(p=>p.life>0);
+shake=Math.max(0,shake-dt*45);
+}
+if(state!=='running')return;
+runTime+=dt;speed=BASE+145*Math.log1p(score/80);const advance=speed*dt;world+=advance;distance+=advance/45;score=Math.floor(distance);
+$('score').textContent=pad(score);$('speed').textContent=(speed/BASE).toFixed(2)+' ×';
+if(score>=milestone+100){milestone=Math.floor(score/100)*100;showToast(milestone+'m 돌파! 조금 더 빠르게');tone(900,.2,'sine',.06,1300)}
+if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('toast').classList.remove('show')}
+jumpBuffer=Math.max(0,jumpBuffer-dt);player.squash+=(0-player.squash)*Math.min(1,dt*14);
+if(!player.grounded){player.vy+=2600*dt;player.y+=player.vy*dt;if(player.y>=G){player.y=G;player.vy=0;player.grounded=true;player.squash=.16;burst(PX+24,G-3,6,'#a6a4b3',.6);if(jumpBuffer>0)jump()}}
+spawnIn-=dt;if(spawnIn<=0)spawn();
+for(const o of obstacles)o.x-=advance;
+obstacles=obstacles.filter(o=>o.x+o.w>-100);
+const px=PX+9,py=player.y-player.h+6,pw=player.w-18,ph=player.h-10;
+for(const o of obstacles){const inset=o.type===0?5:10;const oy=o.y+(o.type===1?Math.sin(time*3+o.phase)*4:0);if(px<o.x+o.w-inset&&px+pw>o.x+inset&&py<oy+o.h-5&&py+ph>oy+5){gameOver();break}}
+if(player.grounded&&Math.random()<dt*18)particles.push({x:PX+7,y:G-3,vx:-70-Math.random()*40,vy:-20-Math.random()*20,life:.3,max:.3,size:2+Math.random()*3,color:'#b0a5c0'});
+}
+const stars=Array.from({length:65},(_,i)=>({x:(i*139.71+57)%W,y:35+(i*67.91)%320,r:i%6===0?2:1,phase:i*2.3}));
+function hills(offset,base,height,color,step){ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(-300,H);for(let x=-300;x<=W+300;x+=12){let t=(x+offset)/step;let y=base-Math.sin(t)*height-Math.sin(t*.53+1)*height*.55;ctx.lineTo(x,y)}ctx.lineTo(W+300,H);ctx.closePath();ctx.fill()}
+function crystal(x,y,s,color){ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+s*.35,y-s);ctx.lineTo(x+s*.7,y-s*.55);ctx.lineTo(x+s,y);ctx.closePath();ctx.fill();ctx.strokeStyle='#ffffff18';ctx.beginPath();ctx.moveTo(x+s*.35,y-s);ctx.lineTo(x+s*.5,y);ctx.stroke()}
+function drawBG(){
+let grad=ctx.createLinearGradient(0,0,0,H);grad.addColorStop(0,'#25203f');grad.addColorStop(.58,'#514064');grad.addColorStop(1,'#8c6275');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+for(const s of stars){const x=(s.x-world*.035%W+W)%W;ctx.globalAlpha=.35+.35*(1+Math.sin(time*.7+s.phase))*.5;ctx.fillStyle='#eee0ff';ctx.beginPath();ctx.arc(x,s.y,s.r,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
+const mx=1017-world*.009%200,my=151;
+let halo=ctx.createRadialGradient(mx,my,25,mx,my,130);halo.addColorStop(0,'#f8dcb72b');halo.addColorStop(1,'#f8dcb700');ctx.fillStyle=halo;ctx.fillRect(mx-130,my-130,260,260);ctx.fillStyle='#f6dfbe';ctx.beginPath();ctx.arc(mx,my,44,0,Math.PI*2);ctx.fill();ctx.fillStyle='#dcbfa6';ctx.globalAlpha=.35;ctx.beginPath();ctx.arc(mx-13,my-7,9,0,Math.PI*2);ctx.arc(mx+15,my+18,6,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+hills(world*.12,427,58,'#4b3b61',210);hills(world*.23+320,487,42,'#393252',150);
+for(let i=0;i<10;i++){let x=((i*179+50-world*.37)%1550+1550)%1550-100;let y=509;crystal(x,y,25+(i%3)*10,'#6c587d');}
+hills(world*.4+50,544,17,'#2e2c48',95);
+ctx.fillStyle='#302e45';ctx.fillRect(0,G,W,H-G);
+ctx.fillStyle='#a99abb';ctx.fillRect(0,G,W,3);ctx.fillStyle='#5a4b65';ctx.fillRect(0,G+3,W,12);
+const groundGrad=ctx.createLinearGradient(0,G,0,H);groundGrad.addColorStop(0,'#343047');groundGrad.addColorStop(1,'#211f34');ctx.fillStyle=groundGrad;ctx.fillRect(0,G+15,W,H-G-15);
+for(let i=0;i<32;i++){let x=((i*79-world)%W+W)%W;let y=G+26+(i*37)%112;ctx.fillStyle=i%2?'#64566e':'#50465f';rounded(x,y,5+(i%4)*4,3,1,ctx.fillStyle)}
+ctx.globalAlpha=.1;ctx.fillStyle='#baa5cc';ctx.fillRect(0,G+53,W,1);ctx.globalAlpha=1;
+}
+function drawPlayer(){
+const grounded=player.grounded;const anim=state==='running'?Math.sin(runTime*18*(speed/BASE)):Math.sin(time*3)*.2;
+let bob=grounded?Math.abs(anim)*2:0;
+ctx.save();ctx.globalAlpha=Math.max(.13,.26-(G-player.y)*.0008);ctx.fillStyle='#080919';ctx.beginPath();ctx.ellipse(PX+24,G+6,35-(G-player.y)*.035,7,0,0,Math.PI*2);ctx.fill();ctx.restore();
+ctx.save();ctx.translate(PX+24,player.y-bob);ctx.scale(1+player.squash*.5,1-player.squash*.5);
+ctx.strokeStyle='#a5edd7';ctx.lineWidth=10;ctx.lineCap='round';
+const leg=grounded?anim*10:8;
+ctx.beginPath();ctx.moveTo(-10,-17);ctx.lineTo(-12+leg,-6);ctx.lineTo(-5+leg,-5);ctx.stroke();ctx.beginPath();ctx.moveTo(11,-17);ctx.lineTo(12-leg,-6);ctx.lineTo(19-leg,-5);ctx.stroke();
+rounded(-24,-49,12,24,5,'#5b9f96');rounded(-20,-48,40,32,9,'#b5ffe0');rounded(-20,-28,40,12,[0,0,8,8],'#75c9ae');
+ctx.strokeStyle='#82d9bd';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(16,-39);ctx.lineTo(25,-29+(grounded?anim*7:-10));ctx.stroke();
+rounded(-25,-70,52,34,11,'#c7ffe8');rounded(-18,-63,39,20,7,'#243b47');
+ctx.fillStyle='#adffdc';rounded(-9,-58,5,8,2,'#adffdc');rounded(8,-58,5,8,2,'#adffdc');
+ctx.strokeStyle='#94d8c4';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,-71);ctx.lineTo(3,-80);ctx.stroke();ctx.fillStyle='#ffcb87';ctx.beginPath();ctx.arc(3,-82,4,0,Math.PI*2);ctx.fill();
+ctx.strokeStyle='#fff';ctx.globalAlpha=.5;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-17,-67);ctx.lineTo(-8,-67);ctx.stroke();ctx.globalAlpha=1;
+ctx.restore();
+}
+function drawObstacles(){
+for(const o of obstacles){
+ctx.globalAlpha=1;
+if(o.type===0){ctx.save();ctx.fillStyle='#100e2444';ctx.beginPath();ctx.ellipse(o.x+o.w/2,G+5,o.w*.7,6,0,0,Math.PI*2);ctx.fill();rounded(o.x,o.y,o.w,o.h,6,'#efaa80','#ffcc9b');rounded(o.x+5,o.y+6,o.w-10,8,2,'#ffc596');rounded(o.x+5,o.y+o.h-12,o.w-10,7,2,'#bc725c');ctx.strokeStyle='#bc725c';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(o.x+12,o.y+16);ctx.lineTo(o.x+o.w-12,o.y+o.h-15);ctx.moveTo(o.x+o.w-12,o.y+16);ctx.lineTo(o.x+12,o.y+o.h-15);ctx.stroke();ctx.restore()}
+else{const y=o.y+Math.sin(time*3+o.phase)*4;ctx.save();ctx.fillStyle='#130d2822';ctx.beginPath();ctx.ellipse(o.x+o.w/2,G+5,37,5,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#c9adf3';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(o.x+8,y+15);ctx.lineTo(o.x+3,y-1);ctx.moveTo(o.x+o.w-8,y+15);ctx.lineTo(o.x+o.w-3,y-1);ctx.stroke();ctx.globalAlpha=.65;rounded(o.x-10,y-6,28,4,2,'#c8b8ec');rounded(o.x+o.w-18,y-6,28,4,2,'#c8b8ec');ctx.globalAlpha=1;rounded(o.x,y+3,o.w,o.h-9,15,'#b5a0de','#d9c2fb');rounded(o.x+13,y+12,o.w-26,14,6,'#4e426a');ctx.fillStyle='#ffd69e';ctx.beginPath();ctx.arc(o.x+o.w/2,y+19,5,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#77658f';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(o.x+20,y+37);ctx.lineTo(o.x+16,y+44);ctx.moveTo(o.x+o.w-20,y+37);ctx.lineTo(o.x+o.w-16,y+44);ctx.stroke();ctx.restore()}
+}
+}
+function render(){
+ctx.save();if(shake>0)ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);
+drawBG();drawObstacles();drawPlayer();
+for(const p of particles){ctx.globalAlpha=Math.max(0,p.life/p.max);rounded(p.x,p.y,p.size,p.size,1,p.color)}ctx.globalAlpha=1;
+if(state==='running'&&runTime<5.5){ctx.globalAlpha=Math.min(1,Math.max(0,(5.5-runTime)/1));ctx.fillStyle='#eee3f6';ctx.font='500 16px system-ui';ctx.textAlign='center';ctx.fillText('SPACE 또는 화면 터치로 점프',W/2,G+104);ctx.globalAlpha=1}
+ctx.restore();
+}
+function frame(now){let dt=last?Math.min((now-last)/1000,.05):0;last=now;
+// Substeps keep fast-moving obstacles from skipping over collision checks.
+let left=dt;while(left>0){let step=Math.min(left,1/120);update(step);left-=step}
+render();requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

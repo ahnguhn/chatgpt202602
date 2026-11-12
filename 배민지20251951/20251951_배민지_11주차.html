@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>차근차근 · 과제 플래너</title>
+<script>document.documentElement.dataset.theme=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";</script>
+<style>:root{color-scheme:light;--bg:#f3f3f3;--panel:#fcfcfc;--ink:#252525;--muted:#6b6b6b;--line:#e3e3e3;--primary:#303030;--primary-hover:#484848;--on-primary:#fafafa;--light:#eaeaea;--danger:#444444;--green:#5b5b5b;--surface:#f6f6f6;--hover:#eaeaea;--border:#d0d0d0;--secondary:#606060;--focus:#858585;--strong-border:#777777;--button-bg:#303030;--button-hover:#484848;--input-bg:#fcfcfc;--progress-fill:#5d5d5d;--selected-border:#6b6b6b;--today-bg:#454545;--shadow:0 8px 30px #00000004;--modal-shadow:0 25px 100px #00000026;--backdrop:#00000066;--toast-bg:#303030;--toast-text:#f0f0f0}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#161616;--panel:#202020;--ink:#dedede;--muted:#a4a4a4;--line:#333333;--primary:#cccccc;--primary-hover:#d8d8d8;--on-primary:#e2e2e2;--light:#2b2b2b;--danger:#c2c2c2;--green:#909090;--surface:#252525;--hover:#303030;--border:#464646;--secondary:#b8b8b8;--focus:#7f7f7f;--strong-border:#737373;--button-bg:#383838;--button-hover:#484848;--input-bg:#262626;--progress-fill:#8c8c8c;--selected-border:#707070;--today-bg:#454545;--shadow:0 8px 30px #00000012;--modal-shadow:0 25px 100px #00000080;--backdrop:#00000099;--toast-bg:#303030;--toast-text:#dedede}
+
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI","Malgun Gothic",sans-serif;font-size:14px;line-height:1.55}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.4}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--focus);outline-offset:3px}button{border:0;background:none;color:inherit}h1,h2,h3,p{margin:0}header{background:var(--panel);border-bottom:1px solid var(--line)}.topbar{max-width:1440px;margin:auto;padding:21px 34px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:12px}.logo{background:var(--button-bg);width:40px;height:40px;display:grid;place-items:center;border-radius:12px;color:var(--on-primary);font-size:23px;font-weight:800}.brand strong{font-size:20px;letter-spacing:-.8px}.brand small{display:block;color:var(--muted);font-size:11px;letter-spacing:.7px}.header-right{display:flex;gap:10px;align-items:center}.pill{border:1px solid var(--line);border-radius:20px;padding:5px 11px;color:var(--muted);font-size:12px}.btn{display:inline-flex;justify-content:center;align-items:center;gap:6px;padding:10px 15px;border-radius:9px;font-weight:650;background:var(--panel);border:1px solid var(--line);white-space:nowrap}.btn:hover{background:var(--hover)}.btn.primary{background:var(--button-bg);border-color:var(--button-bg);color:var(--on-primary)}.btn.primary:hover{background:var(--button-hover);border-color:var(--button-hover)}.btn.danger{color:var(--danger);border-color:var(--border)}.btn.small{padding:6px 10px;font-size:12px}.workspace{max-width:1440px;margin:auto;padding:30px 34px 48px}.intro{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px}.eyebrow{color:var(--primary);font-size:11px;letter-spacing:1.6px;font-weight:750;margin-bottom:7px}h1{font-size:28px;letter-spacing:-1.1px}.subtitle{color:var(--muted);margin-top:6px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:25px}.stat{background:var(--panel);border:1px solid var(--line);padding:18px 21px;border-radius:13px;box-shadow:var(--shadow)}.stat-label{font-size:12px;color:var(--muted)}.stat-value{font-size:29px;font-weight:750;letter-spacing:-1px;margin-top:4px}.stat-value small{font-size:13px;font-weight:500;letter-spacing:0;margin-left:5px}.stat-note{color:var(--muted);font-size:11px;margin-top:3px}.stat.red .stat-value{color:var(--danger)}.stat.purple .stat-value{color:var(--primary)}.layout{display:grid;grid-template-columns:minmax(0,1fr) 365px;gap:23px;align-items:start}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}.list-head{padding:21px 23px 0}.section-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}h2{font-size:17px;letter-spacing:-.4px}.tiny{font-size:11px;color:var(--muted)}.tabs{display:flex;gap:21px;border-bottom:1px solid var(--line);margin-top:18px;overflow:auto}.tab{padding:10px 0 13px;color:var(--muted);font-weight:650;border-bottom:3px solid transparent;white-space:nowrap}.tab.active{color:var(--primary);border-color:var(--primary)}.tab-count{font-size:10px;background:var(--light);border-radius:5px;padding:2px 5px;margin-left:4px}.tab.active .tab-count{background:var(--light)}.filters{display:flex;gap:8px;padding:15px 23px;flex-wrap:wrap}.search{flex:1;min-width:140px}.control{width:100%;border:1px solid var(--border);background:var(--input-bg);border-radius:8px;padding:9px 11px;color:var(--ink);min-width:0}.filters select{width:140px}.filter-chip{margin:0 23px 13px;background:var(--light);color:var(--primary);padding:7px 11px;border-radius:7px;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px}.task-list{padding:0 18px 18px;display:flex;flex-direction:column;gap:11px}.task{border:1px solid var(--line);padding:17px 17px 14px;border-radius:11px;position:relative}.task.overdue{border-left:3px solid var(--strong-border)}.task.completed{background:var(--surface)}.task-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.task-title{font-size:16px;font-weight:700;margin:9px 0 5px;overflow-wrap:anywhere;letter-spacing:-.3px}.tags{display:flex;gap:6px;flex-wrap:wrap}.tag{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:650;max-width:100%;overflow-wrap:anywhere}.tag-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}.importance-high{background:var(--light);color:var(--ink)}.importance-normal{background:var(--light);color:var(--secondary)}.importance-low{background:var(--surface);color:var(--muted)}.rank{color:var(--muted);font-size:11px;white-space:nowrap}.rank strong{font-size:16px;color:var(--primary)}.task-note{font-size:12px;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere;margin:5px 0 12px}.task-meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:11px;margin:10px 0 7px;color:var(--muted)}.due{color:var(--secondary)}.due.urgent{color:var(--danger);font-weight:650}.progress{height:6px;background:var(--light);border-radius:6px;overflow:hidden}.progress span{height:100%;display:block;border-radius:6px;background:var(--progress-fill);transition:width .2s}.completed .progress span{background:var(--green)}.task-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px}.status-select{padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--secondary);font-size:11px}.task-actions{display:flex;gap:4px;align-items:center}.icon-btn{padding:5px 8px;font-size:11px;border-radius:6px;color:var(--muted)}.icon-btn:hover{background:var(--hover);color:var(--primary)}.icon-btn.delete:hover{color:var(--danger);background:var(--light)}.empty{text-align:center;padding:49px 18px;color:var(--muted)}.empty-symbol{display:grid;place-items:center;width:53px;height:53px;background:var(--light);color:var(--primary);font-size:25px;border-radius:16px;margin:0 auto 14px}.empty h3{font-size:15px;color:var(--ink);margin-bottom:7px}.empty p{font-size:12px;margin-bottom:18px}.side{display:flex;flex-direction:column;gap:18px}.calendar{padding:20px}.calendar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}.calendar-nav{display:flex;align-items:center;gap:2px}.nav-btn{width:27px;height:27px;background:var(--surface);border-radius:6px;font-size:17px}.month-title{font-weight:700;font-size:14px;min-width:109px;text-align:center}.calendar-week{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;color:var(--muted);font-size:10px;margin-bottom:5px}.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.day{min-height:48px;padding:4px 1px 3px;border:1px solid transparent;border-radius:7px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px}.day:hover{background:var(--hover)}.day.outside{opacity:.32}.day.today .day-number{background:var(--today-bg);color:var(--on-primary);border-radius:50%}.day.selected{border-color:var(--selected-border);background:var(--light);opacity:1}.day-number{width:22px;height:22px;display:grid;place-items:center}.dots{display:flex;gap:2px;justify-content:center;align-items:center;min-height:7px}.dot{width:5px;height:5px;border-radius:50%;display:inline-block}.day-count{font-size:8px;color:var(--muted)}.calendar-help{font-size:10px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:12px}.subjects{padding:20px}.subject-list{display:flex;flex-direction:column;gap:8px;margin-top:15px;max-height:270px;overflow:auto}.subject-row{display:flex;align-items:center;gap:8px;padding:7px 0}.subject-color{width:9px;height:9px;border-radius:3px;flex:none}.subject-name{flex:1;min-width:0;overflow-wrap:anywhere;font-size:12px}.subject-count{color:var(--muted);font-size:10px}.subject-actions{display:flex}.explanation{padding:18px 20px;color:var(--muted);font-size:11px;line-height:1.8}.explanation summary{font-weight:700;color:var(--ink);cursor:pointer;font-size:12px}.explanation p{margin-top:10px}.notice{font-size:11px;color:var(--muted);text-align:center;margin-top:24px}.deadline-details{margin-top:8px;border-collapse:collapse;width:100%;font-size:10px}.deadline-details td,.deadline-details th{text-align:left;border-bottom:1px solid var(--line);padding:4px 0}.deadline-details th{font-weight:600;color:var(--secondary)}dialog{border:0;padding:0;border-radius:16px;box-shadow:var(--modal-shadow);width:min(590px,calc(100% - 28px));max-height:90vh;color:var(--ink)}dialog::backdrop{background:var(--backdrop);backdrop-filter:blur(3px)}.modal-header{display:flex;align-items:center;justify-content:space-between;padding:22px 25px;border-bottom:1px solid var(--line)}.modal-header h2{font-size:19px}.close{font-size:23px;color:var(--muted);line-height:1}.form-body{padding:21px 25px;display:flex;flex-direction:column;gap:16px}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:15px}label{display:block;font-size:12px;font-weight:650;margin-bottom:6px}.required{color:var(--primary)}textarea{resize:vertical;min-height:88px}.helper{color:var(--muted);font-size:11px;margin-top:5px}.form-footer{padding:17px 25px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;background:var(--surface)}.form-error{background:var(--light);color:var(--danger);padding:9px 11px;border-radius:7px;font-size:12px}.form-preview{padding:12px 14px;background:var(--light);border-radius:8px;font-size:12px;color:var(--primary);display:flex;justify-content:space-between;gap:10px}.color-field{display:flex;align-items:center;gap:12px}.color-field input{width:52px;height:36px;border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:3px}.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:var(--toast-bg);color:var(--toast-text);padding:12px 20px;border-radius:10px;box-shadow:0 5px 25px #00000022;font-size:12px;z-index:5;max-width:90%;text-align:center}.hidden{display:none!important}
+@media(min-width:1450px){.workspace{padding-top:36px}}
+@media(max-width:1050px){.layout{grid-template-columns:minmax(0,1fr) 315px}.workspace{padding:25px 22px}.topbar{padding:18px 22px}.stats{gap:10px}.stat{padding:16px}.tabs{gap:14px}}
+@media(max-width:780px){.layout{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr;align-items:start}.explanation{grid-column:1/-1}.intro{align-items:flex-start}h1{font-size:24px}.subtitle{font-size:12px}.header-right .pill{display:none}.calendar{padding:16px}.subjects{padding:16px}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.workspace{padding:21px 14px 35px}.topbar{padding:15px}.brand strong{font-size:18px}.brand small{font-size:9px}.intro{flex-direction:column;gap:12px}.intro .btn{align-self:stretch}.side{display:flex}.stat{padding:14px}.stat-value{font-size:25px}.list-head{padding:18px 15px 0}.filters{padding:13px 15px}.filters select{width:110px}.task-list{padding:0 10px 12px}.tabs{gap:15px}.tab{font-size:12px}.task{padding:14px 12px}.form-body{padding:19px}.form-row{gap:10px}.modal-header,.form-footer{padding:17px 19px}.header-right .btn{padding:8px 10px;font-size:12px}.filter-chip{margin-left:15px;margin-right:15px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Only subject categories carry color; the rest of the interface is neutral. */
+.subject-tag{color:var(--subject-color);background:color-mix(in srgb,var(--subject-color) 11%,var(--panel))}
+.subject-tag .tag-dot{background:var(--subject-color)}
+:root[data-theme="dark"] .subject-tag{color:color-mix(in srgb,var(--subject-color) 65%,#ffffff);background:color-mix(in srgb,var(--subject-color) 16%,var(--panel))}
+.importance-high{background:var(--light);color:var(--ink);box-shadow:inset 0 0 0 1px var(--border)}
+.importance-normal{background:var(--surface);color:var(--secondary)}
+.importance-low{background:var(--surface);color:var(--muted)}
+.due.urgent{text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--strong-border)}
+.rank{padding:3px 0;color:var(--secondary);font-size:11px}
+.rank strong{font-size:12px;color:var(--ink)}
+.task.overdue .due{font-weight:750}
+.theme-toggle{gap:6px}
+.theme-icon{font-size:16px;line-height:1}
+@media(max-width:500px){.header-right{gap:6px}.theme-toggle{padding:8px!important}.theme-toggle .theme-suffix{display:none}.brand small{letter-spacing:0}.brand{gap:8px}.logo{width:34px;height:34px}.brand strong{font-size:17px}}
+@media(max-width:359px){.brand small{display:none}.topbar{padding:12px}.header-right .btn{font-size:11px;padding:7px}.brand{gap:6px}.logo{width:29px;height:29px}}
+
+/* Status overview cards double as the main task filters. */
+.stat{text-align:left;position:relative;min-width:0;transition:background .15s,border-color .15s}
+.stat-label,.stat-value,.stat-note{display:block}
+.stat:hover{background:var(--surface);border-color:var(--border)}
+.stat.active{background:var(--light);border-color:var(--selected-border);box-shadow:inset 0 0 0 1px var(--selected-border)}
+.stat.active .stat-label{color:var(--ink);font-weight:750}
+.stat.active .stat-value{color:var(--ink)}
+.stat-note{line-height:1.5}
+@media(max-width:500px){.stat-note{font-size:10px}.stat-label{font-size:12px}}
+
+
+/* Inputs, native controls, and dialogs all follow the selected neutral theme. */
+html{background:var(--bg);accent-color:var(--primary)}
+dialog{background:var(--panel)}
+input,select,textarea{color-scheme:inherit;caret-color:var(--ink)}
+input::placeholder,textarea::placeholder{color:var(--muted);opacity:1}
+input[type="date"]::-webkit-calendar-picker-indicator{opacity:.65;cursor:pointer}
+input[type="number"]::-webkit-inner-spin-button{opacity:.6}
+select option{background:var(--input-bg);color:var(--ink)}
+.status-select{background:var(--input-bg);border-color:var(--border)}
+.color-field input{background:var(--input-bg)}
+::selection{background:var(--selected-border);color:var(--on-primary)}
+
+</style>
+</head>
+<body>
+<header><div class="topbar"><div class="brand"><span class="logo" aria-hidden="true">✓</span><div><strong>차근차근</strong><small>YOUR ASSIGNMENT PLANNER</small></div></div><div class="header-right"><span class="pill">저장 없는 임시 작업 공간</span><button class="btn small theme-toggle" id="themeToggle" type="button" aria-pressed="false" aria-label="다크 모드로 전환"><span class="theme-icon" aria-hidden="true">◐</span><span><span id="themeLabel">다크</span><span class="theme-suffix"> 모드</span></span></button></div></div></header>
+<main class="workspace">
+<section class="intro"><div><p class="eyebrow" id="todayLabel"></p><h1>할 일은 선명하게, 마음은 가볍게.</h1><p class="subtitle">마감과 중요도를 정리하고, 지금 먼저 할 과제를 찾아보세요.</p><p class="helper">처음 표시되는 과제는 예시입니다. 자유롭게 수정하거나 삭제해 보세요.</p></div><button class="btn primary" id="addTaskBtn">＋ 새 과제</button></section>
+<section class="stats" role="tablist" aria-label="과제 현황">
+<button class="stat active" type="button" role="tab" id="tab-remaining" data-tab="remaining" aria-selected="true" aria-controls="taskList" tabindex="0"><span class="stat-label">남아 있는 과제</span><span class="stat-value" id="statRemaining">0<small>개</small></span><span class="stat-note">시작 전 + 진행 중</span></button>
+<button class="stat" type="button" role="tab" id="tab-todo" data-tab="todo" aria-selected="false" aria-controls="taskList" tabindex="-1"><span class="stat-label">시작 전</span><span class="stat-value" id="statTodo">0<small>개</small></span><span class="stat-note">아직 시작하지 않은 과제</span></button>
+<button class="stat" type="button" role="tab" id="tab-doing" data-tab="doing" aria-selected="false" aria-controls="taskList" tabindex="-1"><span class="stat-label">진행 중</span><span class="stat-value" id="statDoing">0<small>개</small></span><span class="stat-note">차근차근 진행하고 있는 과제</span></button>
+<button class="stat" type="button" role="tab" id="tab-done" data-tab="done" aria-selected="false" aria-controls="taskList" tabindex="-1"><span class="stat-label">완료</span><span class="stat-value" id="statDone">0<small>개</small></span><span class="stat-note">모든 분량을 끝낸 과제</span></button>
+</section>
+<div class="layout">
+<section class="panel">
+<div class="list-head"><div class="section-heading"><h2>나의 과제</h2><span class="tiny">우선순위 높은 순</span></div></div>
+<div class="filters"><input class="control search" type="search" id="searchInput" placeholder="과제명, 과목, 메모 검색" aria-label="과제 검색"><select class="control" id="subjectFilter" aria-label="과목 필터"><option value="">모든 과목</option></select></div>
+<div class="filter-chip hidden" id="dateChip"><span id="dateFilterText"></span><button id="clearDateBtn" aria-label="날짜 필터 해제">해제 ×</button></div>
+<div class="task-list" id="taskList" role="tabpanel" aria-label="과제 목록"></div>
+</section>
+<aside class="side">
+<section class="panel calendar"><div class="calendar-head"><h2>마감 캘린더</h2><button class="btn small" id="calendarToday">오늘</button></div><div class="calendar-head"><button class="nav-btn" id="prevMonth" aria-label="이전 달">‹</button><div class="month-title" id="monthTitle" aria-live="polite"></div><button class="nav-btn" id="nextMonth" aria-label="다음 달">›</button></div><div class="calendar-week" aria-hidden="true"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div><div class="calendar-grid" id="calendarGrid"></div><p class="calendar-help">과목 색상의 점은 마감 과제입니다. 날짜를 누르면 해당 날짜의 과제를 확인할 수 있어요. 완료 과제도 표시됩니다.</p></section>
+<section class="panel subjects"><div class="section-heading"><h2>과목 관리</h2><button class="btn small" id="addSubjectBtn">＋ 추가</button></div><div class="subject-list" id="subjectList"></div></section>
+<details class="panel explanation"><summary>과제는 어떤 순서로 표시되나요?</summary><p><strong>마감이 임박하고 중요한 과제부터</strong><br>마감일까지 남은 날짜와 중요도를 함께 고려해 자동으로 정렬합니다. 숫자 점수 대신 전체 미완료 과제 중 몇 번째로 할 과제인지 순위로 안내합니다.</p><p>우선순위가 같다면 마감이 빠른 순 → 중요도 높은 순 → 먼저 등록한 순으로 표시합니다. 완료 과제는 우선순위에서 제외하고 전체 목록의 맨 아래에 표시합니다.</p><p>남은 분량 = 전체 분량 − 완료 분량<br>진행률 = 완료 분량 ÷ 전체 분량 × 100<br>서로 다른 과제의 분량은 합산하지 않고, 각 과제의 진행률을 개별적으로 표시합니다.</p><p>마감일은 브라우저의 오늘 날짜 기준으로 계산하며, 마감 당일까지는 기한 초과가 아닙니다. 모드 설정을 포함한 모든 변경 사항은 현재 페이지에서만 유지됩니다.</p></details>
+</aside>
+</div>
+<p class="notice">입력한 내용은 현재 페이지에서만 유지됩니다. 새로고침하거나 페이지를 닫으면 모두 사라지며, 외부 서버로 전송하지 않습니다.</p>
+</main>
+<dialog id="taskDialog" aria-labelledby="taskDialogTitle">
+<form id="taskForm">
+<div class="modal-header"><h2 id="taskDialogTitle">새 과제 추가</h2><button type="button" class="close" data-close="taskDialog" aria-label="닫기">×</button></div>
+<div class="form-body">
+<div class="form-row"><div><label for="taskSubject">과목 <span class="required">*</span></label><select class="control" id="taskSubject" required></select><p class="helper">과목은 오른쪽 과목 관리에서 추가할 수 있어요.</p></div><div><label for="taskImportance">중요도 <span class="required">*</span></label><select class="control" id="taskImportance"><option value="high">높음</option><option value="normal" selected>보통</option><option value="low">낮음</option></select></div></div>
+<div><label for="taskName">과제명 <span class="required">*</span></label><input class="control" id="taskName" placeholder="예: 3장 연습문제 풀기" maxlength="120" required></div>
+<div class="form-row"><div><label for="taskDue">마감일 <span class="required">*</span></label><input class="control" id="taskDue" type="date" min="0001-01-01" max="9999-12-31" required></div><div><label for="taskStatus">진행 상태</label><select class="control" id="taskStatus"><option value="todo">시작 전</option><option value="doing">진행 중</option><option value="done">완료</option></select></div></div>
+<div class="form-row"><div><label for="taskTotal">전체 분량 <span class="required">*</span></label><input class="control" id="taskTotal" type="number" min="0.01" max="1000000000" step="0.01" value="10" required></div><div><label for="taskCompleted">완료한 분량 <span class="required">*</span></label><input class="control" id="taskCompleted" type="number" min="0" max="10" step="0.01" value="0" required></div></div>
+<div class="form-preview"><span id="previewRemaining">남은 분량 10</span><strong id="previewProgress">진행률 0%</strong></div>
+<p class="helper" style="margin-top:-9px">분량 단위는 페이지·문항·단계 등 과제마다 자유롭게 정하세요. 소수점 둘째 자리까지 입력할 수 있습니다. 분량 변경 시 상태가 자동 반영됩니다.</p>
+<div><label for="taskMemo">과제 메모</label><textarea class="control" id="taskMemo" maxlength="3000" placeholder="제출 방법, 준비물, 다음에 할 일을 적어두세요."></textarea></div>
+<p class="form-error hidden" id="taskError" role="alert"></p>
+</div><div class="form-footer"><button type="button" class="btn" data-close="taskDialog">취소</button><button type="submit" class="btn primary" id="taskSubmit">추가하기</button></div>
+</form></dialog>
+<dialog id="subjectDialog" aria-labelledby="subjectDialogTitle">
+<form id="subjectForm"><div class="modal-header"><h2 id="subjectDialogTitle">과목 추가</h2><button class="close" type="button" data-close="subjectDialog" aria-label="닫기">×</button></div><div class="form-body"><div><label for="subjectName">과목명 <span class="required">*</span></label><input id="subjectName" class="control" maxlength="40" placeholder="예: 수학" required></div><div><label for="subjectColor">태그 색상</label><div class="color-field"><input id="subjectColor" type="color" value="#635bdb"><span class="helper">과제 태그와 캘린더에 함께 표시됩니다.</span></div></div><p class="form-error hidden" id="subjectError" role="alert"></p></div><div class="form-footer"><button class="btn" type="button" data-close="subjectDialog">취소</button><button class="btn primary" type="submit" id="subjectSubmit">추가하기</button></div></form>
+</dialog>
+<div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+<script>
+"use strict";
+// 모든 데이터는 메모리에만 존재합니다. 저장소, 네트워크, 외부 라이브러리는 사용하지 않습니다.
+const $ = id => document.getElementById(id);
+const esc = value => String(value).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const palette = ["#635bdb","#219a86","#db8b39","#c86f97","#4f8dc7","#96814c"];
+let subjects = [{id:"none",name:"미분류",color:"#8591a6"}];
+let tasks = [], serial = 0, activeTab = "remaining", selectedDate = "", editingTask = null, editingSubject = null, toastTimer;
+const nextId = prefix => prefix + (++serial);
+const today = () => dateKey(new Date());
+function dateKey(d){return `${String(d.getFullYear()).padStart(4,"0")}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;}
+function fromKey(key){const [y,m,d]=key.split("-").map(Number);const date=new Date(0);date.setFullYear(y,m-1,d);date.setHours(12,0,0,0);return date;}
+function dayStamp(key){const [y,m,d]=key.split("-").map(Number);const date=new Date(0);date.setUTCFullYear(y,m-1,d);date.setUTCHours(0,0,0,0);return date.getTime();}
+function daysLeft(key){return Math.round((dayStamp(key)-dayStamp(today()))/86400000);}
+const fmt = n => Number(n.toFixed(2)).toLocaleString("ko-KR",{maximumFractionDigits:2});
+const percent = task => task.completed/task.total*100;
+const subjectOf = id => subjects.find(s=>s.id===id)||subjects[0];
+const importanceNames = {high:"높음",normal:"보통",low:"낮음"};
+const importancePoints = {high:30,normal:20,low:10};
+function urgency(t){const d=daysLeft(t.due);return d<0?100:d===0?90:d===1?80:d<=3?65:d<=7?45:d<=14?25:10;}
+function score(t){return t.status==="done"?0:urgency(t)+importancePoints[t.importance];}
+function compareTasks(a,b){return Number(a.status==="done")-Number(b.status==="done")||score(b)-score(a)||a.due.localeCompare(b.due)||importancePoints[b.importance]-importancePoints[a.importance]||a.order-b.order;}
+function dueLabel(t){if(t.status==="done")return "완료";const d=daysLeft(t.due);return d<0?`기한 초과 · D+${-d}`:d===0?"오늘 마감 · D-Day":`D-${d}`;}
+let viewDate = new Date();
+function toast(message){clearTimeout(toastTimer);$("toast").textContent=message;$("toast").classList.remove("hidden");toastTimer=setTimeout(()=>$("toast").classList.add("hidden"),2600);}
+function render(){
+  const now=new Date();
+  $("todayLabel").textContent=now.toLocaleDateString("ko-KR",{year:"numeric",month:"long",day:"numeric",weekday:"long"});
+  renderStats();renderSubjects();renderTasks();renderCalendar();
+}
+function renderStats(){
+  const counts={todo:0,doing:0,done:0};
+  tasks.forEach(task=>counts[task.status]++);
+  $("statRemaining").innerHTML=`${counts.todo+counts.doing}<small>개</small>`;
+  $("statTodo").innerHTML=`${counts.todo}<small>개</small>`;
+  $("statDoing").innerHTML=`${counts.doing}<small>개</small>`;
+  $("statDone").innerHTML=`${counts.done}<small>개</small>`;
+}
+function renderSubjects(){
+  const current=$("subjectFilter").value;
+  $("subjectFilter").innerHTML='<option value="">모든 과목</option>'+subjects.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("");
+  $("subjectFilter").value=subjects.some(s=>s.id===current)?current:"";
+  $("subjectList").innerHTML=subjects.map(s=>`<div class="subject-row"><span class="subject-color" style="background:${s.color}"></span><span class="subject-name">${esc(s.name)}</span><span class="subject-count">${tasks.filter(t=>t.subject===s.id).length}개</span>${s.id==="none"?'<span class="tiny" style="padding:0 7px">기본</span>':`<div class="subject-actions"><button class="icon-btn" data-subject-edit="${s.id}" aria-label="${esc(s.name)} 과목 수정">수정</button><button class="icon-btn delete" data-subject-delete="${s.id}" aria-label="${esc(s.name)} 과목 삭제">삭제</button></div>`}</div>`).join("");
+}
+function renderTasks(){
+  document.querySelectorAll("[data-tab]").forEach(b=>{const active=b.dataset.tab===activeTab;b.classList.toggle("active",active);b.setAttribute("aria-selected",String(active));b.tabIndex=active?0:-1;});
+  $("taskList").setAttribute("aria-labelledby","tab-"+activeTab);
+  const ranks=new Map(tasks.filter(t=>t.status!=="done").sort(compareTasks).map((t,i)=>[t.id,i+1]));
+  const query=$("searchInput").value.trim().toLocaleLowerCase();
+  const subject=$("subjectFilter").value;
+  let list=tasks.filter(t=>(activeTab==="remaining"?t.status!=="done":t.status===activeTab)&&(!subject||t.subject===subject)&&(!selectedDate||t.due===selectedDate)&&(!query||[t.name,t.memo,subjectOf(t.subject).name].some(s=>s.toLocaleLowerCase().includes(query)))).sort(compareTasks);
+  $("dateChip").classList.toggle("hidden",!selectedDate);
+  $("dateFilterText").textContent=selectedDate?`${selectedDate} 마감 과제 · ${list.length}개`:"";
+  if(!list.length){
+    const filtered=tasks.length>0;
+    $("taskList").innerHTML=`<div class="empty"><div class="empty-symbol" aria-hidden="true">✓</div><h3>${filtered?"이 조건에 맞는 과제가 없어요":"차근차근, 첫 과제부터 시작해요"}</h3><p>${filtered?"다른 탭을 선택하거나 날짜·검색·과목 필터를 바꿔보세요.":"과목과 마감일을 입력하면 할 일의 순서를 정리해 드려요."}</p><button class="btn ${filtered?"":"primary"}" id="emptyAction">${filtered?"남아 있는 과제 보기":"＋ 첫 과제 추가"}</button></div>`;
+    $("emptyAction").onclick=()=>{if(filtered){activeTab="remaining";selectedDate="";$("searchInput").value="";$("subjectFilter").value="";renderTasks();renderCalendar();}else openTask();};
+    return;
+  }
+  $("taskList").innerHTML=list.map(t=>{
+    const s=subjectOf(t.subject),done=t.status==="done",p=percent(t),d=daysLeft(t.due);
+    return `<article class="task ${done?"completed":d<0?"overdue":""}" aria-label="${esc(t.name)}">
+    <div class="task-top"><div class="tags"><span class="tag subject-tag" style="--subject-color:${s.color}"><span class="tag-dot"></span>${esc(s.name)}</span><span class="tag importance-${t.importance}">중요도 ${importanceNames[t.importance]}</span></div><div class="rank" title="${done?"완료 과제는 우선순위에서 제외":`전체 미완료 과제 중 ${ranks.get(t.id)}순위`}">${done?"완료됨":`<strong>${ranks.get(t.id)}순위</strong>`}</div></div>
+    <h3 class="task-title">${esc(t.name)}</h3>${t.memo?`<p class="task-note">${esc(t.memo)}</p>`:""}
+    <div class="task-meta"><span class="due ${!done&&d<=3?"urgent":""}">${esc(t.due)} · ${dueLabel(t)}</span><span>남은 분량 <strong>${fmt(Math.max(0,t.total-t.completed))}</strong> / ${fmt(t.total)} · ${fmt(p)}%</span></div>
+    <div class="progress" role="progressbar" aria-label="과제 진행률" aria-valuenow="${p.toFixed(2)}" aria-valuemin="0" aria-valuemax="100"><span style="width:${p}%"></span></div>
+    <div class="task-bottom"><select class="status-select" data-task-status="${t.id}" aria-label="${esc(t.name)} 진행 상태">${[["todo","시작 전"],["doing","진행 중"],["done","완료"]].map(([v,n])=>`<option value="${v}" ${v===t.status?"selected":""}>${n}</option>`).join("")}</select><div class="task-actions">${!done?`<button class="icon-btn" data-task-complete="${t.id}">✓ 완료</button>`:""}<button class="icon-btn" data-task-edit="${t.id}">수정</button><button class="icon-btn delete" data-task-delete="${t.id}">삭제</button></div></div></article>`;
+  }).join("");
+}
+function renderCalendar(){
+  const y=viewDate.getFullYear(),m=viewDate.getMonth();
+  $("monthTitle").textContent=`${y}년 ${m+1}월`;
+  const first=new Date(viewDate);first.setDate(1);first.setHours(12,0,0,0);
+  const start=new Date(first);start.setDate(1-first.getDay());
+  const byDate=new Map();
+  for(const t of [...tasks].sort(compareTasks)){if(!byDate.has(t.due))byDate.set(t.due,[]);byDate.get(t.due).push(t);}
+  let result="";
+  for(let i=0;i<42;i++){
+    const date=new Date(start);date.setDate(start.getDate()+i);
+    const key=dateKey(date),items=byDate.get(key)||[],outside=date.getMonth()!==m;
+    const label=`${key}, ${items.length}개 과제${items.length?": "+items.map(t=>t.name).join(", "):""}`;
+    result+=`<button class="day ${outside?"outside":""} ${key===today()?"today":""} ${key===selectedDate?"selected":""}" data-date="${key}" aria-label="${esc(label)}" aria-pressed="${key===selectedDate}" ${key===today()?'aria-current="date"':""} title="${esc(label)}"><span class="day-number">${date.getDate()}</span><span class="dots">${items.slice(0,3).map(t=>`<span class="dot" style="background:${subjectOf(t.subject).color};opacity:${t.status==="done"?".35":"1"}"></span>`).join("")}${items.length>3?`<span class="day-count">+${items.length-3}</span>`:""}</span></button>`;
+  }
+  $("calendarGrid").innerHTML=result;
+}
+function openTask(id=null){
+  const t=id?tasks.find(t=>t.id===id):null;editingTask=t?t.id:null;
+  $("taskForm").reset();$("taskError").classList.add("hidden");
+  $("taskDialogTitle").textContent=t?"과제 수정":"새 과제 추가";$("taskSubmit").textContent=t?"수정 적용":"추가하기";
+  $("taskSubject").innerHTML=subjects.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("");
+  $("taskSubject").value=t?t.subject:($("subjectFilter").value||subjects.find(s=>s.id!=="none")?.id||"none");
+  $("taskName").value=t?t.name:"";$("taskDue").value=t?t.due:(selectedDate||today());
+  $("taskImportance").value=t?t.importance:"normal";$("taskTotal").value=t?t.total:10;$("taskCompleted").value=t?t.completed:0;
+  $("taskStatus").value=t?t.status:"todo";$("taskMemo").value=t?t.memo:"";
+  updatePreview();$("taskDialog").showModal();$("taskName").focus();
+}
+function updatePreview(){
+  const total=Number($("taskTotal").value),completed=Number($("taskCompleted").value);
+  $("taskCompleted").max=Number.isFinite(total)&&total>0?String(total):"1000000000";
+  const valid=Number.isFinite(total)&&Number.isFinite(completed)&&total>0&&completed>=0&&completed<=total;
+  $("previewRemaining").textContent=valid?`남은 분량 ${fmt(total-completed)}`:"분량을 확인해 주세요";
+  $("previewProgress").textContent=valid?`진행률 ${fmt(completed/total*100)}%`:"—";
+}
+function syncStatusFromAmounts(){
+  const total=Number($("taskTotal").value),completed=Number($("taskCompleted").value);
+  if(total>0&&completed>=0&&completed<=total){
+    $("taskStatus").value=completed>=total?"done":completed>0?"doing":($("taskStatus").value==="doing"?"doing":"todo");
+  }
+  updatePreview();
+}
+$("taskTotal").addEventListener("input",syncStatusFromAmounts);
+$("taskCompleted").addEventListener("input",syncStatusFromAmounts);
+$("taskStatus").addEventListener("change",()=>{
+  const status=$("taskStatus").value,total=Number($("taskTotal").value),done=Number($("taskCompleted").value);
+  if(status==="done"&&total>0)$("taskCompleted").value=total;
+  else if(status==="todo")$("taskCompleted").value=0;
+  else if(status==="doing"&&done>=total)$("taskCompleted").value=0;
+  updatePreview();
+});
+$("taskForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  const name=$("taskName").value.trim(),total=Number($("taskTotal").value),completed=Number($("taskCompleted").value),due=$("taskDue").value;
+  const fail=msg=>{$("taskError").textContent=msg;$("taskError").classList.remove("hidden");};
+  if(!name)return fail("과제명을 입력해 주세요. 공백만으로는 등록할 수 없습니다.");
+  if(!Number.isFinite(total)||total<=0||total>1e9||!Number.isFinite(completed)||completed<0||completed>total)return fail("전체 분량은 0보다 커야 하며, 완료 분량은 0 이상 전체 분량 이하여야 합니다.");
+  if(!due||!Number.isFinite(dayStamp(due)))return fail("올바른 마감일을 입력해 주세요.");
+  let status=$("taskStatus").value;
+  if(completed>=total)status="done";else if(completed>0)status="doing";else if(status==="done")status="todo";
+  const old=tasks.find(t=>t.id===editingTask);
+  const task={id:old?old.id:nextId("t"),order:old?old.order:serial,name,subject:$("taskSubject").value,due,importance:$("taskImportance").value,total,completed,status,memo:$("taskMemo").value.trim()};
+  if(old)tasks[tasks.indexOf(old)]=task;else tasks.push(task);
+  $("taskDialog").close();render();toast(old?"과제를 수정했어요.":"새 과제를 추가했어요.");
+});
+function openSubject(id=null){
+  const s=id?subjects.find(s=>s.id===id):null;if(s?.id==="none")return;
+  editingSubject=s?s.id:null;$("subjectForm").reset();$("subjectError").classList.add("hidden");
+  $("subjectDialogTitle").textContent=s?"과목 수정":"과목 추가";$("subjectSubmit").textContent=s?"수정 적용":"추가하기";
+  $("subjectName").value=s?s.name:"";$("subjectColor").value=s?s.color:palette[(subjects.length-1)%palette.length];
+  $("subjectDialog").showModal();$("subjectName").focus();
+}
+$("subjectForm").addEventListener("submit",event=>{
+  event.preventDefault();const name=$("subjectName").value.trim();
+  const fail=msg=>{$("subjectError").textContent=msg;$("subjectError").classList.remove("hidden");};
+  if(!name)return fail("과목명을 입력해 주세요.");
+  if(subjects.some(s=>s.id!==editingSubject&&s.name.toLocaleLowerCase()===name.toLocaleLowerCase()))return fail("같은 이름의 과목이 이미 있어요.");
+  if(editingSubject){const s=subjects.find(s=>s.id===editingSubject);s.name=name;s.color=$("subjectColor").value;}
+  else subjects.push({id:nextId("s"),name,color:$("subjectColor").value});
+  $("subjectDialog").close();render();toast(editingSubject?"과목을 수정했어요.":"새 과목을 추가했어요.");
+});
+function deleteSubject(id){
+  if(id==="none")return;const s=subjects.find(s=>s.id===id),count=tasks.filter(t=>t.subject===id).length;
+  if(!s||!confirm(`‘${s.name}’ 과목을 삭제할까요?\n${count?`이 과목의 과제 ${count}개는 삭제되지 않고 ‘미분류’로 이동합니다.`:"등록된 과제는 없습니다."}`))return;
+  tasks.forEach(t=>{if(t.subject===id)t.subject="none";});subjects=subjects.filter(s=>s.id!==id);render();toast("과목을 삭제했어요.");
+}
+function changeStatus(id,status){
+  const t=tasks.find(t=>t.id===id);if(!t)return;
+  t.status=status;
+  if(status==="done")t.completed=t.total;
+  else if(status==="todo")t.completed=0;
+  else if(t.completed>=t.total)t.completed=0;
+  render();toast(status==="done"?"과제를 완료했어요. 수고했어요!":status==="todo"?"시작 전으로 바꾸고 완료 분량을 0으로 조정했어요.":"진행 중으로 변경했어요.");
+}
+$("taskList").addEventListener("click",event=>{
+  const btn=event.target.closest("button");if(!btn)return;
+  if(btn.dataset.taskEdit)openTask(btn.dataset.taskEdit);
+  else if(btn.dataset.taskComplete)changeStatus(btn.dataset.taskComplete,"done");
+  else if(btn.dataset.taskDelete){const t=tasks.find(t=>t.id===btn.dataset.taskDelete);if(t&&confirm(`‘${t.name}’ 과제를 삭제할까요?`)){tasks=tasks.filter(x=>x.id!==t.id);render();toast("과제를 삭제했어요.");}}
+});
+$("taskList").addEventListener("change",event=>{if(event.target.dataset.taskStatus)changeStatus(event.target.dataset.taskStatus,event.target.value);});
+$("subjectList").addEventListener("click",event=>{const b=event.target.closest("button");if(!b)return;if(b.dataset.subjectEdit)openSubject(b.dataset.subjectEdit);if(b.dataset.subjectDelete)deleteSubject(b.dataset.subjectDelete);});
+const statusTabs=[...document.querySelectorAll("[data-tab]")];
+statusTabs.forEach((btn,index)=>{
+  btn.addEventListener("click",()=>{activeTab=btn.dataset.tab;renderTasks();});
+  btn.addEventListener("keydown",event=>{
+    let next;
+    if(event.key==="ArrowRight"||event.key==="ArrowDown")next=(index+1)%statusTabs.length;
+    else if(event.key==="ArrowLeft"||event.key==="ArrowUp")next=(index-1+statusTabs.length)%statusTabs.length;
+    else if(event.key==="Home")next=0;
+    else if(event.key==="End")next=statusTabs.length-1;
+    else return;
+    event.preventDefault();statusTabs[next].click();statusTabs[next].focus();
+  });
+});
+document.querySelectorAll("[data-close]").forEach(btn=>btn.addEventListener("click",()=>$(btn.dataset.close).close()));
+$("addTaskBtn").onclick=()=>openTask();$("addSubjectBtn").onclick=()=>openSubject();
+$("searchInput").addEventListener("input",renderTasks);$("subjectFilter").addEventListener("change",renderTasks);
+$("clearDateBtn").onclick=()=>{selectedDate="";renderTasks();renderCalendar();};
+$("calendarGrid").addEventListener("click",event=>{const btn=event.target.closest("[data-date]");if(!btn)return;selectedDate=selectedDate===btn.dataset.date?"":btn.dataset.date;renderTasks();renderCalendar();});
+function moveMonth(n){viewDate.setDate(1);viewDate.setMonth(viewDate.getMonth()+n);renderCalendar();}
+$("prevMonth").onclick=()=>moveMonth(-1);$("nextMonth").onclick=()=>moveMonth(1);
+$("calendarToday").onclick=()=>{viewDate=new Date();selectedDate="";renderCalendar();renderTasks();};
+// 처음 방문할 때도 예시를 생성합니다. 마감일은 실행 당일을 기준으로 설정합니다.
+function addExampleTasks(){
+  const specs=[["수학","#635bdb"],["문학","#219a86"],["과학","#db8b39"]];
+  const ids=specs.map(([name,color])=>{let s=subjects.find(s=>s.name===name);if(!s){s={id:nextId("s"),name,color};subjects.push(s);}return s.id;});
+  const relative=n=>{const d=new Date();d.setDate(d.getDate()+n);return dateKey(d);};
+  const examples=[
+    {name:"미적분 연습문제 풀기",subject:ids[0],offset:1,importance:"high",total:20,completed:8,status:"doing",memo:"틀린 문제는 풀이 과정을 한 번 더 정리하기."},
+    {name:"독서 감상문 초안 작성",subject:ids[1],offset:3,importance:"normal",total:4,completed:0,status:"todo",memo:"인상 깊었던 문장과 내 생각을 중심으로 작성."},
+    {name:"실험 보고서 제출",subject:ids[2],offset:-1,importance:"high",total:5,completed:3,status:"doing",memo:"실험 결과 표와 결론 보완. 제출 가능 여부 확인."},
+    {name:"함수 개념 정리",subject:ids[0],offset:8,importance:"low",total:10,completed:0,status:"todo",memo:""},
+    {name:"시 분석 활동지",subject:ids[1],offset:-2,importance:"normal",total:3,completed:3,status:"done",memo:""}
+  ];
+  examples.forEach(({offset,...t})=>{const id=nextId("t");tasks.push({...t,id,order:serial,due:relative(offset)});});
+}
+// 날짜가 바뀌거나 백그라운드에서 돌아오면 긴급도와 D-Day를 다시 계산합니다.
+let lastDay=today();
+function checkDay(){if(today()!==lastDay){lastDay=today();render();}}
+setInterval(checkDay,30000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkDay();});
+
+function updateThemeButton(){
+  const dark=document.documentElement.dataset.theme==="dark";
+  $("themeLabel").textContent=dark?"라이트":"다크";
+  $("themeToggle").setAttribute("aria-pressed",String(dark));
+  $("themeToggle").setAttribute("aria-label",dark?"라이트 모드로 전환":"다크 모드로 전환");
+  $("themeToggle").title=dark?"라이트 모드로 전환":"다크 모드로 전환";
+}
+$("themeToggle").addEventListener("click",()=>{
+  document.documentElement.dataset.theme=document.documentElement.dataset.theme==="dark"?"light":"dark";
+  updateThemeButton();
+});
+updateThemeButton();
+
+addExampleTasks();
+render();
+</script>
+</body>
+</html>

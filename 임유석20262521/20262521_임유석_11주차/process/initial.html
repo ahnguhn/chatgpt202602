@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>과제 한눈에 | 임유석</title>
+<style>
+:root{--ink:#182538;--muted:#66758b;--line:#dfe5ef;--blue:#365edc;--bg:#f3f6fb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,"Malgun Gothic",sans-serif;font-size:15px}
+main{max-width:1000px;margin:44px auto;padding:0 24px}header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:26px}
+.eyebrow{font-size:12px;color:var(--blue);font-weight:bold;letter-spacing:2px}h1{font-size:32px;margin:8px 0}header p{color:var(--muted);margin:0;line-height:1.6}.author{font-size:13px;color:var(--muted);white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}.stat,.panel{background:white;border:1px solid var(--line);border-radius:12px}.stat{padding:20px}.stat span{color:var(--muted);font-size:13px}.stat strong{display:block;font-size:28px;margin-top:10px}
+.layout{display:grid;grid-template-columns:310px 1fr;gap:20px;align-items:start}.panel{padding:24px}h2{font-size:18px;margin:0 0 20px}label{display:block;font-size:13px;font-weight:bold;margin-bottom:8px}.field{margin-bottom:18px}
+input,select,button{font:inherit}input,select{width:100%;border:1px solid #cbd4e2;border-radius:7px;padding:11px;background:white;color:var(--ink)}input:focus,select:focus{outline:2px solid #9aaff8;outline-offset:1px}
+button{cursor:pointer;border:1px solid var(--line);border-radius:7px;padding:10px 14px;background:white;color:var(--ink)}button:hover{background:#eef2fb}button:focus-visible{outline:3px solid #9aaff8;outline-offset:2px}
+.primary{background:var(--blue);border-color:var(--blue);color:white;width:100%;font-weight:bold}.primary:hover{background:#274cc2}.hint{font-size:12px;line-height:1.7;color:var(--muted)}.error{color:#b22235;font-size:13px;line-height:1.6;min-height:21px;margin:10px 0 0}
+.list-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:16px}.list-head h2{margin:0}.small{font-size:12px;padding:7px 10px}.filters{display:flex;gap:7px;margin-bottom:18px}.filters button{font-size:13px;flex:1;padding:9px}.filters .active{color:var(--blue);background:#eef2ff;border-color:#adbefb}
+ul{padding:0;margin:0;list-style:none}.task{padding:16px 0;border-top:1px solid var(--line);display:flex;align-items:center;gap:12px}.toggle{width:23px;height:23px;padding:0;flex-shrink:0;border-color:#a5b3c7;border-radius:50%;color:white}.done .toggle{background:var(--blue);border-color:var(--blue)}.task-info{min-width:0;flex:1}.task-title{font-weight:bold;line-height:1.6;overflow-wrap:anywhere}.done .task-title{text-decoration:line-through;color:#8490a1}.meta{font-size:12px;color:var(--muted);margin-top:6px;display:flex;gap:8px;align-items:center}.badge{font-size:11px;background:#edf1f7;padding:3px 6px;border-radius:4px}.high{background:#fff0e9;color:#a74216}.delete{font-size:12px;color:#7a4652;padding:6px 8px}
+.empty{text-align:center;color:var(--muted);padding:44px 8px;line-height:1.8;font-size:14px}.notice{margin-top:18px;font-size:12px;color:var(--muted);line-height:1.7}.status{font-size:12px;color:var(--blue);min-height:20px;margin:12px 0 0}
+@media(max-width:720px){main{margin:24px auto;padding:0 16px}header{align-items:start;flex-direction:column;gap:10px}h1{font-size:28px}.layout{grid-template-columns:1fr}.stats{gap:8px}.stat{padding:15px 10px}.stat strong{font-size:24px}.stat span{font-size:12px}.panel{padding:20px}}
+</style>
+</head>
+<body>
+<main>
+<header><div><div class="eyebrow">STUDENT TASK PLANNER</div><h1>과제 한눈에</h1><p>해야 할 일을 정리하고, 하나씩 완료해 보세요.</p></div><div class="author">20262521 · 임유석</div></header>
+<section class="stats" aria-label="과제 현황">
+<div class="stat"><span>전체 과제</span><strong id="total">0개</strong></div>
+<div class="stat"><span>완료율</span><strong id="rate">0%</strong></div>
+<div class="stat"><span>남은 예상 시간</span><strong id="remaining">0분</strong></div>
+</section>
+<div class="layout">
+<section class="panel"><h2>새 과제 추가</h2>
+<form id="task-form" novalidate>
+<div class="field"><label for="title">과제 이름</label><input id="title" maxlength="50" placeholder="예: 교양 수업 보고서" autocomplete="off"><div class="hint">공백을 제외한 1~50자</div></div>
+<div class="field"><label for="minutes">예상 소요 시간 (분)</label><input id="minutes" type="number" min="1" max="600" step="1" placeholder="예: 60" inputmode="numeric"><div class="hint">1~600 사이의 정수</div></div>
+<div class="field"><label for="priority">중요도</label><select id="priority"><option value="normal">보통</option><option value="high">높음</option></select></div>
+<button class="primary" type="submit">과제 추가하기</button><p id="error" class="error" role="alert"></p>
+</form><p class="notice">사용 방법: 과제를 추가한 뒤 동그라미를 눌러 완료 상태를 바꾸세요. 데이터는 현재 화면에서만 유지되며 새로고침하면 사라집니다.</p>
+</section>
+<section class="panel"><div class="list-head"><h2>나의 과제</h2><button id="reset" class="small" type="button">전체 초기화</button></div>
+<div class="filters" role="group" aria-label="과제 상태 필터"><button type="button" data-filter="all" class="active" aria-pressed="true">전체</button><button type="button" data-filter="todo" aria-pressed="false">진행 중</button><button type="button" data-filter="done" aria-pressed="false">완료</button></div>
+<ul id="tasks" aria-label="과제 목록"></ul><div id="empty" class="empty">아직 등록한 과제가 없어요.<br>왼쪽 입력란에서 첫 과제를 추가해 주세요.</div>
+<p class="hint">중요도가 높은 과제가 먼저 표시됩니다.<br>현황 수치는 필터와 관계없이 전체 과제를 기준으로 계산합니다.</p><p id="status" class="status" role="status"></p>
+</section>
+</div>
+<p class="notice">11주차 바이브코딩 · 자유주제 웹 응용 프로그램 / 외부 라이브러리 및 저장 기능 미사용</p>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+let tasks = [];
+let nextId = 1;
+let filter = "all";
+function render(){
+  const complete = tasks.filter(t=>t.done).length;
+  $("total").textContent = tasks.length + "개";
+  $("rate").textContent = (tasks.length ? Math.round(complete/tasks.length*100) : 0) + "%";
+  $("remaining").textContent = tasks.filter(t=>!t.done).reduce((sum,t)=>sum+t.minutes,0) + "분";
+  $("tasks").replaceChildren();
+  const visible=tasks.filter(t=>filter==="all" || (filter==="done" ? t.done : !t.done))
+    .sort((a,b)=>Number(b.priority==="high")-Number(a.priority==="high") || a.id-b.id);
+  $("empty").hidden=visible.length>0;
+  if(!visible.length){
+    $("empty").textContent = tasks.length ? "선택한 상태의 과제가 없습니다." : "아직 등록한 과제가 없어요. 새 과제를 추가해 주세요.";
+  }
+  visible.forEach(t=>{
+    const row=document.createElement("li"); row.className="task"+(t.done?" done":"");
+    const toggle=document.createElement("button"); toggle.type="button";toggle.className="toggle";toggle.textContent=t.done?"✓":"";
+    toggle.setAttribute("aria-label",t.title+(t.done?" 완료 취소":" 완료하기"));toggle.setAttribute("aria-pressed",String(t.done));
+    toggle.onclick=()=>{t.done=!t.done;render();$("status").textContent=t.done?"완료로 변경했습니다.":"진행 중으로 변경했습니다.";};
+    const info=document.createElement("div");info.className="task-info";
+    const title=document.createElement("div");title.className="task-title";title.textContent=t.title;
+    const meta=document.createElement("div");meta.className="meta";
+    const badge=document.createElement("span");badge.className="badge"+(t.priority==="high"?" high":"");badge.textContent=t.priority==="high"?"중요도 높음":"보통";
+    const time=document.createElement("span");time.textContent=t.minutes+"분";
+    meta.append(badge,time);info.append(title,meta);
+    const del=document.createElement("button");del.type="button";del.className="delete";del.textContent="삭제";del.setAttribute("aria-label",t.title+" 삭제");
+    del.onclick=()=>{tasks=tasks.filter(x=>x.id!==t.id);render();$("status").textContent="과제를 삭제했습니다.";};
+    row.append(toggle,info,del);$("tasks").append(row);
+  });
+}
+$("task-form").addEventListener("submit",event=>{
+  event.preventDefault();$("error").textContent="";$("status").textContent="";
+  const title=$("title").value.trim();
+  const raw=$("minutes").value.trim();const minutes=Number(raw);
+  if(!title || title.length>50){$("error").textContent="과제 이름을 1~50자로 입력해 주세요.";$("title").focus();return;}
+  if(!raw || minutes<1 || minutes>600){$("error").textContent="예상 시간은 1~600 사이의 정수로 입력해 주세요.";$("minutes").focus();return;}
+  tasks.push({id:nextId++,title,minutes,priority:$("priority").value,done:false});
+  $("task-form").reset();render();$("status").textContent="새 과제를 추가했습니다.";$("title").focus();
+});
+document.querySelectorAll("[data-filter]").forEach(button=>button.onclick=()=>{
+  filter=button.dataset.filter;
+  document.querySelectorAll("[data-filter]").forEach(b=>{b.classList.toggle("active",b===button);b.setAttribute("aria-pressed",String(b===button));});
+  $("status").textContent="";render();
+});
+$("reset").onclick=()=>{
+  if(!tasks.length){$("status").textContent="초기화할 과제가 없습니다.";return;}
+  if(!window.confirm("등록한 과제를 모두 삭제할까요?"))return;
+  tasks=[];nextId=1;filter="all";$("task-form").reset();$("error").textContent="";
+  document.querySelectorAll("[data-filter]").forEach(b=>{b.classList.toggle("active",b.dataset.filter==="all");b.setAttribute("aria-pressed",String(b.dataset.filter==="all"));});
+  render();$("status").textContent="모든 과제를 초기화했습니다.";
+};
+render();
+</script>
+</body></html>

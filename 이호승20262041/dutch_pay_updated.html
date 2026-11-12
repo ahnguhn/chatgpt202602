@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>메뉴별 더치페이 계산기</title>
+<style>
+:root{color-scheme:light;--bg:#f4f6fb;--text:#20283b;--muted:#68738b;--line:#dfe5ef;--primary:#4f46e5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Malgun Gothic",sans-serif;line-height:1.6}
+main{width:min(100% - 40px,1000px);margin:auto;padding:36px 0 60px}h1,h2,h3,p{margin-top:0}h1{margin-bottom:12px;font-size:clamp(26px,5vw,36px)}h2{margin:0;font-size:20px}h3{margin:0;font-size:16px}
+.card{margin-bottom:20px;padding:24px;border:1px solid var(--line);border-radius:16px;background:#fff}.heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.muted{color:var(--muted)}.small{font-size:13px}.warning{color:#9a5700}.guide{margin:0;padding-left:22px;color:var(--muted)}.guide li+li{margin-top:5px}
+button,input{font:inherit}button{min-height:44px;padding:9px 15px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--text);cursor:pointer}button:hover{background:#f0f2f8}button.primary{border-color:var(--primary);background:var(--primary);color:#fff}button.primary:hover{background:#4338ca}button.danger{color:#bd3040}button:disabled{opacity:.45;cursor:not-allowed}
+input:not([type=checkbox]){width:100%;min-width:0;min-height:44px;padding:10px 12px;border:1px solid #c7d0df;border-radius:9px;background:#fff;color:var(--text)}
+:focus-visible{outline:3px solid #a5b4fc;outline-offset:3px}input[type=checkbox]{width:18px;height:18px;margin:0;flex-shrink:0;accent-color:var(--primary)}
+.person-form{display:grid;grid-template-columns:1fr auto;gap:10px}.input-label{display:block;margin-bottom:6px;color:var(--muted);font-size:14px}
+.person-list,.checks{display:flex;flex-wrap:wrap;gap:10px}.person-list{margin-top:16px}.person-chip{display:inline-flex;align-items:center;gap:8px;max-width:100%;padding:5px 7px 5px 13px;border-radius:9px;background:#eeedff;overflow-wrap:anywhere}.person-chip button{min-width:36px;min-height:36px;padding:2px 8px;border:0;background:transparent;color:#bd3040}
+.empty{margin:0;padding:16px 0;color:var(--muted);text-align:center}.menu-row,.assignment{padding:18px;border:1px solid var(--line);border-radius:12px}.menu-row+.menu-row,.assignment+.assignment{margin-top:14px}
+.menu-fields{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1.3fr);gap:12px}.menu-row .heading,.assignment .heading{margin-bottom:12px}.menu-subtotal{margin:12px 0 0;color:var(--muted);font-size:14px}.assignment h3{overflow-wrap:anywhere}
+.check-label{display:inline-flex;align-items:center;gap:8px;max-width:100%;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;cursor:pointer;overflow-wrap:anywhere}.check-label:has(input:checked){border-color:#aaa5ff;background:#f0efff}
+#calculateButton{width:100%;min-height:54px;font-size:18px;font-weight:700}#actionMessage{margin:12px 0 0}#resultPlaceholder{margin:0}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.stat{padding:16px;border-radius:10px;background:#f5f6fc}.stat span{display:block;color:var(--muted);font-size:13px}.stat strong{display:block;margin-top:6px;font-size:21px;overflow-wrap:anywhere}
+.table-wrap{overflow-x:auto}table{width:100%;margin-top:20px;border-collapse:collapse}th,td{padding:14px 10px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--muted);font-size:13px}th:last-child,td:last-child{text-align:right}td:first-child{overflow-wrap:anywhere}.payment{color:var(--primary);font-weight:700}footer{text-align:center;color:var(--muted);font-size:13px}[hidden]{display:none!important}
+@media(max-width:640px){main{width:calc(100% - 28px);padding-top:20px}.card{padding:18px}h2{font-size:18px}.person-form{grid-template-columns:1fr}.person-form button{width:100%}.menu-fields{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.menu-fields>label:first-child{grid-column:1/-1}.menu-row,.assignment{padding:14px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat{padding:13px}.stat strong{font-size:18px}}
+
+.menu-actions{display:flex;gap:10px;flex-wrap:wrap}
+.menu-eaters{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.menu-eaters .heading{margin-bottom:10px}
+.menu-eaters-title{font-size:14px;font-weight:600}
+@media(max-width:640px){.menu-actions{width:100%}.menu-actions button{flex:1}}
+</style>
+</head>
+<body>
+<main>
+<header class="card">
+<h1>메뉴별 더치페이 계산기</h1>
+<ol class="guide"><li>함께 먹은 사람의 이름을 등록하세요.</li><li>메뉴명, 수량, 단가를 입력하세요.</li><li>각 메뉴를 실제로 먹은 사람을 선택하세요.</li><li>계산 버튼을 눌러 사람별 결제 금액을 확인하세요.</li></ol>
+<p class="small muted" style="margin:14px 0 0">메뉴 금액을 참여 인원수로 균등 배분하고, 사람별 합산 후 원 단위로 반올림합니다.</p>
+</header>
+<section class="card" aria-labelledby="peopleTitle">
+<div class="heading"><h2 id="peopleTitle">2. 함께 먹은 사람 등록</h2><button id="resetButton" type="button" class="danger">전체 초기화</button></div>
+<form id="personForm"><label for="personName" class="input-label">이름</label><div class="person-form"><input id="personName" maxlength="500" placeholder="예: 민수, 지연, 현우" aria-describedby="personHint" autocomplete="off" required><button type="submit" class="primary">사람 추가</button></div></form>
+<p id="personHint" class="small muted">쉼표로 구분하면 여러 명을 한 번에 추가할 수 있습니다.</p><p id="personMessage" class="small muted" role="status"></p><div id="peopleList" class="person-list"></div>
+</section>
+<section class="card" aria-labelledby="menuTitle">
+<div class="heading"><h2 id="menuTitle">3·4. 메뉴 입력 · 먹은 사람 선택</h2>
+<div class="menu-actions"><button id="selectEveryoneButton" type="button">모든 메뉴에 전원 선택</button><button id="addMenuButton" type="button" class="primary">+ 메뉴 추가</button></div></div>
+<p class="small muted">메뉴 카드에 이름, 수량, 단가를 입력하고, 해당 메뉴를 실제로 먹은 사람을 체크하세요.</p>
+<div id="menuList"></div></section>
+<section class="card" aria-labelledby="calculateTitle"><div class="heading"><h2 id="calculateTitle">5. 사람별 금액 계산</h2></div><p class="muted">입력과 참여자 선택을 확인한 뒤 계산 버튼을 눌러 주세요.</p><button id="calculateButton" type="button" class="primary">사람별 금액 계산</button><p id="actionMessage" class="small" role="status" aria-live="polite"></p></section>
+<section class="card" aria-labelledby="resultTitle">
+<div class="heading"><h2 id="resultTitle" tabindex="-1">6. 사람별 결제 결과와 전체 합계</h2></div><p id="resultPlaceholder" class="muted">계산 버튼을 누르면 결과가 표시됩니다.</p>
+<div id="resultContent" hidden>
+<div class="stats"><div class="stat"><span>주문 총액</span><strong id="orderTotal">0원</strong></div><div class="stat"><span>사람별 결제 합계</span><strong id="paymentTotal">0원</strong></div><div class="stat"><span>반올림 차이</span><strong id="roundingDifference">0원</strong></div><div class="stat"><span>미배분 금액</span><strong id="unassignedTotal">0원</strong></div></div>
+<p id="resultNotice" class="small warning"></p><div class="table-wrap"><table><thead><tr><th scope="col">이름</th><th scope="col">참여 메뉴 수</th><th scope="col">최종 결제 금액</th></tr></thead><tbody id="paymentRows"></tbody><tfoot><tr><th scope="row" colspan="2">사람별 결제 합계</th><td id="tableTotal" class="payment"></td></tr></tfoot></table></div>
+<p class="small muted" style="margin:16px 0 0">반올림 차이 = 사람별 결제 합계 − 배분된 주문 금액.<br>양수는 초과, 음수는 부족한 금액입니다. 참여자를 선택하지 않은 메뉴는 미배분 금액으로 표시됩니다.</p>
+</div>
+</section>
+<footer>외부 라이브러리와 저장 기능을 사용하지 않습니다.<br>새로고침하거나 페이지를 닫으면 입력 내용이 사라집니다.</footer>
+</main>
+<script>
+
+"use strict";
+
+// 사람과 메뉴의 원본 데이터입니다.
+// menu.eaters에는 해당 메뉴를 먹은 사람의 고유 ID만 저장합니다.
+let people = [];
+let menus = [];
+let nextPersonId = 1;
+let nextMenuId = 1;
+let hasCalculated = false;
+
+const $ = selector => document.querySelector(selector);
+const money = value => `${value.toLocaleString("ko-KR")}원`;
+
+function element(tag, className = "", text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+function invalidateResult() {
+  $("#resultContent").hidden = true;
+  $("#resultPlaceholder").hidden = false;
+  $("#resultPlaceholder").textContent = hasCalculated
+    ? "입력 내용이 변경되었습니다. 계산 버튼을 다시 눌러 주세요."
+    : "계산 버튼을 누르면 결과가 표시됩니다.";
+  $("#actionMessage").textContent = "";
+}
+
+function getMenuTotal(menu) {
+  const quantity = Number(menu.quantity);
+  const price = Number(menu.price);
+
+  if (
+    String(menu.quantity).trim() === "" ||
+    String(menu.price).trim() === "" ||
+    !Number.isSafeInteger(quantity) ||
+    !Number.isSafeInteger(price) ||
+    quantity < 1 || quantity > 999999 ||
+    price < 0 || price > 999999999
+  ) return null;
+
+  const total = quantity * price;
+  return Number.isSafeInteger(total) ? total : null;
+}
+
+// 사람 추가·삭제, 메뉴 추가·삭제, 참여자 변경 시 사용하는 통합 렌더 함수.
+// 사람 영역과 메뉴 카드 전체를 배열의 최신 상태로 함께 갱신합니다.
+function render() {
+  const focusKey = document.activeElement?.dataset.focus;
+
+  // 삭제된 사람의 ID, 중복 ID가 eaters에 남지 않도록 정리합니다.
+  const personIds = new Set(people.map(person => person.id));
+  menus.forEach(menu => {
+    menu.eaters = [...new Set(menu.eaters)].filter(id => personIds.has(id));
+  });
+
+  renderPeople();
+  renderMenus();
+  invalidateResult();
+
+  if (focusKey) {
+    const target = [...document.querySelectorAll("[data-focus]")]
+      .find(node => node.dataset.focus === focusKey);
+    if (target) target.focus({ preventScroll: true });
+  }
+}
+
+function renderPeople() {
+  const container = $("#peopleList");
+  container.replaceChildren();
+
+  if (!people.length) {
+    container.append(element("p", "muted small", "아직 등록된 사람이 없습니다."));
+  }
+
+  people.forEach(person => {
+    const chip = element("span", "person-chip");
+    const remove = element("button", "", "×");
+    remove.type = "button";
+    remove.setAttribute("aria-label", `${person.name} 삭제`);
+
+    remove.addEventListener("click", () => {
+      people = people.filter(item => item.id !== person.id);
+      menus.forEach(menu => {
+        menu.eaters = menu.eaters.filter(id => id !== person.id);
+      });
+      render();
+    });
+
+    chip.append(element("span", "", person.name), remove);
+    container.append(chip);
+  });
+}
+
+function renderMenus() {
+  const container = $("#menuList");
+  container.replaceChildren();
+  $("#selectEveryoneButton").disabled = !people.length || !menus.length;
+
+  if (!menus.length) {
+    container.append(element("p", "empty", "‘메뉴 추가’ 버튼으로 주문 메뉴를 등록하세요."));
+  }
+
+  menus.forEach((menu, index) => {
+    const card = element("article", "menu-row");
+    card.dataset.menuId = String(menu.id);
+
+    const heading = element("div", "heading");
+    const title = element("h3", "", menu.name.trim() || `메뉴 ${index + 1}`);
+    title.id = `menu-title-${menu.id}`;
+    card.setAttribute("aria-labelledby", title.id);
+
+    const remove = element("button", "danger", "메뉴 삭제");
+    remove.type = "button";
+    remove.addEventListener("click", () => {
+      menus = menus.filter(item => item.id !== menu.id);
+      render();
+    });
+    heading.append(title, remove);
+
+    const fields = element("div", "menu-fields");
+    const subtotal = element("p", "menu-subtotal");
+
+    function updateSubtotal() {
+      const total = getMenuTotal(menu);
+      subtotal.textContent = total === null
+        ? "수량과 단가를 올바르게 입력해 주세요."
+        : `메뉴 총액: ${money(total)}`;
+    }
+
+    const definitions = [
+      { key: "name", label: "메뉴명", type: "text" },
+      { key: "quantity", label: "수량", type: "number", min: 1, max: 999999 },
+      { key: "price", label: "단가 (원)", type: "number", min: 0, max: 999999999 }
+    ];
+
+    definitions.forEach(definition => {
+      const label = element("label");
+      const input = element("input");
+      input.type = definition.type;
+      input.value = menu[definition.key];
+      input.dataset.field = definition.key;
+      input.dataset.focus = `menu-${menu.id}-${definition.key}`;
+      input.required = true;
+
+      if (definition.type === "number") {
+        input.min = String(definition.min);
+        input.max = String(definition.max);
+        input.step = "1";
+        input.inputMode = "numeric";
+      } else {
+        input.maxLength = 100;
+        input.placeholder = "예: 파스타";
+      }
+
+      // 타이핑 중에는 카드를 다시 만들지 않아 입력 커서를 유지합니다.
+      input.addEventListener("input", () => {
+        menu[definition.key] = input.value;
+        input.setCustomValidity("");
+        title.textContent = menu.name.trim() || `메뉴 ${index + 1}`;
+        updateSubtotal();
+        invalidateResult();
+      });
+
+      label.append(element("span", "input-label", definition.label), input);
+      fields.append(label);
+    });
+
+    const eatersArea = element("div", "menu-eaters");
+    const eatersHeading = element("div", "heading");
+    const allLabel = element("label", "check-label small");
+    const allCheckbox = element("input");
+    allCheckbox.type = "checkbox";
+    allCheckbox.dataset.focus = `menu-${menu.id}-all`;
+    allCheckbox.disabled = !people.length;
+    allCheckbox.checked = people.length > 0 && menu.eaters.length === people.length;
+    allCheckbox.indeterminate =
+      menu.eaters.length > 0 && menu.eaters.length < people.length;
+
+    allCheckbox.addEventListener("change", () => {
+      menu.eaters = allCheckbox.checked ? people.map(person => person.id) : [];
+      render();
+    });
+
+    allLabel.append(allCheckbox, element("span", "", "전체 선택"));
+    eatersHeading.append(
+      element("span", "menu-eaters-title", `먹은 사람 선택 · ${menu.eaters.length}명`),
+      allLabel
+    );
+
+    const checks = element("div", "checks");
+    if (!people.length) {
+      checks.append(element("p", "muted small", "2번 단계에서 사람을 먼저 등록하세요."));
+    }
+
+    people.forEach(person => {
+      const label = element("label", "check-label");
+      const checkbox = element("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = menu.eaters.includes(person.id);
+      checkbox.dataset.focus = `menu-${menu.id}-person-${person.id}`;
+
+      checkbox.addEventListener("change", () => {
+        if (checkbox.checked) {
+          if (!menu.eaters.includes(person.id)) menu.eaters.push(person.id);
+        } else {
+          menu.eaters = menu.eaters.filter(id => id !== person.id);
+        }
+        render();
+      });
+
+      label.append(checkbox, element("span", "", person.name));
+      checks.append(label);
+    });
+
+    updateSubtotal();
+    eatersArea.append(eatersHeading, checks);
+    card.append(heading, fields, subtotal, eatersArea);
+    container.append(card);
+  });
+}
+
+$("#personForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const input = $("#personName");
+  const names = input.value.split(/[,，\n]+/).map(name => name.trim()).filter(Boolean);
+  let added = 0;
+  let duplicates = 0;
+
+  names.forEach(name => {
+    if (people.some(person => person.name === name)) {
+      duplicates++;
+      return;
+    }
+    people.push({ id: nextPersonId++, name });
+    added++;
+  });
+
+  $("#personMessage").textContent = [
+    added ? `${added}명을 추가했습니다.` : "",
+    duplicates ? "중복 이름은 제외했습니다. 동명이인은 이름 뒤에 숫자 등을 붙여 구분하세요." : "",
+    !names.length ? "이름을 입력해 주세요." : ""
+  ].filter(Boolean).join(" ");
+
+  input.value = "";
+  render();
+  input.focus();
+});
+
+$("#addMenuButton").addEventListener("click", () => {
+  menus.push({
+    id: nextMenuId++,
+    name: "",
+    quantity: "1",
+    price: "0",
+    eaters: []
+  });
+  render();
+  $("#menuList").lastElementChild.querySelector('[data-field="name"]').focus();
+});
+
+$("#selectEveryoneButton").addEventListener("click", () => {
+  menus.forEach(menu => {
+    menu.eaters = people.map(person => person.id);
+  });
+  render();
+});
+
+// 유리수 연산으로 메뉴별 나눗셈을 누적해 부동소수점 반올림 오차를 방지합니다.
+function gcd(a, b) {
+  while (b) {
+    const remainder = a % b;
+    a = b;
+    b = remainder;
+  }
+  return a;
+}
+
+function addFraction(amount, numerator, denominator) {
+  const common = gcd(amount.d, denominator);
+  const d = amount.d / common * denominator;
+  const n = amount.n * (denominator / common) + numerator * (amount.d / common);
+  const divisor = gcd(n, d);
+  return { n: n / divisor, d: d / divisor };
+}
+
+$("#calculateButton").addEventListener("click", () => {
+  const message = $("#actionMessage");
+
+  if (!people.length) {
+    message.textContent = "함께 먹은 사람을 먼저 등록해 주세요.";
+    $("#personName").focus();
+    return;
+  }
+  if (!menus.length) {
+    message.textContent = "메뉴를 한 개 이상 추가해 주세요.";
+    $("#addMenuButton").focus();
+    return;
+  }
+
+  $("#menuList").querySelectorAll('[data-field="name"]').forEach(input => {
+    input.setCustomValidity(input.value.trim() ? "" : "메뉴명을 입력해 주세요.");
+  });
+
+  for (const input of $("#menuList").querySelectorAll("input:not([type=checkbox])")) {
+    if (!input.reportValidity()) {
+      message.textContent = "메뉴명, 수량, 단가를 확인해 주세요.";
+      return;
+    }
+  }
+
+  const totals = menus.map(getMenuTotal);
+  if (totals.some(total => total === null)) {
+    message.textContent = "수량과 단가를 확인해 주세요.";
+    return;
+  }
+
+  const orderTotal = totals.reduce((sum, total) => sum + BigInt(total), 0n);
+  if (orderTotal > BigInt(Number.MAX_SAFE_INTEGER)) {
+    message.textContent = "정확하게 표시할 수 있는 금액 범위를 초과했습니다.";
+    return;
+  }
+
+  const amounts = new Map(people.map(person => [person.id, { n: 0n, d: 1n }]));
+  const counts = new Map(people.map(person => [person.id, 0]));
+  let unassignedTotal = 0n;
+  let unassignedCount = 0;
+
+  menus.forEach((menu, index) => {
+    const total = BigInt(totals[index]);
+    if (!menu.eaters.length) {
+      unassignedTotal += total;
+      unassignedCount++;
+      return;
+    }
+    menu.eaters.forEach(id => {
+      amounts.set(id, addFraction(amounts.get(id), total, BigInt(menu.eaters.length)));
+      counts.set(id, counts.get(id) + 1);
+    });
+  });
+
+  const rows = $("#paymentRows");
+  rows.replaceChildren();
+  let paymentTotal = 0n;
+
+  people.forEach(person => {
+    const amount = amounts.get(person.id);
+    const payment = (2n * amount.n + amount.d) / (2n * amount.d);
+    paymentTotal += payment;
+    const row = element("tr");
+    row.append(
+      element("td", "", person.name),
+      element("td", "", `${counts.get(person.id)}개`),
+      element("td", "payment", money(payment))
+    );
+    rows.append(row);
+  });
+
+  const difference = paymentTotal - (orderTotal - unassignedTotal);
+  $("#orderTotal").textContent = money(orderTotal);
+  $("#paymentTotal").textContent = money(paymentTotal);
+  $("#tableTotal").textContent = money(paymentTotal);
+  $("#unassignedTotal").textContent = money(unassignedTotal);
+  $("#roundingDifference").textContent =
+    `${difference > 0n ? "+" : ""}${money(difference)}`;
+
+  const notice = $("#resultNotice");
+  notice.textContent = unassignedCount
+    ? `참여자를 선택하지 않은 메뉴가 ${unassignedCount}개 있습니다. ` +
+      `미배분 금액 ${money(unassignedTotal)}은 사람별 결제 금액에서 제외되었습니다.`
+    : "모든 메뉴의 금액이 참여자에게 배분되었습니다.";
+  notice.className = unassignedCount ? "small warning" : "small muted";
+
+  hasCalculated = true;
+  $("#resultPlaceholder").hidden = true;
+  $("#resultContent").hidden = false;
+  message.textContent = "계산이 완료되었습니다.";
+  $("#resultTitle").focus();
+});
+
+$("#resetButton").addEventListener("click", () => {
+  if (!confirm("등록한 사람과 메뉴를 모두 초기화할까요?")) return;
+  people = [];
+  menus = [];
+  nextPersonId = 1;
+  nextMenuId = 1;
+  hasCalculated = false;
+  $("#personName").value = "";
+  $("#personMessage").textContent = "";
+  render();
+  $("#personName").focus();
+});
+
+render();
+</script>
+</body>
+</html>

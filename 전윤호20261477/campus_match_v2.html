@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f2eb">
+  <meta name="description" content="경일대학교의 호관과 시설을 연결하는 1분 캠퍼스 카드 게임">
+  <title>새내기의 캠퍼스 짝꿍 찾기</title>
+<style>
+/* 외부 폰트·라이브러리 없이 실행되는 반응형 화면 */
+:root{--paper:#f7f4ee;--ink:#302d43;--muted:#777383;--purple:#7260b9;--purple-dark:#584596;--lilac:#eee8fa;--mint:#dcefe4;--line:#e6e0da;--white:#fffefa;--green:#35775d;--red:#a84761;--shadow:0 16px 45px #44365b0c}
+*{box-sizing:border-box}html{min-width:280px}body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;word-break:keep-all;-webkit-text-size-adjust:100%}button,a{-webkit-tap-highlight-color:transparent;touch-action:manipulation}button{font:inherit}button:disabled{cursor:default}button:not(:disabled),a{cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #775dc1;outline-offset:5px}button{border:0}a{color:inherit;text-decoration:none}img{display:block;max-width:100%}[hidden]{display:none!important}h1,h2,p{margin:0}.site-shell{max-width:1120px;margin:auto;padding:0 40px}.site-header{height:106px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);gap:16px}.brand{display:flex;gap:12px;align-items:center;font-size:17px;font-weight:800;letter-spacing:-.5px}.brand small{display:block;font-size:9px;letter-spacing:1.5px;font-weight:650;margin-top:5px;color:var(--muted)}.brand-mark{display:grid;grid-template-columns:repeat(2,12px);gap:4px;transform:rotate(-7deg);padding:3px}.brand-mark i{width:12px;height:12px;border-radius:4px;background:var(--purple)}.brand-mark i:nth-child(2){background:#b7d6c2}.brand-mark i:nth-child(3){background:#edca9d}.brand-mark i:nth-child(4){background:#b8a4dc}.school-tag{font-size:12px;color:#6d687c;background:#eeebe5;border:1px solid #e7e2db;padding:9px 13px;border-radius:30px;white-space:nowrap}.screen{animation:arrive .25s ease-out}.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:24px;padding:64px 0 54px;align-items:center}.eyebrow{font-size:11px;font-weight:750;letter-spacing:1.5px;color:var(--purple);line-height:1.7}.hero-copy .eyebrow{font-size:13px;letter-spacing:.3px;margin-bottom:17px}.tiny-spark{margin-right:5px;color:#9476be}.hero h1{font-size:clamp(32px,4.7vw,49px);line-height:1.33;letter-spacing:-2.3px;font-weight:850}.hero h1 em{font-style:normal;color:var(--purple);position:relative;white-space:nowrap}.hero-description{margin-top:20px;font-size:16px;line-height:1.8;color:#746c7b}.rule-chips{display:flex;flex-wrap:wrap;gap:8px;margin:23px 0}.rule-chips span{font-size:12px;background:var(--white);border:1px solid var(--line);border-radius:9px;padding:9px 11px;color:var(--muted)}.rule-chips b{color:#59506e;font-size:14px;margin-right:3px}.button{display:inline-flex;align-items:center;justify-content:center;gap:14px;min-height:48px;padding:13px 21px;border-radius:13px;font-size:14px;font-weight:750;line-height:1.4;transition:background .15s,transform .15s,box-shadow .15s}.button:not(:disabled):active{transform:translateY(1px)}.button-primary{background:var(--purple);color:white;box-shadow:0 6px 16px #7260b922}.button-primary:hover{background:var(--purple-dark)}.button-primary span{font-size:20px;line-height:1}.button-start{min-width:198px;justify-content:space-between;font-size:16px;padding:16px 24px}.button-secondary{background:#f4f0e9;color:#625b6d;border:1px solid var(--line)}.button-secondary:hover{background:#eae4dc}.button-quiet{background:transparent;color:var(--muted);font-size:12px;border:1px solid var(--line);padding:9px 13px;min-height:42px}.button-quiet:hover{background:#eeebe5}.start-note{font-size:11px;line-height:1.7;color:var(--muted);margin-top:12px}.hero-art{position:relative;min-width:0;height:380px;border-radius:50%;background:radial-gradient(ellipse at 52% 51%,#ede7f4 0%,#f2edea 54%,transparent 72%)}.preview-card{position:absolute;width:158px;height:194px;border:1px solid #e6deeb;border-radius:19px;background:var(--white);box-shadow:0 14px 28px #51456912;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:14px;gap:9px}.preview-card img{width:122px;height:122px}.preview-card>span:last-child{font-size:11px;color:#766d84;font-weight:700}.preview-book{left:15px;top:41px;transform:rotate(-12deg);z-index:2}.preview-vr{right:21px;top:114px;transform:rotate(11deg);z-index:3;background:#fffdf5}.preview-back{left:126px;top:3px;transform:rotate(10deg);z-index:1;background:#e7def4;border:5px solid var(--white);width:147px;height:187px}.back-symbol{display:flex;align-items:center;justify-content:center;width:83px;height:83px;border:1px dashed #b7a5d0;border-radius:50%;color:#b39acf;font-size:47px;font-weight:800}.art-label{position:absolute;bottom:6px;left:36px;font-size:12px;color:#8c8297;line-height:1.8;transform:rotate(-4deg)}.art-label b{color:#756687;font-weight:650}.art-star{position:absolute;color:#c8ad70;font-size:26px}.star-one{top:16px;right:13px}.star-two{bottom:33px;right:43px;font-size:35px;color:#9bbb9c}.art-dot{position:absolute;width:9px;height:9px;border-radius:50%;background:#c0b0d6}.dot-one{top:3px;left:47px}.dot-two{bottom:72px;left:14px;background:#b6d6c1}.art-orbit{position:absolute;inset:42px 18px 40px;border:1px dashed #dcd1e5;border-radius:50%;transform:rotate(-12deg)}.orbit-two{inset:49px 10px 46px;transform:rotate(20deg);opacity:.5}.how-to-strip{display:flex;align-items:center;justify-content:space-between;background:#fffdfa99;border:1px solid var(--line);border-radius:18px;padding:22px 25px;gap:15px}.how-to-strip>div{display:flex;align-items:center;gap:12px}.step-number{font-size:12px;font-weight:800;color:var(--purple);background:var(--lilac);width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}.how-to-strip p b{display:block;font-size:13px}.how-to-strip p>span{display:block;font-size:11px;color:var(--muted);margin-top:5px}.step-arrow{color:#c0b5c8}.site-footer{display:flex;justify-content:space-between;gap:12px;padding:27px 0;font-size:10px;color:#928a96;line-height:1.6;margin-top:18px}.game-screen{max-width:752px;margin:0 auto;padding-top:30px}.game-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:20px}.game-heading h1{font-size:27px;letter-spacing:-1px;margin-top:3px;outline:none}.game-heading .eyebrow{font-size:9px;letter-spacing:1.3px}.stats-panel{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--white);border:1px solid var(--line);border-radius:15px;padding:16px 4px}.stat{text-align:center;border-left:1px solid #eee9e3}.stat:first-child{border:0}.stat>span{font-size:11px;color:var(--muted)}.stat strong{display:block;font-size:26px;letter-spacing:-.7px;margin-top:4px;line-height:1.2;font-variant-numeric:tabular-nums}.stat strong small{font-size:12px;margin-left:4px;color:var(--muted);font-weight:550;letter-spacing:0}.stat-time strong{color:var(--purple)}.time-track{height:5px;border-radius:5px;background:#e8e0ed;margin:10px 2px 16px;overflow:hidden}.time-track>span{display:block;width:100%;height:100%;background:#ac9acd;border-radius:5px;transition:width .12s linear}.is-urgent .stat-time strong{color:var(--red)}.is-urgent .time-track>span{background:#c66c80}.board-caption{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:13px;font-size:11px;color:var(--muted)}.board-caption>span{display:flex;align-items:center;gap:6px}.mini-card{display:inline-block;width:11px;height:14px;border-radius:3px;border:1px solid #b3a2cf;background:#eee7f6}.facility-mini{background:#e1f0e6;border-color:#97b5a0}.caption-link{color:#b3a6bd}.card-board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.card{position:relative;display:block;background:transparent;padding:0;border:0;border-radius:15px;height:139px;perspective:800px;min-width:0;isolation:isolate}.card-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .25s ease}.card.is-open .card-inner{transform:rotateY(180deg)}.card-face{position:absolute;inset:0;border-radius:15px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}.card-back{background:#ece5f5;border:1px solid #d9cde9;box-shadow:0 3px 0 #e1d7ec}.card-back::before{content:"";position:absolute;inset:8px;border:1px dashed #d1c1e2;border-radius:10px}.card-back .back-question{font-size:33px;line-height:1;font-weight:800;color:#a28cbc;display:flex;align-items:center;justify-content:center;width:55px;height:55px;border-radius:50%;background:#f5effb80}.card-back .back-label{font-size:8px;letter-spacing:1.8px;color:#ab96c1;margin-top:10px;font-weight:750}.card:not(:disabled):hover .card-back{background:#e4d9f0;border-color:#bda4d9}.card-front{transform:rotateY(180deg);background:#fffefa;border:1px solid #d8cde7;box-shadow:0 3px 0 #e6dfee}.card-kind{font-size:9px;color:#9c8caf;letter-spacing:1px;position:absolute;top:12px}.building-number{font-size:44px;font-weight:850;letter-spacing:-2px;color:#7560a5;line-height:1.1;padding-top:14px}.building-suffix{font-size:12px;color:#9688a7;margin-top:4px}.facility-front{background:#f6fcf7;border-color:#c7ddcb;box-shadow:0 3px 0 #deebe0}.facility-front img{width:84px;height:84px;margin-top:2px}.facility-name{font-size:12px;font-weight:750;color:#506951;margin-top:0}.match-mark{position:absolute;right:7px;top:6px;display:none;width:20px;height:20px;border-radius:50%;background:#4f8a67;color:white;font-size:12px;align-items:center;justify-content:center}.card.is-matched .card-front{border:2px solid #8db79a;box-shadow:0 2px 0 #c7ddcd;background:#edf7ef}.card.is-matched .match-mark{display:flex}.card.is-wrong .card-front{border:2px solid #c98596;background:#fff4f4}.card.is-wrong .match-mark{display:flex;background:#b7617a}.card.is-matched .building-number{color:#4f7a5b}.game-feedback{text-align:center;font-size:13px;font-weight:650;color:#6e6284;line-height:1.6;min-height:23px;margin-top:17px}.game-feedback.good{color:var(--green)}.game-feedback.wrong{color:var(--red)}.game-tip{text-align:center;font-size:10px;color:#928897;margin:6px 0 4px}.result-screen{padding:40px 0 12px}.result-card{max-width:532px;margin:auto;border:1px solid var(--line);border-radius:25px;background:var(--white);box-shadow:var(--shadow);padding:32px 38px;text-align:center}.result-emblem{width:67px;height:67px;background:#efe8fa;border:1px solid #dfd2ef;border-radius:23px;margin:0 auto 18px;color:#a18bca;display:flex;align-items:center;justify-content:center;font-size:43px;transform:rotate(-6deg)}.result-card.is-failure .result-emblem{background:#f7ecdf;color:#bd9470;border-color:#e9d8bf}.result-card h1{font-size:28px;letter-spacing:-1px;margin-top:8px;outline:none}.result-message{font-size:13px;color:var(--muted);margin-top:10px;line-height:1.7}.score-display{display:flex;align-items:baseline;justify-content:center;gap:9px;margin:18px 0}.score-display strong{font-size:72px;color:var(--purple);line-height:1.1;letter-spacing:-3px}.score-display>span{font-size:15px;color:#9c91a8}.result-stat-row{display:grid;grid-template-columns:1fr 1fr;max-width:290px;margin:auto;padding:15px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.result-stat-row>div+div{border-left:1px solid var(--line)}.result-stat-row span{display:block;font-size:11px;color:var(--muted)}.result-stat-row strong{display:block;font-size:17px;margin-top:5px}.result-stamps{display:flex;justify-content:center;gap:7px;margin:21px 0}.result-stamp{width:47px;height:47px;background:#f1f5ee;border:1px solid #dce7d8;border-radius:12px;display:flex;align-items:center;justify-content:center}.result-stamp img{width:40px;height:40px}.result-stamp.missing{filter:grayscale(1);opacity:.35}.result-actions{display:grid;grid-template-columns:1.15fr 1fr;gap:10px}.result-note{font-size:10px;color:#948b9b;line-height:1.7;margin-top:14px}.study-dialog{width:min(760px,calc(100% - 32px));max-height:calc(100dvh - 40px);padding:29px 30px 24px;border:1px solid #e5ddeb;border-radius:23px;background:var(--white);color:var(--ink);box-shadow:0 25px 100px #302d4330;overflow-y:auto;overscroll-behavior:contain}.study-dialog::backdrop{background:#30293866;backdrop-filter:blur(5px)}.study-header{text-align:center}.study-header h2{font-size:25px;letter-spacing:-1px;margin-top:7px;line-height:1.45;outline:none}.study-header>p:not(.eyebrow){font-size:12px;line-height:1.7;color:var(--muted);margin-top:8px}.no-timer-tag{display:inline-block;font-size:10px;padding:6px 12px;border-radius:20px;color:#507660;background:#eaf3ea;margin-top:12px}.study-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:23px}.study-item{display:flex;align-items:center;gap:10px;padding:13px 12px;border:1px solid #e9e2ee;border-radius:13px;background:#faf8fd;min-width:0}.study-building{background:#eee6f7;color:#766197;border:1px solid #e1d5ed;border-radius:10px;min-width:53px;height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}.study-building b{font-size:23px;line-height:1;letter-spacing:-1px}.study-building small{font-size:10px;margin-top:5px}.study-arrow{font-size:15px;color:#b2a1c3}.study-picture{width:57px;height:65px;flex-shrink:0;object-fit:contain}.study-text{min-width:0}.study-text h3{font-size:13px;margin:0;line-height:1.5;letter-spacing:-.3px}.study-text p{font-size:10px;color:#8b8096;line-height:1.6;margin-top:4px;overflow-wrap:anywhere}.study-disclaimer{text-align:center;font-size:10px;line-height:1.7;color:var(--muted);margin:17px 0}.study-actions{display:flex;justify-content:center;gap:10px}.study-actions .button-primary{flex:1;max-width:360px}.study-actions .button-secondary{min-width:110px}body.modal-open{overflow:hidden}
+@keyframes arrive{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(min-width:1000px){.hero-art{margin-left:20px}.hero{min-height:510px}}
+@media(max-width:800px){.site-shell{padding:0 25px}.hero-art{transform:scale(.88);transform-origin:center}.hero{gap:0}.preview-book{left:0}.preview-vr{right:0}.preview-back{left:95px}.how-to-strip{padding:19px 17px;gap:10px}.how-to-strip>div{gap:8px}.step-arrow{display:none}.how-to-strip p b{font-size:12px}.how-to-strip p>span{font-size:10px}.study-item{gap:7px;padding:11px 8px}.study-picture{width:49px}.study-building{min-width:44px}.study-text h3{font-size:12px}}
+@media(max-width:600px){.site-shell{padding:0 18px}.site-header{height:79px}.brand{font-size:14px;gap:8px}.brand small{font-size:7px;letter-spacing:1.05px}.brand-mark{grid-template-columns:repeat(2,10px);gap:3px}.brand-mark i{width:10px;height:10px;border-radius:3px}.school-tag{font-size:10px;padding:7px 10px}.school-tag>span{display:none}.hero{grid-template-columns:1fr;padding:31px 0 26px;text-align:center;gap:12px}.hero-copy .eyebrow{font-size:11px;margin-bottom:12px}.hero h1{font-size:35px;letter-spacing:-1.9px}.hero h1 br{display:none}.hero h1 em{display:block}.hero-description{font-size:13px;line-height:1.75;margin-top:13px}.rule-chips{justify-content:center;margin:17px 0}.rule-chips span{font-size:10px;padding:7px 10px}.rule-chips b{font-size:12px}.button-start{min-width:205px;font-size:15px;min-height:49px;padding:13px 22px}.start-note{font-size:9px;margin-top:10px}.hero-art{height:220px;max-width:360px;width:100%;margin:0 auto;transform:none}.preview-card{width:107px;height:130px;border-radius:14px;padding:9px;gap:3px}.preview-card img{width:87px;height:87px}.preview-card>span:last-child{font-size:8px}.preview-book{top:27px;left:36px}.preview-vr{top:66px;right:31px}.preview-back{width:103px;height:125px;top:10px;left:135px;border-width:4px}.back-symbol{width:57px;height:57px;font-size:33px}.art-label{bottom:0;left:38px;font-size:9px}.star-one{right:24px;top:13px;font-size:20px}.star-two{bottom:1px;right:39px;font-size:24px}.dot-one{left:53px;top:4px}.dot-two{bottom:51px;left:20px}.art-orbit{inset:18px 16px 10px}.orbit-two{inset:33px 35px 24px}.how-to-strip{padding:14px 12px;gap:8px;align-items:flex-start}.how-to-strip>div{flex:1;flex-direction:column;text-align:center;gap:8px}.how-to-strip p b{font-size:11px}.how-to-strip p>span{font-size:9px;line-height:1.5}.step-number{width:29px;height:29px;font-size:10px;border-radius:9px}.site-footer{flex-direction:column;text-align:center;gap:5px;font-size:9px;padding:18px 0;margin-top:9px}.game-screen{padding-top:20px}.game-heading{margin-bottom:15px}.game-heading h1{font-size:22px}.game-heading .eyebrow{font-size:8px;letter-spacing:.7px}.stats-panel{padding:12px 2px;border-radius:12px}.stat>span{font-size:10px}.stat strong{font-size:22px}.stat strong small{font-size:10px;margin-left:3px}.card-board{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.card{height:auto;aspect-ratio:1/1.03}.card-face{border-radius:12px}.card{border-radius:12px}.card-back::before{inset:6px;border-radius:8px}.card-back .back-question{width:43px;height:43px;font-size:27px}.card-back .back-label{font-size:6px;letter-spacing:1px;margin-top:7px}.card-kind{font-size:8px;top:9px}.building-number{font-size:36px;padding-top:11px}.building-suffix{font-size:10px;margin-top:2px}.facility-front img{width:68%;height:68%;margin-top:0}.facility-name{font-size:10px}.match-mark{width:17px;height:17px;font-size:10px;top:5px;right:5px}.game-feedback{font-size:11px;min-height:19px;margin-top:15px}.game-tip{font-size:9px}.time-track{margin-bottom:13px}.board-caption{font-size:10px;margin-bottom:11px}.result-screen{padding-top:24px}.result-card{padding:26px 20px;border-radius:20px}.result-card h1{font-size:25px}.score-display strong{font-size:65px}.result-message{font-size:12px}.result-stamps{gap:5px}.result-stamp{width:40px;height:40px;border-radius:10px}.result-stamp img{width:35px;height:35px}.result-actions .button{padding:13px 12px}.study-dialog{padding:23px 17px 19px;width:calc(100% - 24px);max-height:calc(100dvh - 24px);border-radius:18px}.study-header h2{font-size:21px}.study-header>p:not(.eyebrow){font-size:11px}.study-list{grid-template-columns:1fr;gap:8px;margin-top:18px}.study-item{padding:10px 12px;gap:13px}.study-building{min-width:49px;height:52px}.study-picture{width:51px;height:56px}.study-text h3{font-size:13px}.study-text p{font-size:10px}.study-actions{gap:8px}.study-actions .button{font-size:12px;padding:12px 10px;min-height:47px;gap:6px}.study-actions .button-secondary{min-width:83px}.study-disclaimer{font-size:9px}.no-timer-tag{font-size:9px}}
+@media(max-width:350px){.site-shell{padding:0 12px}.brand{font-size:12px}.school-tag{padding:6px 8px;font-size:9px}.hero h1{font-size:31px}.rule-chips{gap:5px}.rule-chips span{padding:7px 8px}.preview-book{left:23px}.preview-vr{right:20px}.preview-back{left:116px}.card-board{gap:7px}.card-back .back-question{width:35px;height:35px;font-size:23px}.building-number{font-size:30px}.card-kind{top:7px;font-size:7px}.facility-name{font-size:9px}.study-item{gap:8px;padding:9px}.study-header h2{font-size:19px}.study-actions .button{font-size:11px}.study-actions .button-secondary{min-width:74px}.result-card{padding:24px 15px}.result-stamp{width:35px;height:35px}.result-stamp img{width:31px;height:31px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* v2: 진행 중 실수 종료를 예방하는 확인 창. 시간과 게임 상태는 계속 유지합니다. */
+.leave-dialog{width:min(456px,calc(100% - 32px));max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;padding:30px 28px 23px;border:1px solid #e5ddeb;border-radius:23px;background:var(--white);color:var(--ink);text-align:center;box-shadow:0 25px 100px #302d4330}
+.leave-dialog::backdrop{background:#30293866;backdrop-filter:blur(5px)}
+.leave-emblem{width:53px;height:53px;margin:0 auto 15px;border-radius:18px;display:flex;align-items:center;justify-content:center;background:var(--lilac);color:var(--purple);font-size:30px;transform:rotate(-5deg)}
+.leave-dialog .eyebrow{font-size:10px;letter-spacing:.5px}
+.leave-dialog h2{font-size:23px;letter-spacing:-.9px;line-height:1.5;margin-top:8px}
+.leave-description{font-size:13px;line-height:1.85;color:var(--muted);margin-top:12px}
+.leave-time-note{display:inline-flex;align-items:center;gap:6px;font-size:11px;line-height:1.7;padding:8px 12px;background:#fbf0df;color:#896a42;border-radius:10px;margin-top:17px}
+.leave-time-note>span{font-size:16px;line-height:1}
+.leave-actions{display:grid;grid-template-columns:1.12fr 1fr;gap:10px;margin-top:22px}
+.leave-keyboard-note{font-size:10px;color:#948b9b;line-height:1.7;margin-top:13px}
+@media(max-width:600px){.leave-dialog{width:calc(100% - 32px);padding:25px 21px 20px;border-radius:20px}.leave-dialog h2{font-size:21px}.leave-description{font-size:12px}.leave-time-note{font-size:10px}.leave-actions .button{padding:13px 10px;font-size:13px}}
+@media(max-width:350px){.leave-dialog{padding:22px 15px 18px}.leave-dialog h2{font-size:19px}.leave-time-note{font-size:9px}.leave-actions{gap:8px}}
+
+</style>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <a href="#" class="brand" id="brand-home" aria-label="캠퍼스 짝꿍 찾기 메인으로">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span>캠퍼스 짝꿍 찾기<small>KYUNGIL CAMPUS MATCH</small></span>
+      </a>
+      <span class="school-tag">경일대학교 <span>· 새내기 가이드</span></span>
+    </header>
+
+    <main id="main-content">
+      <section id="home-screen" class="screen home-screen" aria-labelledby="home-title">
+        <div class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="tiny-spark" aria-hidden="true">✦</span> 수업 전, 가볍게 한 판!</p>
+            <h1 id="home-title">새내기의<br>캠퍼스 <em>짝꿍 찾기</em></h1>
+            <p class="hero-description">호관과 시설을 연결하며<br>경일대학교를 알아봐요!</p>
+            <div class="rule-chips" aria-label="게임 규칙">
+              <span><b>12장</b> 카드</span><span><b>60초</b> 제한 시간</span><span><b>90점</b> 만점</span>
+            </div>
+            <button id="start-button" class="button button-primary button-start" type="button">시작 <span aria-hidden="true">→</span></button>
+            <p class="start-note">먼저 정답을 살펴봐요. 아직 시간은 흐르지 않아요.</p>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <span class="art-orbit orbit-one"></span><span class="art-orbit orbit-two"></span>
+            <span class="art-star star-one">✦</span><span class="art-star star-two">✧</span>
+            <span class="art-dot dot-one"></span><span class="art-dot dot-two"></span>
+            <div class="preview-card preview-book"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUiPjx0aXRsZSBpZD0idGl0bGUiPuykkeyVmeuPhOyEnOq0gDwvdGl0bGU+PGVsbGlwc2UgY3g9IjgyIiBjeT0iMTM4IiByeD0iNTgiIHJ5PSI3IiBmaWxsPSIjRTlFMkYwIi8+CjxyZWN0IHg9IjM2IiB5PSIxMTYiIHdpZHRoPSI5NSIgaGVpZ2h0PSIxNSIgcng9IjQiIGZpbGw9IiNCOUQ2QzEiIHN0cm9rZT0iIzc0NjA4NyIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxwYXRoIGQ9Ik00OCAxMjRoNzMiIHN0cm9rZT0iI0VGRjVFQSIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPHJlY3QgeD0iMjkiIHk9Ijk5IiB3aWR0aD0iOTYiIGhlaWdodD0iMTUiIHJ4PSI0IiBmaWxsPSIjREZDMThEIiBzdHJva2U9IiM3NDYwODciIHN0cm9rZS13aWR0aD0iMyIvPgo8cGF0aCBkPSJNNDAgMTA3aDcyIiBzdHJva2U9IiNGRkY0REMiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxwYXRoIGQ9Ik04MCA1M2MtMTctMTMtMzYtMTItNTUtNXY0NmMyMi01IDM5LTQgNTUgOSAxNi0xMyAzMy0xNCA1NS05VjQ4Yy0xOS03LTM4LTgtNTUgNXoiIGZpbGw9IiNGRkZDRUYiIHN0cm9rZT0iIzc0NjA4NyIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggZD0iTTgwIDU0djQ3TTM2IDYxYzEzLTMgMjItMiAzMiAzTTM2IDczYzEzLTMgMjItMiAzMiAzTTkyIDY0YzEwLTUgMTktNiAzMS0zTTkyIDc2YzEwLTUgMTktNiAzMS0zIiBmaWxsPSJub25lIiBzdHJva2U9IiNDNkI0RDYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxwYXRoIGQ9Ik0xMDUgNDR2MjVsOC02IDcgNFY0MyIgZmlsbD0iI0I3RDZDMCIgc3Ryb2tlPSIjN0NBNThBIiBzdHJva2Utd2lkdGg9IjIiLz4KPHBhdGggZD0iTTQ4IDIxdjEybS02LTZoMTJNMTM1IDI3djhtLTQtNGg4IiBzdHJva2U9IiNENEFFNjgiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+" alt=""><span>책 속으로 쏙!</span></div>
+            <div class="preview-card preview-vr"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUiPjx0aXRsZSBpZD0idGl0bGUiPlZS7LK07ZeY6rSAPC90aXRsZT48ZWxsaXBzZSBjeD0iODAiIGN5PSIxMzgiIHJ4PSI1OSIgcnk9IjciIGZpbGw9IiNFOUUyRjAiLz4KPHBhdGggZD0iTTM5IDYyVjQ5YzAtMzEgODItMzEgODIgMHYxNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzQ2MDg3IiBzdHJva2Utd2lkdGg9IjEwIi8+CjxwYXRoIGQ9Ik00MCA1OFY0OWMwLTI3IDgwLTI3IDgwIDB2MTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0I4QTNENiIgc3Ryb2tlLXdpZHRoPSI0Ii8+CjxyZWN0IHg9IjI0IiB5PSI1NiIgd2lkdGg9IjExMyIgaGVpZ2h0PSI0OCIgcng9IjE3IiBmaWxsPSIjRDhDREVBIiBzdHJva2U9IiM3NDYwODciIHN0cm9rZS13aWR0aD0iMy41Ii8+CjxyZWN0IHg9IjM3IiB5PSI2NSIgd2lkdGg9Ijg2IiBoZWlnaHQ9IjMwIiByeD0iMTAiIGZpbGw9IiM4NTcxOUUiIHN0cm9rZT0iIzc0NjA4NyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KPHBhdGggZD0iTTc3IDkzdi03YTQgNCAwIDAgMSA4IDB2NyIgZmlsbD0iI0Q4Q0RFQSIvPgo8cGF0aCBkPSJtNDggNzQgNi01bTQyIDE5IDEzLTEzIiBzdHJva2U9IiNDREJERTMiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxwYXRoIGQ9Ik0yOCAxMDdjLTgtNC0xOCA1LTE2IDEzbDQgMTRjMiA3IDE0IDQgMTQtMnYtOGw3LTh6TTEzMSAxMDhjOC00IDE4IDUgMTYgMTNsLTQgMTNjLTIgNy0xNCA0LTE0LTJ2LThsLTctOHoiIGZpbGw9IiNCOEQ0QzEiIHN0cm9rZT0iIzc0NjA4NyIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxjaXJjbGUgY3g9IjI2IiBjeT0iMTE0IiByPSI5IiBmaWxsPSJub25lIiBzdHJva2U9IiM3NDYwODciIHN0cm9rZS13aWR0aD0iMyIvPgo8Y2lyY2xlIGN4PSIxMzIiIGN5PSIxMTQiIHI9IjkiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzc0NjA4NyIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxwYXRoIGQ9Ik0zMCAzMHYxMW0tNS02aDEwTTEzNCAzN3Y4bS00LTRoOCIgc3Ryb2tlPSIjRDRBRTY4IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==" alt=""><span>새로운 세계로</span></div>
+            <div class="preview-card preview-back"><span class="back-symbol">?</span><span>어떤 짝꿍일까?</span></div>
+            <span class="art-label">작은 기억이 모여<br><b>익숙한 캠퍼스가 돼요.</b></span>
+          </div>
+        </div>
+        <div class="how-to-strip" aria-label="게임 방법">
+          <div><span class="step-number">01</span><p><b>먼저 기억해요</b><span>호관과 시설 6쌍 확인</span></p></div>
+          <span class="step-arrow" aria-hidden="true">→</span>
+          <div><span class="step-number">02</span><p><b>카드를 뒤집어요</b><span>클릭 또는 터치로 선택</span></p></div>
+          <span class="step-arrow" aria-hidden="true">→</span>
+          <div><span class="step-number">03</span><p><b>짝꿍을 찾아요</b><span>한 쌍당 15점 획득</span></p></div>
+        </div>
+      </section>
+
+      <section id="game-screen" class="screen game-screen" hidden aria-labelledby="game-title">
+        <div class="game-heading">
+          <div><p class="eyebrow">CAMPUS MEMORY CHALLENGE</p><h1 id="game-title" tabindex="-1">이 장소의 짝꿍은?</h1></div>
+          <button id="game-home-button" class="button button-quiet" type="button">메인으로</button>
+        </div>
+        <div class="stats-panel" aria-label="현재 게임 상태">
+          <div class="stat stat-time"><span>남은 시간</span><strong><span id="time-value">60</span><small>초</small></strong></div>
+          <div class="stat"><span>현재 점수</span><strong><span id="score-value">0</span><small>점</small></strong></div>
+          <div class="stat"><span>찾은 짝꿍</span><strong><span id="pairs-value">0</span><small>/ 6</small></strong></div>
+          <div class="stat"><span>시도 횟수</span><strong><span id="attempts-value">0</span><small>회</small></strong></div>
+        </div>
+        <div id="time-track" class="time-track" role="progressbar" aria-label="남은 시간" aria-valuemin="0" aria-valuemax="60" aria-valuenow="60"><span id="time-fill"></span></div>
+        <div class="board-caption"><span><i class="mini-card building-mini" aria-hidden="true"></i>호관 카드</span><span class="caption-link" aria-hidden="true">↔</span><span><i class="mini-card facility-mini" aria-hidden="true"></i>시설 그림 카드</span></div>
+        <div id="card-board" class="card-board" aria-label="짝 맞추기 카드 12장"></div>
+        <p id="game-feedback" class="game-feedback" role="status" aria-live="polite">카드 두 장을 뒤집어 호관과 시설을 연결해요.</p>
+        <p class="game-tip">틀려도 괜찮아요. 감점 없이 다시 기억해 보세요.</p>
+      </section>
+
+      <section id="result-screen" class="screen result-screen" hidden aria-labelledby="result-title">
+        <div class="result-card">
+          <div id="result-emblem" class="result-emblem" aria-hidden="true">✦</div>
+          <p id="result-kicker" class="eyebrow">CAMPUS CHALLENGE COMPLETE</p>
+          <h1 id="result-title" tabindex="-1">캠퍼스 탐험 성공!</h1>
+          <p id="result-message" class="result-message"></p>
+          <div class="score-display"><strong id="final-score">90</strong><span>/ 90점</span></div>
+          <div class="result-stat-row"><div><span>찾은 짝꿍</span><strong id="final-pairs">6 / 6쌍</strong></div><div><span>시도 횟수</span><strong id="final-attempts">6회</strong></div></div>
+          <div id="result-stamps" class="result-stamps" aria-label="시설별 정답 여부"></div>
+          <div class="result-actions"><button id="retry-button" class="button button-primary" type="button">다시하기 <span aria-hidden="true">↻</span></button><button id="result-home-button" class="button button-secondary" type="button">메인으로</button></div>
+          <p class="result-note">다시하기를 누르면 정답 안내부터 확인할 수 있어요.</p>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer"><span>짧은 한 판, 조금 더 익숙해진 캠퍼스.</span><span>학생 제작 학습 게임 · 학교 공식 서비스 아님</span></footer>
+  </div>
+
+  <dialog id="study-dialog" class="study-dialog" aria-labelledby="study-title" aria-describedby="study-description">
+    <div class="study-header"><p class="eyebrow">STEP 01 · 기억할 준비</p><h2 id="study-title" tabindex="-1">시작 전, 캠퍼스 장소를 기억해요!</h2><p id="study-description">호관 번호와 그림이 한 쌍이에요. 천천히 살펴보세요.</p><span class="no-timer-tag">학습 중에는 시간이 흐르지 않아요</span></div>
+    <div id="study-list" class="study-list"></div>
+    <p class="study-disclaimer">각 호관의 여러 시설 중, 이번 게임에서 배울 대표 시설을 연결했어요.</p>
+    <div class="study-actions"><button id="study-back-button" class="button button-secondary" type="button">메인으로</button><button id="play-button" class="button button-primary" type="button">기억했어요! 게임 시작 <span aria-hidden="true">→</span></button></div>
+  </dialog>
+
+
+  <dialog id="leave-dialog" class="leave-dialog" aria-labelledby="leave-title" aria-describedby="leave-description leave-time-note">
+    <div class="leave-emblem" aria-hidden="true">↩</div>
+    <p class="eyebrow">잠깐, 한 번 더 확인해요</p>
+    <h2 id="leave-title">캠퍼스 탐험을 잠깐 멈출까요?</h2>
+    <p id="leave-description" class="leave-description">메인으로 돌아가면 지금 찾은 짝꿍과 점수가 초기화돼요.</p>
+    <p id="leave-time-note" class="leave-time-note"><span aria-hidden="true">◷</span> 고르는 동안에도 시간은 흘러요.</p>
+    <div class="leave-actions">
+      <button id="continue-button" class="button button-primary" type="button" autofocus>계속하기 <span aria-hidden="true">→</span></button>
+      <button id="confirm-home-button" class="button button-secondary" type="button">메인으로</button>
+    </div>
+    <p class="leave-keyboard-note">Esc 키를 눌러도 계속할 수 있어요.</p>
+  </dialog>
+
+<script>
+/* 새내기의 캠퍼스 짝꿍 찾기
+ * 외부 통신·저장 기능 없음. 한 곳의 DATA를 도움말과 게임에서 공유합니다.
+ */
+(() => {
+  "use strict";
+
+  const DATA = Object.freeze([
+    { pairId: "conference", building: 1, name: "국제회의장", image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUiPjx0aXRsZSBpZD0idGl0bGUiPuq1reygnO2ajOydmOyepTwvdGl0bGU+PGVsbGlwc2UgY3g9IjgwIiBjeT0iMTM4IiByeD0iNTMiIHJ5PSI3IiBmaWxsPSIjRTlFMkYwIi8+CjxwYXRoIGQ9Ik01MiA4N1Y1N2MwLTggNi0xNCAxNC0xNGgxMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzQ2MDg3IiBzdHJva2Utd2lkdGg9IjUiLz4KPHJlY3QgeD0iNzEiIHk9IjMyIiB3aWR0aD0iMTciIGhlaWdodD0iMjkiIHJ4PSI4IiBmaWxsPSIjQTk5NkQwIi8+PHBhdGggZD0iTTY3IDUxYzAgMTEgMjQgMTEgMjQgME03OSA2MXYxMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzQ2MDg3IiBzdHJva2Utd2lkdGg9IjQiLz4KPHBhdGggZD0iTTM2IDc4aDg3bC03IDE2SDQzeiIgZmlsbD0iI0I3QTJEOCIgc3Ryb2tlPSIjNzQ2MDg3IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggZD0iTTQ5IDk0aDYybC02IDQzSDU1eiIgZmlsbD0iI0RBRDBFQyIgc3Ryb2tlPSIjNzQ2MDg3IiBzdHJva2Utd2lkdGg9IjMiLz4KPHBhdGggZD0iTTU3IDEzOGg0OCIgc3Ryb2tlPSIjNzQ2MDg3IiBzdHJva2Utd2lkdGg9IjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8Y2lyY2xlIGN4PSI4MCIgY3k9IjExMSIgcj0iOSIgZmlsbD0iI0ZERjhFRCIvPjxwYXRoIGQ9Im03NiAxMTEgMyAzIDUtNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOUU4N0JBIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8cGF0aCBkPSJNMTEzIDM0djEzbS02LTZoMTJNMzMgNTd2OW0tNC01aDgiIHN0cm9rZT0iI0Q0QUU2OCIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=", note: "본관 1호관 103호" },
+    { pairId: "library", building: 2, name: "중앙도서관", image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUiPjx0aXRsZSBpZD0idGl0bGUiPuykkeyVmeuPhOyEnOq0gDwvdGl0bGU+PGVsbGlwc2UgY3g9IjgyIiBjeT0iMTM4IiByeD0iNTgiIHJ5PSI3IiBmaWxsPSIjRTlFMkYwIi8+CjxyZWN0IHg9IjM2IiB5PSIxMTYiIHdpZHRoPSI5NSIgaGVpZ2h0PSIxNSIgcng9IjQiIGZpbGw9IiNCOUQ2QzEiIHN0cm9rZT0iIzc0NjA4NyIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxwYXRoIGQ9Ik00OCAxMjRoNzMiIHN0cm9rZT0iI0VGRjVFQSIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPHJlY3QgeD0iMjkiIHk9Ijk5IiB3aWR0aD0iOTYiIGhlaWdodD0iMTUiIHJ4PSI0IiBmaWxsPSIjREZDMThEIiBzdHJva2U9IiM3NDYwODciIHN0cm9rZS13aWR0aD0iMyIvPgo8cGF0aCBkPSJNNDAgMTA3aDcyIiBzdHJva2U9IiNGRkY0REMiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxwYXRoIGQ9Ik04MCA1M2MtMTctMTMtMzYtMTItNTUtNXY0NmMyMi01IDM5LTQgNTUgOSAxNi0xMyAzMy0xNCA1NS05VjQ4Yy0xOS03LTM4LTgtNTUgNXoiIGZpbGw9IiNGRkZDRUYiIHN0cm9rZT0iIzc0NjA4NyIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggZD0iTTgwIDU0djQ3TTM2IDYxYzEzLTMgMjItMiAzMiAzTTM2IDczYzEzLTMgMjItMiAzMiAzTTkyIDY0YzEwLTUgMTktNiAzMS0zTTkyIDc2YzEwLTUgMTktNiAzMS0zIiBmaWxsPSJub25lIiBzdHJva2U9IiNDNkI0RDYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxwYXRoIGQ9Ik0xMDUgNDR2MjVsOC02IDcgNFY0MyIgZmlsbD0iI0I3RDZDMCIgc3Ryb2tlPSIjN0NBNThBIiBzdHJva2Utd2lkdGg9IjIiLz4KPHBhdGggZD0iTTQ4IDIxdjEybS02LTZoMTJNMTM1IDI3djhtLTQtNGg4IiBzdHJva2U9IiNENEFFNjgiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+", note: "책을 읽고 학습할 수 있는 중앙도서관" },
+    { pairId: "counseling", building: 7, name: "심리상담", image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUiPjx0aXRsZSBpZD0idGl0bGUiPuyLrOumrOyDgeuLtDwvdGl0bGU+PGVsbGlwc2UgY3g9IjgwIiBjeT0iMTM5IiByeD0iNTgiIHJ5PSI3IiBmaWxsPSIjRTlFMkYwIi8+CjxwYXRoIGQ9Ik0zMiAzMGg0N2M4IDAgMTIgNSAxMiAxMnYxOGMwIDctNCAxMS0xMSAxMUg2MUw0OSA4M1Y3MUgzMmMtNiAwLTEwLTUtMTAtMTFWNDJjMC03IDQtMTIgMTAtMTJ6IiBmaWxsPSIjRENEMkVEIiBzdHJva2U9IiM3NDYwODciIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBkPSJNNDUgNDhjNC03IDEzLTMgMTMgMiAwLTUgMTAtOSAxMy0yIDQgOC0xMyAxNi0xMyAxNlM0MSA1NiA0NSA0OHoiIGZpbGw9IiNCODlCQ0EiLz4KPGNpcmNsZSBjeD0iNDIiIGN5PSI4OCIgcj0iMTMiIGZpbGw9IiNGMUQ1QkQiIHN0cm9rZT0iIzc0NjA4NyIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxwYXRoIGQ9Ik0yOSA4NWMtMi0xOCAyOC0xOCAyNyAwLTExIDEtMTQtOC0xNC04cy0zIDgtMTMgOCIgZmlsbD0iIzdDNkE4OCIvPgo8cGF0aCBkPSJNMjIgMTMzdi0xOGMwLTE3IDM5LTE3IDM5IDB2MTgiIGZpbGw9IiNBOENEQjQiIHN0cm9rZT0iIzc0NjA4NyIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxjaXJjbGUgY3g9IjExOSIgY3k9Ijg4IiByPSIxMyIgZmlsbD0iI0YxRDVCRCIgc3Ryb2tlPSIjNzQ2MDg3IiBzdHJva2Utd2lkdGg9IjMiLz4KPHBhdGggZD0iTTEwNiA4N2MtNC0xOCAzMC0xOSAyNyAwLTYtMS0xMC00LTEzLTEwLTIgNi03IDktMTQgMTAiIGZpbGw9IiNBOTkxQjQiLz4KPHBhdGggZD0iTTk5IDEzM3YtMThjMC0xNyAzOS0xNyAzOSAwdjE4IiBmaWxsPSIjQkRBOEQ3IiBzdHJva2U9IiM3NDYwODciIHN0cm9rZS13aWR0aD0iMyIvPgo8cGF0aCBkPSJNNjIgMTE1aDM2TTgwIDExNXYyMCIgc3Ryb2tlPSIjNzQ2MDg3IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8cmVjdCB4PSI2NCIgeT0iMTEwIiB3aWR0aD0iMzIiIGhlaWdodD0iNyIgcng9IjMiIGZpbGw9IiNFOEQ0QUMiIHN0cm9rZT0iIzc0NjA4NyIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxwYXRoIGQ9Ik0xMTYgMzh2MTJtLTYtNmgxMiIgc3Ryb2tlPSIjRDRBRTY4IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==", note: "7호관 행정동 2층 통합상담관리센터" },
+    { pairId: "vr", building: 12, name: "VR체험관", image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUiPjx0aXRsZSBpZD0idGl0bGUiPlZS7LK07ZeY6rSAPC90aXRsZT48ZWxsaXBzZSBjeD0iODAiIGN5PSIxMzgiIHJ4PSI1OSIgcnk9IjciIGZpbGw9IiNFOUUyRjAiLz4KPHBhdGggZD0iTTM5IDYyVjQ5YzAtMzEgODItMzEgODIgMHYxNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzQ2MDg3IiBzdHJva2Utd2lkdGg9IjEwIi8+CjxwYXRoIGQ9Ik00MCA1OFY0OWMwLTI3IDgwLTI3IDgwIDB2MTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0I4QTNENiIgc3Ryb2tlLXdpZHRoPSI0Ii8+CjxyZWN0IHg9IjI0IiB5PSI1NiIgd2lkdGg9IjExMyIgaGVpZ2h0PSI0OCIgcng9IjE3IiBmaWxsPSIjRDhDREVBIiBzdHJva2U9IiM3NDYwODciIHN0cm9rZS13aWR0aD0iMy41Ii8+CjxyZWN0IHg9IjM3IiB5PSI2NSIgd2lkdGg9Ijg2IiBoZWlnaHQ9IjMwIiByeD0iMTAiIGZpbGw9IiM4NTcxOUUiIHN0cm9rZT0iIzc0NjA4NyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KPHBhdGggZD0iTTc3IDkzdi03YTQgNCAwIDAgMSA4IDB2NyIgZmlsbD0iI0Q4Q0RFQSIvPgo8cGF0aCBkPSJtNDggNzQgNi01bTQyIDE5IDEzLTEzIiBzdHJva2U9IiNDREJERTMiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxwYXRoIGQ9Ik0yOCAxMDdjLTgtNC0xOCA1LTE2IDEzbDQgMTRjMiA3IDE0IDQgMTQtMnYtOGw3LTh6TTEzMSAxMDhjOC00IDE4IDUgMTYgMTNsLTQgMTNjLTIgNy0xNCA0LTE0LTJ2LThsLTctOHoiIGZpbGw9IiNCOEQ0QzEiIHN0cm9rZT0iIzc0NjA4NyIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxjaXJjbGUgY3g9IjI2IiBjeT0iMTE0IiByPSI5IiBmaWxsPSJub25lIiBzdHJva2U9IiM3NDYwODciIHN0cm9rZS13aWR0aD0iMyIvPgo8Y2lyY2xlIGN4PSIxMzIiIGN5PSIxMTQiIHI9IjkiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzc0NjA4NyIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxwYXRoIGQ9Ik0zMCAzMHYxMW0tNS02aDEwTTEzNCAzN3Y4bS00LTRoOCIgc3Ryb2tlPSIjRDRBRTY4IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==", note: "창의융합센터의 VR체험관" },
+    { pairId: "cafeteria", building: 13, name: "학생식당", image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUiPjx0aXRsZSBpZD0idGl0bGUiPu2VmeyDneyLneuLuTwvdGl0bGU+PGVsbGlwc2UgY3g9IjgxIiBjeT0iMTM4IiByeD0iNTkiIHJ5PSI3IiBmaWxsPSIjRTlFMkYwIi8+CjxyZWN0IHg9IjE3IiB5PSI0OCIgd2lkdGg9IjEyNiIgaGVpZ2h0PSI4NiIgcng9IjE1IiBmaWxsPSIjQjdENEJEIiBzdHJva2U9IiM3NDYwODciIHN0cm9rZS13aWR0aD0iMy41Ii8+CjxyZWN0IHg9IjI2IiB5PSI1NyIgd2lkdGg9IjQyIiBoZWlnaHQ9IjI3IiByeD0iOCIgZmlsbD0iI0Y5RjRFNSIgc3Ryb2tlPSIjOEVBQjkzIiBzdHJva2Utd2lkdGg9IjIiLz4KPHJlY3QgeD0iNzUiIHk9IjU3IiB3aWR0aD0iMjYiIGhlaWdodD0iMjciIHJ4PSI3IiBmaWxsPSIjRjlGNEU1IiBzdHJva2U9IiM4RUFCOTMiIHN0cm9rZS13aWR0aD0iMiIvPgo8cmVjdCB4PSIxMDgiIHk9IjU3IiB3aWR0aD0iMjYiIGhlaWdodD0iMjciIHJ4PSI3IiBmaWxsPSIjRjlGNEU1IiBzdHJva2U9IiM4RUFCOTMiIHN0cm9rZS13aWR0aD0iMiIvPgo8cmVjdCB4PSIyNiIgeT0iOTIiIHdpZHRoPSI1OCIgaGVpZ2h0PSIzMiIgcng9IjkiIGZpbGw9IiNGOUY0RTUiIHN0cm9rZT0iIzhFQUI5MyIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxyZWN0IHg9IjkxIiB5PSI5MiIgd2lkdGg9IjQzIiBoZWlnaHQ9IjMyIiByeD0iOSIgZmlsbD0iI0Y5RjRFNSIgc3Ryb2tlPSIjOEVBQjkzIiBzdHJva2Utd2lkdGg9IjIiLz4KPHBhdGggZD0iTTM1IDExMGMwLTE4IDM5LTE4IDM5IDB6IiBmaWxsPSIjRkZGRkY2IiBzdHJva2U9IiNEOUNBQjciIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNOTcgMTEwYzMgMTUgMjkgMTUgMzEgMHoiIGZpbGw9IiNDNkIwRDciIHN0cm9rZT0iIzc0NjA4NyIgc3Ryb2tlLXdpZHRoPSIyIi8+PGVsbGlwc2UgY3g9IjExMiIgY3k9IjEwOSIgcng9IjE1IiByeT0iNSIgZmlsbD0iI0NCQjY4RSIvPgo8cGF0aCBkPSJtMzMgNjcgOCA3IDktOSA5IDZNODIgNjVsMTEgOW0tMTEgMSAxMS0xMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRDlBNTgzIiBzdHJva2Utd2lkdGg9IjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8Y2lyY2xlIGN4PSIxMjEiIGN5PSI2OSIgcj0iOCIgZmlsbD0iIzlBQkE4NyIvPjxwYXRoIGQ9Im0xMTggNjUgNSA4bS04LTMgMTAtMiIgc3Ryb2tlPSIjRUVGM0RGIiBzdHJva2Utd2lkdGg9IjIiLz4KPHBhdGggZD0iTTQ4IDIzYy04IDcgNyA5IDAgMTZNNzIgMThjLTggNyA3IDkgMCAxNk05NSAyNGMtOCA3IDcgOSAwIDE2IiBmaWxsPSJub25lIiBzdHJva2U9IiNCRkFBQ0UiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+", note: "13호관 학생회관 1층" },
+    { pairId: "gym", building: 21, name: "종합체육관", image: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0idGl0bGUiPjx0aXRsZSBpZD0idGl0bGUiPuyihe2VqeyytOycoeq0gDwvdGl0bGU+PGVsbGlwc2UgY3g9IjgwIiBjeT0iMTM4IiByeD0iNTUiIHJ5PSI3IiBmaWxsPSIjRTlFMkYwIi8+CjxnIHRyYW5zZm9ybT0icm90YXRlKDM0IDczIDc2KSI+CjxlbGxpcHNlIGN4PSI3MiIgY3k9IjU4IiByeD0iMjkiIHJ5PSIzNiIgZmlsbD0iI0RDRUNERiIgc3Ryb2tlPSIjNzQ2MDg3IiBzdHJva2Utd2lkdGg9IjQiLz4KPHBhdGggZD0iTTU1IDM0djQ4bTExLTU2djY0bTEyLTY0djY0bTExLTU3djQ5TTQ1IDQ3aDU0TTQ0IDU5aDU2TTQ4IDcxaDQ4IiBzdHJva2U9IiNBOEM2QUQiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNNjQgOTJoMTZsLTQgMTdoLTh6IiBmaWxsPSIjQkZBNkQ1IiBzdHJva2U9IiM3NDYwODciIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSI2NiIgeT0iMTA2IiB3aWR0aD0iMTIiIGhlaWdodD0iMzUiIHJ4PSI1IiBmaWxsPSIjQjhBMENGIiBzdHJva2U9IiM3NDYwODciIHN0cm9rZS13aWR0aD0iMyIvPgo8cGF0aCBkPSJtNjcgMTE1IDEwIDRtLTEwIDQgMTAgNCIgc3Ryb2tlPSIjRTZEQUVFIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9nPgo8cGF0aCBkPSJtMTAwIDc1IDMtMzIgMTMgOCAxMy0yIDggMTEtMjUgMjJ6IiBmaWxsPSIjRkZGQkVDIiBzdHJva2U9IiM3NDYwODciIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBkPSJtMTA1IDQ5IDcgMjdtNS0yMy01IDIzbTE2LTIxLTE2IDIxIiBzdHJva2U9IiNENUM2REEiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNMTA1IDc2Yy0xMCA5IDAgMjEgMTAgMTJsNC01eiIgZmlsbD0iI0JEQTdENiIgc3Ryb2tlPSIjNzQ2MDg3IiBzdHJva2Utd2lkdGg9IjMiLz4KPHBhdGggZD0iTTEyOSAxMDZ2MTNtLTYtNmgxMk0zNyAzMnYxMG0tNS01aDEwIiBzdHJva2U9IiNENEFFNjgiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+", note: "배드민턴장 등이 있는 종합체육관" }
+  ].map(Object.freeze));
+  const LIMIT_MS = 60000;
+  const PAIR_SCORE = 15;
+  const MISMATCH_MS = 800;
+  const $ = (id) => document.getElementById(id);
+  const dom = {
+    home: $("home-screen"), game: $("game-screen"), result: $("result-screen"),
+    dialog: $("study-dialog"), leaveDialog: $("leave-dialog"), studyList: $("study-list"), board: $("card-board"),
+    time: $("time-value"), score: $("score-value"), pairs: $("pairs-value"),
+    attempts: $("attempts-value"), feedback: $("game-feedback"),
+    track: $("time-track"), fill: $("time-fill")
+  };
+  const state = {
+    phase: "home", deck: [], selected: [], matched: new Set(),
+    attempts: 0, locked: false, deadline: 0, timer: null, flipTimer: null, version: 0
+  };
+
+  let leaveTrigger = null;
+
+  function make(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function showScreen(which) {
+    dom.home.hidden = which !== "home";
+    dom.game.hidden = which !== "game";
+    dom.result.hidden = which !== "result";
+    window.scrollTo(0, 0);
+  }
+
+  // version 값으로 이전 판의 콜백을 무효화하여 화면 전환 뒤 예약 작업이 섞이지 않게 합니다.
+  function clearScheduledWork() {
+    clearTimeout(state.timer);
+    clearTimeout(state.flipTimer);
+    state.timer = null;
+    state.flipTimer = null;
+    state.version += 1;
+  }
+
+  function resetRound() {
+    clearScheduledWork();
+    state.deck = [];
+    state.selected = [];
+    state.matched.clear();
+    state.attempts = 0;
+    state.locked = false;
+    state.deadline = 0;
+    dom.board.replaceChildren();
+    dom.game.classList.remove("is-urgent");
+    dom.time.textContent = "60";
+    dom.fill.style.width = "100%";
+    dom.track.setAttribute("aria-valuenow", "60");
+    updateStats();
+    feedback("카드 두 장을 뒤집어 호관과 시설을 연결해요.");
+  }
+
+  function closeStudy() {
+    if (dom.dialog.open) dom.dialog.close();
+    document.body.classList.remove("modal-open");
+  }
+
+  // 확인 창은 게임 상태를 변경하거나 타이머를 새로 만들지 않습니다.
+  function requestHome() {
+    if (state.phase !== "playing") { goHome(); return; }
+    if (syncClock() <= 0) { finish(false); return; }
+    if (dom.leaveDialog.open) return;
+    leaveTrigger = document.activeElement;
+    dom.leaveDialog.showModal();
+    document.body.classList.add("modal-open");
+    $("continue-button").focus({ preventScroll: true });
+  }
+
+  function closeLeave(restoreFocus = true) {
+    if (dom.leaveDialog.open) dom.leaveDialog.close();
+    if (!dom.dialog.open) document.body.classList.remove("modal-open");
+    if (restoreFocus && state.phase === "playing") {
+      const target = leaveTrigger && leaveTrigger.isConnected && !leaveTrigger.disabled
+        ? leaveTrigger : $("game-home-button");
+      target.focus({ preventScroll: true });
+    }
+    leaveTrigger = null;
+  }
+
+  function continueGame() {
+    if (state.phase !== "playing" || !dom.leaveDialog.open) return;
+    if (syncClock() <= 0) { finish(false); return; }
+    closeLeave(true);
+  }
+
+  function confirmHome() {
+    if (state.phase !== "playing" || !dom.leaveDialog.open) return;
+    if (syncClock() <= 0) { finish(false); return; }
+    goHome();
+  }
+
+  function goHome() {
+    // 닫힘 이벤트가 비동기로 도착해도 새 상태를 되돌리지 않도록 상태부터 전환합니다.
+    state.phase = "home";
+    closeLeave(false);
+    closeStudy();
+    resetRound();
+    showScreen("home");
+    $("start-button").focus({ preventScroll: true });
+  }
+
+  function renderStudy() {
+    const fragment = document.createDocumentFragment();
+    DATA.forEach((item) => {
+      const article = make("article", "study-item");
+      const building = make("div", "study-building");
+      building.append(make("b", "", String(item.building)), make("small", "", "호관"));
+      const arrow = make("span", "study-arrow", "↔");
+      arrow.setAttribute("aria-hidden", "true");
+      const img = make("img", "study-picture");
+      img.src = item.image; img.alt = ""; img.width = 57; img.height = 65;
+      const text = make("div", "study-text");
+      text.append(make("h3", "", item.name), make("p", "", item.note));
+      article.append(building, arrow, img, text);
+      fragment.append(article);
+    });
+    dom.studyList.replaceChildren(fragment);
+  }
+
+  function openStudy() {
+    if (state.phase !== "home" && state.phase !== "result") return;
+    resetRound();
+    state.phase = "study";
+    showScreen("home");
+    dom.dialog.showModal();
+    document.body.classList.add("modal-open");
+    dom.dialog.scrollTop = 0;
+    $("study-title").focus({ preventScroll: true });
+  }
+
+  // Fisher–Yates: 정렬 함수에 난수를 넣는 방식 대신 각 위치를 균등하게 섞습니다.
+  function shuffle(items) {
+    const result = [...items];
+    for (let i = result.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  }
+
+  function createDeck() {
+    return shuffle(DATA.flatMap((item) => [
+      { pairId: item.pairId, type: "building", item },
+      { pairId: item.pairId, type: "facility", item }
+    ]));
+  }
+
+  function renderBoard() {
+    const fragment = document.createDocumentFragment();
+    state.deck.forEach((card, index) => {
+      const button = make("button", "card");
+      button.type = "button";
+      button.dataset.index = String(index);
+      // 뒷면의 접근성 이름도 정답을 노출하지 않습니다.
+      button.setAttribute("aria-label", `${index + 1}번째 카드, 뒤집기`);
+      const inner = make("span", "card-inner");
+      inner.setAttribute("aria-hidden", "true");
+      const back = make("span", "card-face card-back");
+      back.append(make("span", "back-question", "?"), make("span", "back-label", "CAMPUS MATCH"));
+      const front = make("span", `card-face card-front ${card.type === "facility" ? "facility-front" : "building-front"}`);
+      if (card.type === "building") {
+        front.append(make("span", "card-kind", "BUILDING"), make("span", "building-number", String(card.item.building)), make("span", "building-suffix", "호관"));
+      } else {
+        const img = make("img");
+        img.src = card.item.image; img.alt = ""; img.width = 84; img.height = 84;
+        front.append(img, make("span", "facility-name", card.item.name));
+      }
+      front.append(make("span", "match-mark", "✓"));
+      inner.append(back, front);
+      button.append(inner);
+      fragment.append(button);
+    });
+    dom.board.replaceChildren(fragment);
+  }
+
+  function cardName(card) {
+    return card.type === "building" ? `${card.item.building}호관` : card.item.name;
+  }
+
+  function updateStats() {
+    dom.score.textContent = String(state.matched.size * PAIR_SCORE);
+    dom.pairs.textContent = String(state.matched.size);
+    dom.attempts.textContent = String(state.attempts);
+  }
+
+  function feedback(message, kind = "") {
+    dom.feedback.textContent = message;
+    dom.feedback.className = `game-feedback ${kind}`.trim();
+  }
+
+  function syncClock() {
+    const remaining = Math.max(0, state.deadline - Date.now());
+    const seconds = Math.ceil(remaining / 1000);
+    dom.time.textContent = String(seconds);
+    dom.track.setAttribute("aria-valuenow", String(seconds));
+    dom.fill.style.width = `${(remaining / LIMIT_MS) * 100}%`;
+    dom.game.classList.toggle("is-urgent", remaining <= 10000);
+    return remaining;
+  }
+
+  function tick(version) {
+    if (state.phase !== "playing" || version !== state.version) return;
+    if (syncClock() <= 0) {
+      finish(false);
+      return;
+    }
+    state.timer = setTimeout(() => tick(version), 80);
+  }
+
+  function startGame() {
+    if (state.phase !== "study") return;
+    state.phase = "playing"; // 빠른 중복 입력은 여기서 차단됩니다.
+    closeStudy();
+    clearScheduledWork();
+    state.selected = [];
+    state.matched.clear();
+    state.attempts = 0;
+    state.locked = false;
+    state.deck = createDeck();
+    renderBoard();
+    updateStats();
+    feedback("카드 두 장을 뒤집어 호관과 시설을 연결해요.");
+    showScreen("game");
+    state.deadline = Date.now() + LIMIT_MS;
+    tick(state.version);
+    $("game-title").focus({ preventScroll: true });
+  }
+
+  function selectCard(index) {
+    if (state.phase !== "playing") return;
+    // 타이머 콜백이 지연되었더라도 마감 후 클릭은 절대 인정하지 않습니다.
+    if (syncClock() <= 0) {
+      finish(false);
+      return;
+    }
+    if (dom.leaveDialog.open || state.locked || !Number.isInteger(index) || index < 0 || index >= state.deck.length) return;
+    const card = state.deck[index];
+    if (state.selected.includes(index) || state.matched.has(card.pairId)) return;
+    const button = dom.board.children[index];
+    button.classList.add("is-open");
+    button.disabled = true;
+    button.setAttribute("aria-label", `${index + 1}번째 카드, ${cardName(card)}`);
+    state.selected.push(index);
+    if (state.selected.length === 1) {
+      feedback("이 카드와 연결되는 짝꿍을 찾아요.");
+      return;
+    }
+    state.attempts += 1;
+    state.locked = true;
+    updateStats();
+    const [firstIndex, secondIndex] = state.selected;
+    const first = state.deck[firstIndex], second = state.deck[secondIndex];
+    const correct = first.pairId === second.pairId && first.type !== second.type;
+    const buttons = [dom.board.children[firstIndex], dom.board.children[secondIndex]];
+    if (correct) {
+      // 정답을 확정하기 직전에도 마감 여부를 확인합니다.
+      if (Date.now() >= state.deadline) { finish(false); return; }
+      state.matched.add(first.pairId);
+      buttons.forEach((node) => {
+        node.classList.add("is-matched");
+        node.setAttribute("aria-label", `${node.getAttribute("aria-label")}, 정답`);
+      });
+      feedback(`정답! ${first.item.building}호관 ↔ ${first.item.name} · +15점`, "good");
+      state.selected = [];
+      state.locked = false;
+      updateStats();
+      if (state.matched.size === DATA.length) finish(true);
+      return;
+    }
+    buttons.forEach((node) => {
+      node.classList.add("is-wrong");
+      node.querySelector(".match-mark").textContent = "×";
+    });
+    feedback("다른 짝꿍이에요. 잠시 기억한 뒤 다시 찾아봐요!", "wrong");
+    const version = state.version;
+    state.flipTimer = setTimeout(() => {
+      if (state.phase !== "playing" || state.version !== version) return;
+      if (syncClock() <= 0) {
+        finish(false);
+        return;
+      }
+      [firstIndex, secondIndex].forEach((cardIndex) => {
+        const node = dom.board.children[cardIndex];
+        node.classList.remove("is-open", "is-wrong");
+        node.querySelector(".match-mark").textContent = "✓";
+        node.disabled = false;
+        node.setAttribute("aria-label", `${cardIndex + 1}번째 카드, 뒤집기`);
+      });
+      state.selected = [];
+      state.locked = false;
+      state.flipTimer = null;
+      feedback("괜찮아요! 다른 두 장을 연결해 보세요.");
+    }, MISMATCH_MS);
+  }
+
+  function finish(success) {
+    if (state.phase !== "playing") return;
+    // 성공 여부는 마지막 정답을 확정한 시점을 기준으로 전달됩니다.
+    state.phase = "result";
+    closeLeave(false);
+    clearScheduledWork();
+    state.locked = true;
+    [...dom.board.children].forEach((card) => { card.disabled = true; });
+    $("final-score").textContent = String(state.matched.size * PAIR_SCORE);
+    $("final-pairs").textContent = `${state.matched.size} / 6쌍`;
+    $("final-attempts").textContent = `${state.attempts}회`;
+    $("result-title").textContent = success ? "캠퍼스 탐험 성공!" : "다음엔 더 잘할 수 있어요!";
+    $("result-message").textContent = success ? "6쌍을 모두 찾았어요. 캠퍼스와 한 걸음 더 가까워졌네요!" : "아쉬워요! 다시 도전하며 캠퍼스를 기억해 봐요.";
+    $("result-kicker").textContent = success ? "CAMPUS CHALLENGE COMPLETE" : "ONE MORE LITTLE CHALLENGE";
+    $("result-emblem").textContent = success ? "✦" : "↻";
+    document.querySelector(".result-card").classList.toggle("is-failure", !success);
+    const stamps = DATA.map((item) => {
+      const matched = state.matched.has(item.pairId);
+      const stamp = make("span", `result-stamp${matched ? "" : " missing"}`);
+      stamp.setAttribute("role", "img");
+      stamp.setAttribute("aria-label", `${item.name}: ${matched ? "찾음" : "못 찾음"}`);
+      stamp.title = `${item.name}: ${matched ? "찾음" : "못 찾음"}`;
+      const img = make("img");
+      img.src = item.image; img.alt = "";
+      stamp.append(img);
+      return stamp;
+    });
+    $("result-stamps").replaceChildren(...stamps);
+    showScreen("result");
+    $("result-title").focus({ preventScroll: true });
+  }
+
+  $("start-button").addEventListener("click", openStudy);
+  $("retry-button").addEventListener("click", openStudy);
+  $("play-button").addEventListener("click", startGame);
+  $("study-back-button").addEventListener("click", goHome);
+  $("game-home-button").addEventListener("click", requestHome);
+  $("result-home-button").addEventListener("click", goHome);
+  $("brand-home").addEventListener("click", (event) => { event.preventDefault(); requestHome(); });
+  dom.board.addEventListener("click", (event) => {
+    const button = event.target.closest(".card");
+    if (button && dom.board.contains(button)) selectCard(Number(button.dataset.index));
+  });
+  $("continue-button").addEventListener("click", continueGame);
+  $("confirm-home-button").addEventListener("click", confirmHome);
+  dom.leaveDialog.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    continueGame();
+  });
+  dom.leaveDialog.addEventListener("keydown", (event) => {
+    if (event.key !== "Tab" || !dom.leaveDialog.open) return;
+    const first = $("continue-button"), last = $("confirm-home-button");
+    if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault(); first.focus();
+    } else if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault(); last.focus();
+    }
+  });
+  dom.leaveDialog.addEventListener("close", () => {
+    if (!dom.leaveDialog.open && !dom.dialog.open) document.body.classList.remove("modal-open");
+  });
+  // 정답 안내에서 Escape는 기존과 같이 메인으로 돌아갑니다.
+  dom.dialog.addEventListener("cancel", (event) => { event.preventDefault(); goHome(); });
+  // 마지막 버튼에서 Tab을 누를 때 브라우저 주소창으로 포커스가 빠지지 않게 합니다.
+  dom.dialog.addEventListener("keydown", (event) => {
+    if (event.key !== "Tab" || !dom.dialog.open) return;
+    const first = $("study-back-button"), last = $("play-button");
+    if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault(); first.focus();
+    } else if (event.shiftKey && (document.activeElement === first || document.activeElement === $("study-title"))) {
+      event.preventDefault(); last.focus();
+    }
+  });
+  dom.dialog.addEventListener("close", () => {
+    if (state.phase === "study" && !dom.dialog.open) goHome();
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (state.phase === "playing" && syncClock() <= 0) finish(false);
+  });
+  renderStudy();
+  updateStats();
+})();
+
+</script>
+</body>
+</html>

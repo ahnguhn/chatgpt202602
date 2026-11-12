@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>감스트 샷건 게임</title>
+<style>
+:root{color-scheme:dark;--bg:#0c0e15;--panel:#171b27;--line:#2b3042;--muted:#a6aec6;--lime:#d7ff63;--pink:#ff668d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0,#24223d,transparent 55%),var(--bg);color:#f4f5fc;font-family:system-ui,-apple-system,"Malgun Gothic",sans-serif}
+button,select,input{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:10px;background:#242a3b;color:white;padding:12px 18px;font-weight:750;touch-action:manipulation}button:hover{filter:brightness(1.15)}button:focus-visible,select:focus-visible{outline:3px solid var(--lime);outline-offset:3px}button:disabled{opacity:.4;cursor:not-allowed}
+.shell{max-width:1160px;margin:auto;padding:32px 24px 20px}.top{display:flex;align-items:center;justify-content:space-between;gap:20px}.eyebrow{font-size:11px;letter-spacing:.2em;color:var(--lime);font-weight:800}
+h1{font-size:clamp(25px,4vw,40px);margin:8px 0 5px;letter-spacing:-.06em}.subtitle{color:var(--muted);font-size:13px;margin:0}.tag{border:1px solid var(--line);border-radius:30px;padding:9px 14px;font-size:12px;white-space:nowrap;color:var(--muted)}.tag b{color:var(--lime)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0 16px}.stat{background:#171b27db;border:1px solid var(--line);border-radius:14px;padding:15px 20px}.stat label{display:block;font-size:11px;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}.stat strong{font-size:28px;font-variant-numeric:tabular-nums}.stat small{font-size:13px;color:var(--muted);margin-left:5px}.stat:first-child strong{color:var(--lime)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:16px}.stage{border-radius:16px;overflow:hidden;border:1px solid #363c51;position:relative;background:#121724}
+canvas{display:block;width:100%;height:auto;aspect-ratio:1000/610}
+.stagebar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#111521;font-size:12px;color:var(--muted);border-bottom:1px solid var(--line);gap:8px}.status{color:var(--lime);font-weight:800}
+.overlay{position:absolute;inset:42px 0 0;display:flex;align-items:center;justify-content:center;background:#090d19b8;backdrop-filter:blur(5px);padding:18px;text-align:center}.overlay[hidden]{display:none}.overlaybox{max-width:420px}.overlay .mini{color:var(--lime);font-size:11px;letter-spacing:.2em}.overlay h2{font-size:clamp(24px,4vw,39px);letter-spacing:-.04em;margin:10px 0}.overlay p{color:#c3c9da;line-height:1.7;font-size:14px}.primary{background:var(--lime);color:#111827;border:0}.overlay button{margin:6px 4px}
+.side{display:flex;flex-direction:column;gap:12px}.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}.card h2{font-size:14px;margin:0 0 14px}.card p{font-size:12px;color:var(--muted);line-height:1.7;margin:8px 0}.settings label{display:block;font-size:12px;color:var(--muted);margin:0 0 7px}select{width:100%;padding:10px;border-radius:8px;background:#0f131e;color:white;border:1px solid var(--line)}.check{display:flex!important;align-items:center;gap:8px;margin-top:13px!important}.check input{accent-color:var(--lime)}.bar{height:9px;border-radius:9px;background:#0a0d14;overflow:hidden;margin:8px 0}.bar span{display:block;height:100%;transition:width .15s;background:linear-gradient(90deg,#ff6b62,#ffca6d)}.health span{background:var(--lime)}
+.row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}.row b{color:white}.hint{color:var(--lime)!important}
+.controls{display:grid;grid-template-columns:1fr auto auto;gap:10px;margin:14px 0}.hit{background:var(--lime);color:#111827;font-size:17px;border:0;min-height:56px}.ragebtn{color:#ffbc92}.smallrow{display:flex;gap:8px}.smallrow button{font-size:12px;padding:9px 12px;flex:1}.keys{display:grid;gap:10px;font-size:12px;color:var(--muted)}kbd{display:inline-block;color:white;background:#2b3144;border-radius:5px;padding:3px 6px;border-bottom:2px solid #434b65;min-width:26px;text-align:center;margin-right:7px}.bottom{display:flex;justify-content:space-between;gap:12px;margin-top:17px;color:#808aa4;font-size:11px;line-height:1.7}.testresult{white-space:pre-wrap;color:#c4d2ae;font-size:11px;line-height:1.7;margin-top:8px} .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.low{color:var(--pink)!important}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr}.side .help{display:none}.shell{padding:20px 14px}.tag{display:none}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:24px}.bottom{display:block}}
+@media(max-width:480px){.controls{grid-template-columns:1fr 1fr}.hit{grid-column:1/-1}.stats{grid-template-columns:repeat(2,1fr)}.side{grid-template-columns:1fr}.overlay p{font-size:12px}.overlay h2{font-size:24px}.overlay button{padding:10px}.stagebar{font-size:10px}.card{padding:14px}.overlaybox{max-width:100%}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body><main class="shell">
+<header class="top"><div><div class="eyebrow">KEYBOARD SMASH / MINI ARCADE</div><h1>감스트 샷건 게임<span style="color:var(--lime)">.</span></h1><p class="subtitle">30초 안에 2,500점 달성! 타이밍을 맞춰 게임 속 키보드를 박살 내자.</p></div><div class="tag"><b>30초</b> 타임어택 · 오프라인 플레이</div></header>
+<section class="stats" aria-label="게임 현황">
+<div class="stat"><label>SCORE / 점수</label><strong id="score">0</strong><small>점</small></div>
+<div class="stat"><label>TIME LEFT / 남은 시간</label><strong id="time">30.0</strong><small>초</small></div>
+<div class="stat"><label>DESTROYED / 파괴한 키보드</label><strong id="broken">0</strong><small>개</small></div>
+<div class="stat"><label>COMBO / 연속 퍼펙트</label><strong id="combo">0</strong><small>COMBO</small></div>
+</section>
+<div class="layout"><section>
+<div class="stage">
+<div class="stagebar"><span><span class="status" id="status">● READY</span> &nbsp; STREAM ROOM</span><span id="best">이번 실행 최고 0점</span></div>
+<canvas id="scene" width="1000" height="610" role="img" aria-label="사용자 제공 얼굴 사진과 헤드셋을 적용한 팬 캐릭터가 책상 위의 가상 키보드를 내려치는 게임 화면"></canvas>
+<div class="overlay" id="overlay"><div class="overlaybox">
+<div class="mini" id="overlayMini">READY TO SMASH?</div><h2 id="overlayTitle">키보드야, 미안하다!</h2>
+<p id="overlayText">움직이는 표시가 초록 구간에 올 때 <b>Space</b>!<br>분노가 꽉 차면 <b>F</b>로 강력한 샷건을 날리세요.<br>실제 키보드는 가볍게 눌러 주세요.</p>
+<button class="primary" id="mainAction">게임 시작</button><button id="overlayReset" hidden>처음으로</button>
+</div></div></div>
+<div class="controls"><button class="hit" id="hit" disabled>샷건! <small>[ SPACE ]</small></button><button class="ragebtn" id="rage" disabled>분노 폭발 [ F ]</button><button id="pause" disabled>일시정지</button></div>
+<div class="smallrow"><button id="reset">전체 초기화</button><button id="test">로직 자가 테스트</button></div>
+<div class="testresult" id="testresult" role="status"></div>
+</section><aside class="side">
+<section class="card settings"><h2>01 &nbsp; 플레이 설정</h2><label for="difficulty">난이도 · 시작 전에 선택</label><select id="difficulty"><option value="easy">연습 · 넓은 타이밍 구간</option><option value="normal" selected>보통 · 기본 타이밍 구간</option><option value="hard">도전 · 좁은 타이밍 구간</option></select><label class="check"><input id="sound" type="checkbox">타격 효과음 켜기</label><p>사용자 제공 사진을 assets 폴더에서 불러옵니다. 실제 음성 대신 합성 효과음을 사용합니다.</p></section>
+<section class="card"><h2>02 &nbsp; 키보드 상태</h2><div class="row"><span id="boardName">키보드 01</span><b id="hpLabel">100 / 100</b></div><div class="bar health"><span id="hpBar" style="width:100%"></span></div><div class="row" style="margin-top:18px"><span>분노 게이지</span><b id="rageLabel">0%</b></div><div class="bar"><span id="rageBar" style="width:0%"></span></div><p class="hint" id="tip">초록 구간의 정중앙을 노려 보세요.</p></section>
+<section class="card help"><h2>03 &nbsp; 조작 가이드</h2><div class="keys"><div><kbd>Space</kbd>일반 샷건 / 초록 구간 = PERFECT</div><div><kbd>F</kbd>분노 100%일 때 강력한 일격</div><div><kbd>P</kbd>일시정지 / 이어하기</div></div><p>버튼 클릭·터치로도 플레이할 수 있어요. 키를 길게 눌러도 자동 연타되지 않습니다.</p><p>PERFECT를 연속으로 맞히면 콤보 배율이 올라갑니다. 키보드는 파괴될수록 더 튼튼해집니다.</p></section>
+</aside></div>
+<footer class="bottom"><span>비공식 팬 창작 학습용 게임 · 실존 인물의 실제 행동을 재현하거나 보증하지 않습니다.<br>‘샷건’은 게임 속 책상을 내려치는 동작을 뜻하며, 총기는 등장하지 않습니다.</span><span>HTML + CSS + JavaScript<br>외부 라이브러리 · 서버 · 저장 기능 없음</span></footer>
+<p class="sr" role="status" id="announce" aria-live="polite"></p>
+</main>
+<script>
+"use strict";
+// 게임 규칙은 별도 순수 함수로 분리해 자가 테스트 가능하게 구성.
+const RULES = {
+ easy:{width:.21,period:1500,base:15},
+ normal:{width:.14,period:1200,base:12},
+ hard:{width:.085,period:950,base:10}
+};
+function isPerfect(phase,width){return Math.abs(phase-.5)<=width;}
+function multiplier(combo){return 1+Math.min(2,Math.floor(combo/5)*.25);}
+function hitOutcome({perfect,combo,base,power}){
+ const nextCombo=perfect?combo+1:0;
+ return {combo:nextCombo,damage:base*(perfect?2:1)*(power?4:1),
+ score:Math.round((perfect?100:35)*multiplier(nextCombo)*(power?3:1)),
+ rage:power?0:(perfect?16:9)};
+}
+function maxHP(broken){return 100+broken*20;}
+function remaining(elapsed){return Math.max(0,30-elapsed);}
+function resolveDamage(hp,damage){return {hp:Math.max(0,hp-damage),destroyed:damage>=hp};}
+const $=id=>document.getElementById(id);
+const canvas=$("scene"),ctx=canvas.getContext("2d");
+// 과제 지시문에 따라 assets 폴더의 상대 경로로 사용자 제공 사진을 불러옵니다.
+const facePhoto=new Image();
+facePhoto.src="assets/face.jpg";
+const reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
+let state,particles=[],floaters=[],best=0,lastFrame=performance.now(),audio;
+function fresh(){return {mode:"ready",score:0,elapsed:0,broken:0,combo:0,maxCombo:0,
+ hp:100,maxHp:100,rage:0,hits:0,perfects:0,impact:0,shake:0,lastHit:-Infinity,
+ difficulty:$("difficulty").value};}
+function rule(){return RULES[state.difficulty];}
+function phase(){return ((state.elapsed*1000)%rule().period)/rule().period;}
+function announce(text){$("announce").textContent=text;}
+function render(){
+ $("score").textContent=state.score.toLocaleString("ko-KR");
+ $("time").textContent=remaining(state.elapsed).toFixed(1);
+ $("time").classList.toggle("low",remaining(state.elapsed)<=5);
+ $("broken").textContent=state.broken;$("combo").textContent=state.combo;
+ $("hpLabel").textContent=state.hp+" / "+state.maxHp;
+ $("hpBar").style.width=(100*state.hp/state.maxHp)+"%";
+ $("rageBar").style.width=state.rage+"%";$("rageLabel").textContent=state.rage+"%";
+ $("boardName").textContent="키보드 "+String(state.broken+1).padStart(2,"0");
+ const playing=state.mode==="playing";
+ $("hit").disabled=!playing;$("rage").disabled=!playing||state.rage<100;
+ $("pause").disabled=!["playing","paused"].includes(state.mode);
+ $("pause").textContent=state.mode==="paused"?"이어하기":"일시정지";
+ $("difficulty").disabled=state.mode!=="ready";
+ $("status").textContent={ready:"● READY",playing:"● LIVE",paused:"Ⅱ PAUSED",ended:"■ FINISHED"}[state.mode];
+ $("best").textContent="이번 실행 최고 "+best.toLocaleString("ko-KR")+"점";
+ $("tip").textContent=state.rage>=100?"분노 충전 완료! F 또는 분노 폭발 버튼!":"초록 구간 = PERFECT · 5콤보마다 배율 상승";
+}
+function showOverlay(mini,title,text,action,reset=false){
+ $("overlayMini").textContent=mini;$("overlayTitle").textContent=title;
+ $("overlayText").innerHTML=text;$("mainAction").textContent=action;
+ $("overlayReset").hidden=!reset;$("overlay").hidden=false;
+}
+function reset(){
+ state=fresh();particles=[];floaters=[];$("testresult").textContent="";
+ showOverlay("READY TO SMASH?","키보드야, 미안하다!","초록 구간에서 <b>Space</b> 또는 샷건 버튼!<br>분노 100%에서 <b>F</b>로 강력한 일격.<br>30초 안에 2,500점이면 목표 달성!<br>실제 키보드는 가볍게 눌러 주세요.","게임 시작");
+ render();
+}
+function start(){
+ state=fresh();state.mode="playing";lastFrame=performance.now();particles=[];floaters=[];
+ $("overlay").hidden=true;initAudio();render();announce("게임 시작. 제한 시간 30초.");
+}
+function togglePause(){
+ if(state.mode==="playing"){
+  state.mode="paused";showOverlay("TAKE A BREATH","잠깐 쉬어가기","시간과 타이밍 바가 멈췄어요.<br>P 키 또는 아래 버튼으로 이어할 수 있어요.","이어하기",true);
+ }else if(state.mode==="paused"){state.mode="playing";lastFrame=performance.now();$("overlay").hidden=true;}
+ render();
+}
+function end(){
+ state.mode="ended";state.elapsed=30;best=Math.max(best,state.score);
+ const rank=state.score>=12000?"키보드의 천적":state.score>=6000?"샷건 장인":state.score>=2500?"떠오르는 파괴왕":"차분한 연습생";
+ const accuracy=state.hits?Math.round(state.perfects/state.hits*100):0;
+ showOverlay("TIME OVER / RESULT",(state.score>=2500?"목표 달성! ":"목표 미달 · ")+rank,
+ `<b style="font-size:27px;color:#d7ff63">${state.score.toLocaleString("ko-KR")}점</b><br>파괴 ${state.broken}개 · 최대 ${state.maxCombo}콤보<br>PERFECT ${accuracy}% (${state.perfects}/${state.hits})<br>${state.score>=2500?"성공: 목표 2,500점 달성!":"실패: 목표 2,500점에 다시 도전!"}<br>한 판 더 도전해 볼까요?`,"다시 도전",true);
+ render();announce(`게임 종료. ${state.score}점, 키보드 ${state.broken}개 파괴.`);
+}
+function initAudio(){
+ if(!$("sound").checked)return;
+ try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==="suspended")audio.resume().catch(()=>{});}catch(e){}
+}
+function sound(power,perfect){
+ if(!$("sound").checked)return;initAudio();if(!audio)return;
+ const t=audio.currentTime,osc=audio.createOscillator(),gain=audio.createGain();
+ osc.type="triangle";osc.frequency.setValueAtTime(power?110:perfect?210:150,t);
+ osc.frequency.exponentialRampToValueAtTime(35,t+.13);
+ gain.gain.setValueAtTime(.14,t);gain.gain.exponentialRampToValueAtTime(.001,t+.16);
+ osc.connect(gain);gain.connect(audio.destination);osc.start(t);osc.stop(t+.17);
+}
+function burst(power,destroyed){
+ const count=reducedMotion?0:destroyed?46:power?28:12;
+ for(let i=0;i<count;i++)particles.push({x:410+Math.random()*250,y:450,
+ vx:(Math.random()-.5)*(destroyed?750:420),vy:-140-Math.random()*470,
+ age:0,life:.6+Math.random()*.6,size:8+Math.random()*12,
+ color:destroyed?"#d7ff63":power?"#ff9e75":"#f2f3ff",rotation:Math.random()*6});
+}
+function hit(power=false){
+ if(state.mode!=="playing")return;
+ // 종료 직후 입력으로 점수가 늘지 않도록 입력 시점의 시간을 먼저 반영합니다.
+ advance(performance.now());if(state.mode!=="playing")return;
+ const now=state.elapsed;
+ if(now-state.lastHit<.12)return;
+ if(power&&state.rage<100){announce("분노 게이지가 100%가 되면 사용할 수 있습니다.");return;}
+ state.lastHit=now;
+ const perfect=isPerfect(phase(),rule().width);
+ const outcome=hitOutcome({perfect,combo:state.combo,base:rule().base,power});
+ state.combo=outcome.combo;state.maxCombo=Math.max(state.maxCombo,state.combo);
+ state.hits++;if(perfect)state.perfects++;
+ state.score+=outcome.score;state.rage=power?0:Math.min(100,state.rage+outcome.rage);
+ const resolved=resolveDamage(state.hp,outcome.damage);state.hp=resolved.hp;
+ if(resolved.destroyed){
+  state.broken++;state.score+=500;state.maxHp=maxHP(state.broken);state.hp=state.maxHp;
+  floaters.push({x:500,y:325,text:"KEYBOARD BREAK! +500",color:"#d7ff63",age:0});
+  announce(`키보드 파괴. ${state.broken}개째.`);
+ }
+ state.impact=power?1.2:1;state.shake=power?20:perfect?10:5;
+ burst(power,resolved.destroyed);sound(power,perfect);
+ floaters.push({x:500+(Math.random()-.5)*100,y:365,text:(power?"RAGE! ":"")+(perfect?"PERFECT":"HIT")+" +"+outcome.score,color:perfect?"#d7ff63":"#ffffff",age:0});
+ render();
+}
+function advance(now){
+ const dt=Math.max(0,(now-lastFrame)/1000);lastFrame=now;
+ if(state.mode==="playing"){state.elapsed=Math.min(30,state.elapsed+dt);if(state.elapsed>=30)end();}
+ return dt;
+}
+function box(x,y,w,h,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();}
+function text(str,x,y,size,color,align="center",weight=700){
+ ctx.fillStyle=color;ctx.font=`${weight} ${size}px system-ui,"Malgun Gothic",sans-serif`;ctx.textAlign=align;ctx.fillText(str,x,y);
+}
+function draw(){
+ ctx.clearRect(0,0,1000,610);
+ const j=reducedMotion?0:state.shake;
+ ctx.save();ctx.translate((Math.random()-.5)*j,(Math.random()-.5)*j);
+ // original streaming room illustration, no external assets
+ const bg=ctx.createLinearGradient(0,0,0,610);bg.addColorStop(0,"#181d32");bg.addColorStop(1,"#10131d");
+ ctx.fillStyle=bg;ctx.fillRect(-30,-30,1060,670);
+ ctx.strokeStyle="#252b44";ctx.lineWidth=1;
+ for(let x=0;x<1000;x+=72){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,440);ctx.stroke();}
+ for(let y=0;y<440;y+=72){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(1000,y);ctx.stroke();}
+ box(45,35,158,39,8,"#252c43");text("●  ON AIR",124,61,19,"#ff7b98");
+ box(756,38,200,110,10,"#111621");text("CHAT / 응원 중",780,65,15,"#9fa9c5","left");
+ text("오늘도 키보드 안녕?",775,96,13,"#d3daf0","left",400);text("타이밍이 생명이다!",775,122,13,"#d7ff63","left",400);
+ // monitors
+ box(55,175,235,181,13,"#090d16");box(66,186,213,147,6,"#263454");
+ for(let i=0;i<5;i++)box(82,205+i*21,80+i*17,5,2,i%2?"#687ba3":"#91a984");
+ box(152,356,40,50,3,"#292f42");box(110,399,124,10,4,"#2d354c");
+ // chair
+ box(371,170,274,303,75,"#343b55");box(387,183,242,256,60,"#242b40");
+ box(398,190,17,220,8,"#a5ca47");box(605,190,17,220,8,"#a5ca47");
+ // body
+ box(385,309,245,167,58,"#182637");box(414,340,186,127,25,"#223a4e");text("GAMST",507,395,32,"#d7ff63");
+ // 사용자 제공 얼굴 사진을 게임 캐릭터의 얼굴 위치에 표시합니다.
+ // 별도 파일 편집 없이 게임 렌더링 시 얼굴 영역을 선택하고 타원 마스크를 적용합니다.
+ const headBob=reducedMotion?0:Math.sin(Math.min(1,state.impact)*Math.PI/2)*8;
+ ctx.save();ctx.translate(0,headBob);
+ ctx.fillStyle="#f0bd9c";ctx.beginPath();ctx.ellipse(508,227,88,108,0,0,Math.PI*2);ctx.fill();
+ if(facePhoto.complete&&facePhoto.naturalWidth>0){
+  const iw=facePhoto.naturalWidth,ih=facePhoto.naturalHeight;
+  ctx.save();ctx.beginPath();ctx.ellipse(508,227,88,108,0,0,Math.PI*2);ctx.clip();
+  ctx.imageSmoothingEnabled=true;
+  ctx.drawImage(facePhoto,iw*.19,ih*.035,iw*.62,ih*.89,420,119,176,216);
+  ctx.restore();
+ }else{
+  text("사진 준비 중",508,232,17,"#42323a");
+ }
+ ctx.strokeStyle="#090d16";ctx.lineWidth=13;ctx.beginPath();ctx.arc(508,220,100,Math.PI,Math.PI*2);ctx.stroke();
+ box(403,207,25,64,10,"#111722");box(590,207,25,64,10,"#111722");
+ box(407,220,10,38,3,"#d7ff63");box(600,220,10,38,3,"#d7ff63");
+ ctx.strokeStyle="#121723";ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(606,255);ctx.quadraticCurveTo(620,290,565,295);ctx.stroke();box(551,288,22,12,5,"#121723");
+ ctx.restore();
+ // desk
+ ctx.fillStyle="#413547";ctx.beginPath();ctx.moveTo(0,430);ctx.lineTo(1000,430);ctx.lineTo(1040,538);ctx.lineTo(-40,538);ctx.fill();
+ box(-20,530,1040,40,0,"#2a2436");box(0,569,1000,41,0,"#151320");
+ ctx.strokeStyle="#b49b73";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,431);ctx.lineTo(1000,431);ctx.stroke();
+ // mug
+ box(790,365,54,66,8,"#cebb9d");text("GG",817,403,18,"#56465a");ctx.strokeStyle="#cebb9d";ctx.lineWidth=9;ctx.strokeRect(844,382,21,25);
+ // keyboard and visible damage
+ ctx.save();ctx.translate(500,472);ctx.transform(1,0,-.15,.74,0,0);
+ box(-183,-40,366,100,12,"#080c15");box(-174,-32,348,82,9,"#252c41");
+ const letters=["QWERTYUIOP","ASDFGHJKL","ZXCVBNM"];
+ for(let row=0;row<3;row++)for(let col=0;col<10;col++){
+  const missing=state.hp/state.maxHp<.6&&((col*7+row*3)%10)>state.hp/state.maxHp*12;
+  if(missing)continue;const x=-160+col*32;
+  box(x,-23+row*23,27,18,3,(col+row)%4===0?"#91ac57":"#56617c");
+  text((letters[row]||"")[col]||"·",x+13,-10+row*23,10,"#e9eefc");
+ }
+ if(state.hp/state.maxHp<.7){ctx.strokeStyle="#ff9b94";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-64,-35);ctx.lineTo(-25,2);ctx.lineTo(-44,30);ctx.lineTo(10,57);ctx.stroke();}
+ ctx.restore();
+ // arms / striking fist
+ const motion=Math.sin(Math.min(1,state.impact)*Math.PI/2);
+ ctx.strokeStyle="#223a4e";ctx.lineWidth=46;ctx.lineCap="round";ctx.beginPath();
+ ctx.moveTo(411,354);ctx.lineTo(353,399);ctx.lineTo(421,430);ctx.stroke();
+ ctx.fillStyle="#f0bd9c";ctx.beginPath();ctx.ellipse(431,430,34,24,.25,0,Math.PI*2);ctx.fill();
+ const fy=359+motion*87,fx=612-motion*40;
+ ctx.strokeStyle="#223a4e";ctx.lineWidth=47;ctx.beginPath();ctx.moveTo(602,349);ctx.lineTo(659,369);ctx.lineTo(fx,fy);ctx.stroke();
+ box(fx-31,fy-30,64,53,16,"#f0bd9c");
+ ctx.strokeStyle="#c38b74";ctx.lineWidth=2;for(let i=0;i<3;i++){ctx.beginPath();ctx.moveTo(fx-17+i*14,fy-25);ctx.lineTo(fx-17+i*14,fy-7);ctx.stroke();}
+ // impact rays
+ if(state.impact>.65&&!reducedMotion){ctx.strokeStyle="#d7ff63";ctx.lineWidth=5;for(let i=0;i<8;i++){let a=i*Math.PI/4;ctx.beginPath();ctx.moveTo(563+Math.cos(a)*47,455+Math.sin(a)*27);ctx.lineTo(563+Math.cos(a)*78,455+Math.sin(a)*49);ctx.stroke();}}
+ for(const p of particles){ctx.save();ctx.globalAlpha=Math.max(0,1-p.age/p.life);ctx.translate(p.x,p.y);ctx.rotate(p.rotation+p.age*8);box(-p.size/2,-p.size/2,p.size,p.size,3,p.color);ctx.restore();}
+ for(const f of floaters){ctx.save();ctx.globalAlpha=Math.max(0,1-f.age/.85);text(f.text,f.x,f.y-f.age*90,26,f.color);ctx.restore();}
+ ctx.restore();
+ // timing guide is fixed even during screen shake
+ box(195,548,610,47,10,"#0a0e18");const x=218,w=564;
+ box(x,566,w,9,4,"#35405b");
+ box(x+w*(.5-rule().width),563,w*rule().width*2,15,4,"#d7ff63");
+ const cursor=x+w*phase();box(cursor-4,555,8,31,3,"#ffffff");
+ text("PERFECT ZONE",500,542,12,"#cbd6ab");
+}
+function loop(now){
+ const dt=advance(now),visualDt=Math.min(dt,.05);
+ if(state.mode==="playing"){
+  state.impact=Math.max(0,state.impact-visualDt*4);state.shake=Math.max(0,state.shake-visualDt*45);
+  for(const p of particles){p.age+=visualDt;p.x+=p.vx*visualDt;p.y+=p.vy*visualDt;p.vy+=visualDt*950;}
+  particles=particles.filter(p=>p.age<p.life);
+  for(const f of floaters)f.age+=visualDt;floaters=floaters.filter(f=>f.age<.85);
+ }
+ draw();render();requestAnimationFrame(loop);
+}
+function runTests(){
+ const checks=[];
+ function check(name,condition){checks.push({name,passed:!!condition});}
+ check("초록 구간 중앙 = PERFECT",isPerfect(.5,.14));
+ check("초록 구간 바깥 = 일반 타격",!isPerfect(.05,.14));
+ check("PERFECT는 콤보 +1",hitOutcome({perfect:true,combo:4,base:12,power:false}).combo===5);
+ check("일반 타격은 콤보 초기화",hitOutcome({perfect:false,combo:8,base:12,power:false}).combo===0);
+ check("일반 / PERFECT 피해량 12 / 24",hitOutcome({perfect:false,combo:0,base:12,power:false}).damage===12&&hitOutcome({perfect:true,combo:0,base:12,power:false}).damage===24);
+ check("분노 PERFECT 피해량 96",hitOutcome({perfect:true,combo:0,base:12,power:true}).damage===96);
+ check("체력 이하 / 이상 파괴 판정",!resolveDamage(25,24).destroyed&&resolveDamage(24,24).destroyed);
+ check("체력 음수 방지",resolveDamage(10,96).hp===0);
+ check("새 키보드 체력 증가",maxHP(0)===100&&maxHP(1)===120);
+ check("시간은 0 이하로 내려가지 않음",remaining(31)===0);
+ check("콤보 배율은 최대 3배",multiplier(999)===3);
+ check("난이도 순서: 연습 > 보통 > 도전 판정 폭",RULES.easy.width>RULES.normal.width&&RULES.normal.width>RULES.hard.width);
+ return checks;
+}
+$("mainAction").onclick=()=>{if(state.mode==="paused")togglePause();else start();};
+$("overlayReset").onclick=reset;$("hit").onclick=()=>hit(false);$("rage").onclick=()=>hit(true);
+$("pause").onclick=togglePause;$("reset").onclick=reset;
+$("difficulty").onchange=()=>{if(state.mode==="ready"){state.difficulty=$("difficulty").value;render();}};
+$("sound").onchange=initAudio;
+$("test").onclick=()=>{
+ const results=runTests();$("testresult").textContent=`규칙 테스트 ${results.filter(r=>r.passed).length}/${results.length} 통과\n`+results.map(r=>(r.passed?"PASS":"FAIL")+" · "+r.name).join("\n");
+};
+document.addEventListener("keydown",e=>{
+ if(["INPUT","SELECT","TEXTAREA"].includes(e.target.tagName)||e.isComposing)return;
+ if(["Space","KeyF","KeyP"].includes(e.code))e.preventDefault();if(e.repeat)return;
+ if(e.code==="Space"){if(state.mode==="ready")start();else hit();}
+ if(e.code==="KeyF")hit(true);if(e.code==="KeyP")togglePause();
+});
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&state.mode==="playing"){advance(performance.now());if(state.mode==="playing")togglePause();}});
+window.addEventListener("blur",()=>{if(state.mode==="playing"){advance(performance.now());if(state.mode==="playing")togglePause();}});
+reset();requestAnimationFrame(loop);
+</script></body></html>

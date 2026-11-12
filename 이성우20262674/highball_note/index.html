@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#163a34">
+<meta name="description" content="11주차 선택 A 과제: 저장 기능 없는 단일 HTML 하이볼 도수 계산기">
+<title>하이볼 노트 · 도수 계산기 & 재료 도감</title>
+<style>
+:root{--bg:#f6f5f0;--card:#fff;--ink:#1e332e;--muted:#66756e;--green:#1d5b4c;--light:#eaf2ed;--line:#dee5df;--amber:#c38a35;--warn:#fff5df;--red:#ab443e;--shadow:0 8px 32px #193d3008}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif}
+button,input,select{font:inherit}button,a,input,select{ -webkit-tap-highlight-color:transparent}button{cursor:pointer;border:1px solid var(--line);background:white;color:var(--ink);padding:10px 15px;border-radius:10px;font-weight:650;transition:background .15s}button:hover{background:var(--light)}button:focus-visible,a:focus-visible{outline:3px solid #d3a85c;outline-offset:3px}button.primary{background:var(--green);border-color:var(--green);color:#fff}button.primary:hover{background:#154838}button.small{font-size:13px;padding:7px 11px}button.danger{color:var(--red)}input,select{width:100%;min-width:0;background:#fff;border:1px solid #ced8d0;border-radius:9px;padding:11px 12px;color:var(--ink)}input:focus,select:focus{outline:2px solid #88b39f;outline-offset:1px}input:invalid{border-color:var(--red)}label{display:block;font-size:13px;font-weight:650;color:#586b61;margin-bottom:6px}h1,h2,h3,p{margin-top:0}h1{font-size:clamp(28px,5vw,42px);letter-spacing:-1.7px;line-height:1.2;margin-bottom:12px}h2{font-size:21px;letter-spacing:-.7px;margin-bottom:7px}h3{font-size:17px;letter-spacing:-.4px;margin-bottom:8px}p{margin-bottom:12px}.muted{color:var(--muted)}.tiny{font-size:12px}.smalltext{font-size:13px}.eyebrow{font-size:11px;font-weight:800;letter-spacing:2px;color:#b7d6c7;margin-bottom:15px}
+header{background:#163a34;color:white;padding:36px max(22px,calc((100% - 1140px)/2)) 30px;position:relative;overflow:hidden}header:after{content:"";position:absolute;width:210px;height:210px;border:38px solid #ffffff06;border-radius:50%;right:-55px;top:-65px;pointer-events:none}header p{max-width:660px;color:#c0d5cc;margin-bottom:0}.headerline{display:flex;justify-content:space-between;gap:20px;align-items:center}.labelpill{display:inline-block;border:1px solid #ffffff38;border-radius:99px;font-size:12px;padding:6px 12px;color:#d1e3d9;white-space:nowrap}
+.shell{max-width:1184px;margin:0 auto;padding:0 22px 35px}nav{display:flex;gap:7px;border-bottom:1px solid var(--line);margin:20px 0 24px;padding-bottom:12px;overflow:auto}nav button{border:0;background:transparent;white-space:nowrap;color:var(--muted);padding:12px 19px}nav button[aria-selected=true]{background:var(--green);color:white}
+.tabpanel[hidden]{display:none}.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(290px,1fr);gap:20px;align-items:start}.card{background:white;border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:var(--shadow);margin-bottom:20px}.sectionhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.sectionhead h2{margin:0}.step{font-size:11px;font-weight:800;letter-spacing:1.6px;color:var(--green);margin-bottom:5px}.rowhead,.ingredientrow{display:grid;grid-template-columns:minmax(90px,1fr) 96px 80px 38px;gap:9px;align-items:start}.rowhead{font-size:12px;color:var(--muted);padding:0 1px 5px}.ingredientrow{padding:9px 0;border-bottom:1px solid #edf0ec}.ingredientrow input{padding:10px 8px}.ingredientrow button{padding:9px 0;font-size:20px;line-height:26px}.ingredientrow label{margin:0}.ingredientrow .mobilelabel{display:none}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:17px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.note{padding:13px 15px;border-radius:10px;background:var(--light);font-size:13px;margin-top:15px}.warning{background:var(--warn);color:#715120}.result{background:#163a34;color:#fff;border:0}.result .muted{color:#c4d9cc}.big{font-size:66px;font-weight:750;letter-spacing:-3px;line-height:1.15;font-variant-numeric:tabular-nums}.big span{font-size:25px;letter-spacing:0;font-weight:500;color:#b8d6c5}.resultstats{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid #ffffff26;margin-top:22px;padding-top:17px}.resultstats strong{display:block;font-size:22px;line-height:1.35}.resultstats label{color:#c4d9cc;font-weight:400;margin:0}.metric{background:#f3f6f2;border-radius:12px;padding:17px;margin-top:14px}.metric strong{font-size:30px;letter-spacing:-1px;color:var(--green);display:block}.minirow{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.meter{height:7px;background:#dce8df;border-radius:5px;overflow:hidden;margin-top:10px}.meter span{display:block;height:100%;background:var(--green)}
+details{margin-top:15px;font-size:13px}summary{cursor:pointer;font-weight:650;color:var(--green)}details p{margin:10px 0 0}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;white-space:nowrap;font-size:13px}th{text-align:right;color:var(--muted);font-weight:500;background:#f5f7f3;padding:12px}td{text-align:right;border-bottom:1px solid #edf0ec;padding:12px}th:first-child,td:first-child{text-align:left}tr.selected{background:var(--light)}.abvcell{font-weight:800;color:var(--green);font-size:16px}.range{width:100%;accent-color:var(--green);padding:0;border:0}.timeends{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.toolbar input{flex:1;min-width:180px}.toolbar select{width:auto;max-width:100%}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.tile{background:white;border:1px solid var(--line);border-radius:14px;padding:21px;display:flex;flex-direction:column}.tile p{font-size:13px;color:var(--muted)}.tile .bottom{margin-top:auto;padding-top:12px;display:flex;justify-content:space-between;align-items:center;gap:8px}.tag{display:inline-block;padding:3px 8px;border-radius:5px;background:var(--light);font-size:11px;color:var(--green);font-weight:650;margin:0 4px 8px 0}.tag.gold{background:#f9eedb;color:#86632f}.tile strong.abv{font-size:25px;color:var(--green)}.tile ul,.tile ol{padding-left:20px;margin:0 0 12px;font-size:13px}.tile li{margin:4px 0}.sourcelink{font-size:12px;color:var(--green)}a{color:var(--green)}.empty{padding:45px;text-align:center;color:var(--muted);grid-column:1/-1}.error{font-size:13px;color:var(--red);margin-top:10px}.status{font-size:12px;color:var(--muted);min-height:20px;margin-top:10px}footer{padding-top:10px;color:var(--muted);font-size:12px}.footerline{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:#163a34;color:white;border-radius:10px;padding:12px 20px;z-index:10;box-shadow:0 4px 25px #0003;max-width:90vw}.toast[hidden]{display:none}.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(min-width:900px){.side{position:sticky;top:20px}}
+@media(max-width:860px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr;gap:16px}.side .card{margin-bottom:0}.side .note{grid-column:1/-1;margin-top:0}.big{font-size:58px}}
+@media(max-width:540px){header{padding:30px 20px 24px}.shell{padding:0 14px 25px}.labelpill{display:none}nav{gap:2px}nav button{padding:10px 13px;font-size:14px}.card{padding:19px 16px}.grid{grid-template-columns:1fr}.side{display:block}.side .card{margin-bottom:16px}.formgrid{gap:12px}.rowhead,.ingredientrow{grid-template-columns:minmax(85px,1fr) 78px 65px 32px;gap:5px}.ingredientrow input{font-size:14px;padding:10px 6px}.sectionhead{align-items:flex-start}h2{font-size:19px}.sectionhead button{padding:7px 10px;font-size:12px}th,td{padding:10px 9px}.tile{padding:19px}.toolbar select{flex:1}.big{font-size:62px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+.layout>div,.layout>aside,.formgrid>div{min-width:0}.tablewrap{max-width:100%}
+</style>
+</head>
+<body>
+<!-- 과제 제출용: HTML/CSS/JavaScript 단일 파일, 외부 라이브러리·데이터 저장 기능 없음 -->
+<header><div class="eyebrow">HIGHBALL NOTE / MIX & EXPLORE</div><div class="headerline"><h1>나만의 하이볼, 숫자로도 맛있게.</h1><span class="labelpill">설치 없이 · 오프라인 사용</span></div><p>여러 재료의 도수를 한 번에 계산하고, 얼음이 녹은 뒤의 변화까지 살펴보세요.</p></header>
+<main class="shell">
+<nav role="tablist" aria-label="기능 선택">
+<button role="tab" id="tab-calc" aria-controls="panel-calc" aria-selected="true" data-tab="calc">도수 계산기</button>
+<button role="tab" id="tab-book" aria-controls="panel-book" aria-selected="false" data-tab="book" tabindex="-1">재료 도감 <span id="bookCount"></span></button>
+<button role="tab" id="tab-recipes" aria-controls="panel-recipes" aria-selected="false" data-tab="recipes" tabindex="-1">하이볼 레시피</button>
+</nav>
+<section role="tabpanel" id="panel-calc" class="tabpanel" aria-labelledby="tab-calc">
+<div class="layout"><div>
+<section class="card"><div class="sectionhead"><div><div class="step">01 / INGREDIENTS</div><h2>무엇을 넣을까요?</h2></div><button class="small" id="openBook">도감에서 추가 ↗</button></div>
+<div class="rowhead" aria-hidden="true"><span>재료 이름</span><span>용량 · mL</span><span>도수 · %</span><span></span></div>
+<div id="ingredientRows"></div>
+<div class="actions"><button class="primary" id="addRow">+ 직접 재료 추가</button><button id="clearRows" class="small">재료 비우기</button></div>
+<div id="inputError" class="error" role="alert"></div>
+<p class="tiny muted" style="margin:12px 0 0">재료 이름·용량·도수를 모두 입력하세요. 탄산수·주스·시럽은 제품이 무알코올이면 0%로 입력하세요. 도수는 제품 라벨을 우선합니다.</p>
+</section>
+<section class="card"><div class="sectionhead"><div><div class="step">02 / ICE & DILUTION</div><h2>얼음이 녹으면?</h2></div><span class="tag gold">가정 기반 추정</span></div>
+<p class="smalltext muted">얼음 무게와 30분당 녹는 양을 정해, 마시지 않고 그대로 두었을 때의 도수 변화를 계산합니다.</p>
+<div class="formgrid">
+<div><label for="iceMass">현재 남아 있는 얼음 · g</label><input id="iceMass" type="number" min="0" max="10000" step="any" value="120" inputmode="decimal"></div>
+<div><label for="initialWater">이미 녹아 들어간 물 · mL</label><input id="initialWater" type="number" min="0" max="10000" step="any" value="0" inputmode="decimal"></div>
+<div><label for="meltPreset">녹는 속도 시나리오</label><select id="meltPreset"><option value="10">느리게 · 10g / 30분</option><option value="25" selected>중간 · 25g / 30분</option><option value="45">빠르게 · 45g / 30분</option><option value="custom">직접 설정</option></select></div>
+<div><label for="meltRate">30분당 녹는 얼음 · g</label><input id="meltRate" type="number" min="0" max="10000" step="any" value="25" inputmode="decimal"></div>
+<div><label for="horizon">예측할 시간</label><select id="horizon"><option value="120">2시간 · 30분 간격</option><option value="180" selected>3시간 · 30분 간격</option><option value="360">6시간 · 30분 간격</option></select></div>
+<div><label for="timeSlider">미리 볼 시점 · <span id="timeLabel">30분 후</span></label><input id="timeSlider" class="range" type="range" min="0" max="180" step="30" value="30"><div class="timeends"><span>지금</span><span id="horizonLabel">180분</span></div></div>
+</div>
+<div class="note warning"><strong>시간만으로 실제 도수를 알아낼 수는 없어요.</strong><br>10·25·45g은 측정 데이터가 아닌 비교용 가정입니다. 실내 온도, 얼음 크기, 잔, 재료 온도, 젓는 정도는 자동 반영되지 않습니다. 실제 관측한 녹은 양이 있으면 속도를 직접 입력하세요.</div>
+<details><summary>계산 원리와 한계 확인하기</summary>
+<p>순수 알코올 부피 A = 각 재료의 (용량 × 도수 ÷ 100)의 합입니다. 처음 액체량 V = 재료 용량의 합 + 이미 녹아 들어간 물입니다.</p>
+<p>t분 후 추가 물 W = min(현재 얼음 g, 30분당 녹는 g × t ÷ 30)입니다. 녹은 얼음 1g ≈ 물 1mL로 두고, 예상 도수(%) = 100 × A ÷ (V + W)로 계산합니다. 얼음이 전부 녹으면 도수는 더 내려가지 않습니다.</p>
+<p>일정한 속도로 녹는 단순 모델입니다. 실제 열전달·얼음 온도·초기 냉각·혼합 부피 수축·증발·탄산 손실은 계산하지 않습니다. 처음 젓는 동안 녹은 물은 ‘이미 녹아 들어간 물’에 넣고, 그때 남아 있는 얼음만 얼음 무게에 넣으세요.</p>
+<p>실제로 마시거나 다른 재료를 더하면 이 표는 맞지 않습니다. ‘모두 녹은 뒤’는 이 조건에서의 희석 한계이며, 녹는 완료 시간은 현재 속도를 그대로 유지했을 때의 값일 뿐입니다.</p>
+</details>
+</section>
+<section class="card"><div class="sectionhead"><div><div class="step">03 / TIMELINE</div><h2>30분마다 달라지는 도수</h2></div></div>
+<div class="tablewrap"><table><caption class="sr">경과 시간별 추가 물의 양, 남은 얼음, 액체량 및 예상 알코올 도수</caption><thead><tr><th scope="col">경과 시간</th><th scope="col">추가 물</th><th scope="col">남은 얼음</th><th scope="col">액체량</th><th scope="col">예상 도수</th></tr></thead><tbody id="timeline"></tbody></table></div>
+<p class="tiny muted" style="margin:12px 0 0">추가 물은 지금부터 녹은 누적량입니다. 액체량에는 녹지 않은 얼음 부피가 포함되지 않습니다.</p>
+</section>
+</div>
+<aside class="side">
+<section class="card result" aria-label="현재 도수 계산 결과"><div class="eyebrow">YOUR HIGHBALL</div><p class="muted smalltext" style="margin-bottom:8px">현재 예상 도수 · ABV</p><div id="currentAbv" class="big">—<span> %</span></div><div class="resultstats"><div><label>현재 액체량</label><strong id="currentVol">—</strong></div><div><label>순수 알코올</label><strong id="alcoholVol">—</strong></div></div></section>
+<section class="card"><div class="step">ICE PREVIEW</div><h2 id="previewTitle">30분 후의 한 잔</h2><div class="metric"><div class="minirow"><span class="smalltext muted">예상 도수</span><span class="tiny muted" id="delta"></span></div><strong id="previewAbv">—</strong><div class="meter" aria-hidden="true"><span id="previewMeter" style="width:0"></span></div><p id="previewDetails" class="tiny muted" style="margin:10px 0 0"></p></div>
+<div class="minirow" style="margin-top:20px"><span class="smalltext muted">얼음이 모두 녹으면</span><strong id="finalAbv">—</strong></div><p id="meltEnd" class="tiny muted" style="margin:6px 0 0"></p></section>
+<div class="note warning"><strong>희석되어도 알코올 자체는 그대로입니다.</strong><br>이 계산기는 음주 가능량이나 운전 가능 여부를 판단하는 도구가 아닙니다.</div>
+</aside></div>
+</section>
+<section role="tabpanel" id="panel-book" class="tabpanel" aria-labelledby="tab-book" hidden>
+<div class="sectionhead"><div><div class="step">INGREDIENT LIBRARY</div><h2>한 잔을 구성하는 재료 도감</h2></div></div>
+<p class="muted">이름이나 특징으로 찾고, ‘추가’를 누르면 계산기에 바로 들어가요.</p>
+<div class="note">일반 재료의 도수와 용량은 <strong>수정 가능한 입력 예시</strong>이며, 모든 제품에 적용되는 수치가 아닙니다. 술·저알코올 믹서는 반드시 실제 라벨을 확인하세요. 과일 조각·허브는 향 장식이므로 액체량에 자동 합산하지 않습니다.</div>
+<div class="toolbar"><input id="bookSearch" type="search" aria-label="도감 검색" placeholder="위스키, 진저에일, 상큼…"><select id="bookCategory" aria-label="재료 종류"><option value="all">모든 재료</option><option value="술">술</option><option value="믹서">믹서</option><option value="과즙·시럽">과즙·시럽</option><option value="가니시">가니시</option></select></div>
+<div id="bookGrid" class="grid"></div>
+</section>
+<section role="tabpanel" id="panel-recipes" class="tabpanel" aria-labelledby="tab-recipes" hidden>
+<div class="step">RECIPE COLLECTION</div><h2>오늘은 어떤 하이볼?</h2>
+<p class="muted">제조사 비율을 참고한 기본 레시피와 직접 구성한 응용 레시피입니다. 적용하면 현재 재료가 교체됩니다.</p>
+<div class="note">표시 도수는 <strong>얼음이 녹기 전</strong> 기준입니다. 얼음은 도수 계산에 즉시 물로 더해지지 않고, 시간별 시뮬레이션에서 녹은 만큼 반영됩니다. 응용 레시피는 공식·정통 배합이 아닙니다.</div>
+<div class="toolbar"><input id="recipeSearch" type="search" aria-label="레시피 검색" placeholder="클래식, 생강, 유자…"><select id="recipeFilter" aria-label="레시피 종류"><option value="all">모든 레시피</option><option value="official">제조사 비율 참고</option><option value="custom">응용 레시피</option><option value="zero">무알코올 구성</option></select></div>
+<div id="recipeGrid" class="grid"></div>
+</section>
+<footer><div class="footerline"><span>과제 제출용 · 입력 내용은 저장되지 않습니다.</span><button class="small" id="resetAll">전체 초기화</button></div>
+<p style="margin:12px 0 0">새로고침하거나 페이지를 닫으면 입력값이 초기화됩니다. 외부 라이브러리와 저장 기능을 사용하지 않습니다. 성인을 위한 참고 도구입니다.</p>
+<details><summary>자료 출처 · 레시피 및 제품 정보</summary><p>첨부 원본에 포함된 제품·배합 참고 출처입니다. 제출용 편집 과정에서 최신 제품 정보까지 다시 확인한 것은 아니므로 실제 라벨을 우선하세요. 얼음 속도 시나리오는 이 자료에서 가져온 실험값이 아닙니다.</p><ul>
+<li><a href="https://www.suntory.co.jp/whisky/beginner/drink/highball.html" target="_blank" rel="noopener noreferrer">산토리 — 하이볼 기본 비율 1:3~4, 탄산수·토닉·진저에일 응용</a></li>
+<li><a href="https://www.jamesonwhiskey.com/en-au/cocktail-recipes/jameson-ginger-lime/" target="_blank" rel="noopener noreferrer">제임슨 — 위스키 30mL, 진저에일 90mL, 라임 웨지</a></li>
+<li><a href="https://www.suntory.co.jp/whisky/kakubin/product/kaku.html" target="_blank" rel="noopener noreferrer">산토리 가쿠빈 — 제품 도수 40%</a></li>
+<li><a href="https://wecommerce.pernod-ricard.com/products/product?id=PRPECOM000418&market=ko_KR" target="_blank" rel="noopener noreferrer">페르노리카 — 제임슨 오리지널 제품 도수 40%</a></li>
+</ul></details></footer>
+</main><div id="toast" class="toast" role="status" hidden></div>
+<script>
+'use strict';
+const $=s=>document.querySelector(s);
+// 제출용: 실행 중 메모리만 사용하며 데이터를 저장하지 않습니다.
+const sources={
+suntory:'https://www.suntory.co.jp/whisky/beginner/drink/highball.html',
+jameson:'https://www.jamesonwhiskey.com/en-au/cocktail-recipes/jameson-ginger-lime/',
+kaku:'https://www.suntory.co.jp/whisky/kakubin/product/kaku.html',
+jamesonProduct:'https://wecommerce.pernod-ricard.com/products/product?id=PRPECOM000418&market=ko_KR'
+};
+const library=[
+{id:'whisky',name:'위스키',cat:'술',abv:40,vol:30,desc:'기본 하이볼의 베이스로 골라 볼 재료. 먼저 탄산수와 1:3~4로 조합해 보세요.',pair:'탄산수 · 레몬',badge:'입력 예시 40%'},
+{id:'kakubin',name:'산토리 가쿠빈',cat:'술',abv:40,vol:30,desc:'제조사 제품 정보 기준 40%. 다른 가쿠빈 제품이나 캔 하이볼과 구분해 주세요.',pair:'탄산수 · 레몬 껍질',badge:'제품 도수 40%',source:sources.kaku},
+{id:'jameson',name:'제임슨 오리지널',cat:'술',abv:40,vol:30,desc:'제품 정보 기준 40%. 제조사 진저 & 라임 레시피에 사용할 수 있어요.',pair:'진저에일 · 라임',badge:'제품 도수 40%',source:sources.jamesonProduct},
+{id:'bourbon',name:'버번 위스키',cat:'술',abv:45,vol:30,desc:'탄산수나 콜라를 섞는 응용의 베이스. 45%는 계산용 예시이므로 제품 도수를 확인하세요.',pair:'탄산수 · 콜라 · 오렌지',badge:'입력 예시 45%'},
+{id:'scotch',name:'스카치 위스키',cat:'술',abv:40,vol:30,desc:'좋아하는 스카치로 기본 비율부터 시도해 보세요. 피트향 등 제품 개성이 다릅니다.',pair:'탄산수 · 레몬',badge:'입력 예시 40%'},
+{id:'gin',name:'진',cat:'술',abv:40,vol:30,desc:'위스키 대신 토닉이나 탄산수와 조합하는 롱드링크 응용용 베이스.',pair:'토닉워터 · 라임',badge:'입력 예시 40%'},
+{id:'vodka',name:'보드카',cat:'술',abv:40,vol:30,desc:'과즙이나 탄산 믹서와 조합하는 응용용 베이스입니다.',pair:'자몽 · 진저에일',badge:'입력 예시 40%'},
+{id:'rum',name:'럼',cat:'술',abv:40,vol:30,desc:'콜라·라임을 넣는 롱드링크 응용에 사용할 수 있어요.',pair:'콜라 · 라임',badge:'입력 예시 40%'},
+{id:'tequila',name:'테킬라',cat:'술',abv:40,vol:30,desc:'자몽 탄산음료나 라임과 조합해 보는 베이스입니다.',pair:'자몽 탄산음료 · 라임',badge:'입력 예시 40%'},
+{id:'plum',name:'매실주',cat:'술',abv:14,vol:45,desc:'제품별 당도와 도수가 달라요. 단맛을 보고 시럽 양을 조절해 보세요.',pair:'탄산수 · 레몬',badge:'입력 예시 14%'},
+{id:'soju',name:'소주',cat:'술',abv:16,vol:45,desc:'소주 기반 탄산 칵테일 응용용. 16%는 예시이며 실제 병의 도수를 입력하세요.',pair:'토닉워터 · 레몬',badge:'입력 예시 16%'},
+{id:'peach',name:'복숭아 리큐어',cat:'술',abv:20,vol:20,desc:'향과 단맛을 더하는 소량 재료. 리큐어도 알코올을 포함하니 도수에 반영해요.',pair:'홍차 · 탄산수',badge:'입력 예시 20%'},
+{id:'soda',name:'탄산수',cat:'믹서',abv:0,vol:120,desc:'기본 하이볼 믹서. 여기서는 무알코올 탄산수로 입력합니다.',pair:'위스키 · 과즙',badge:'무알코올 입력 0%'},
+{id:'tonic',name:'토닉워터',cat:'믹서',abv:0,vol:120,desc:'단맛과 쌉싸래한 느낌을 원할 때 고르는 믹서. 제품별 당류가 달라요.',pair:'진 · 위스키 · 라임',badge:'무알코올 입력 0%'},
+{id:'ginger',name:'진저에일',cat:'믹서',abv:0,vol:90,desc:'생강 향과 단맛을 더하는 탄산음료. 제임슨 공식 배합 참고 레시피에 들어가요.',pair:'위스키 · 라임',badge:'무알코올 입력 0%'},
+{id:'gingerbeer',name:'진저비어',cat:'믹서',abv:0,vol:120,desc:'생강 계열 믹서. 알코올 포함 제품도 있으므로 0%를 그대로 적용하지 말고 라벨을 확인하세요.',pair:'럼 · 보드카 · 라임',badge:'무알코올 제품 가정'},
+{id:'cola',name:'콜라',cat:'믹서',abv:0,vol:120,desc:'달콤한 탄산 믹서로 응용할 수 있어요. 제로당 제품도 별도로 선택할 수 있습니다.',pair:'버번 · 럼',badge:'무알코올 입력 0%'},
+{id:'grapefruitSoda',name:'자몽 탄산음료',cat:'믹서',abv:0,vol:120,desc:'자몽 향과 탄산을 한 번에 더하는 응용용 믹서입니다.',pair:'테킬라 · 보드카',badge:'무알코올 입력 0%'},
+{id:'tea',name:'무가당 홍차',cat:'믹서',abv:0,vol:90,desc:'탄산 대신 또는 탄산수와 함께 넣어 보는 티 하이볼 응용 재료.',pair:'위스키 · 복숭아 리큐어',badge:'무알코올 입력 0%'},
+{id:'water',name:'물',cat:'믹서',abv:0,vol:30,desc:'직접 넣은 물은 재료로 기록하세요. 얼음이 녹은 물과 중복 입력하지 않도록 주의해요.',pair:'모든 베이스',badge:'0%'},
+{id:'lemon',name:'레몬즙',cat:'과즙·시럽',abv:0,vol:5,desc:'신맛을 더하는 액체 재료. 장식용 레몬 조각과 달리 넣은 즙의 양을 계산합니다.',pair:'위스키 · 탄산수',badge:'입력 0%'},
+{id:'lime',name:'라임즙',cat:'과즙·시럽',abv:0,vol:5,desc:'라임을 짜 넣었다면 실제 즙의 양을 입력하세요. 웨지 하나의 즙 양은 일정하지 않아요.',pair:'진 · 럼 · 진저에일',badge:'입력 0%'},
+{id:'grapefruit',name:'자몽 주스',cat:'과즙·시럽',abv:0,vol:30,desc:'자몽 맛을 더하고 싶을 때. 주스와 자몽 탄산음료는 별개의 재료입니다.',pair:'보드카 · 탄산수',badge:'무알코올 입력 0%'},
+{id:'yuzu',name:'유자청 / 유자 시럽',cat:'과즙·시럽',abv:0,vol:15,desc:'잘 풀어서 액체 부피로 계량하세요. 과육이 많은 청은 부피 합산 오차가 커질 수 있어요.',pair:'위스키 · 탄산수',badge:'무알코올 입력 0%'},
+{id:'syrup',name:'설탕 시럽',cat:'과즙·시럽',abv:0,vol:5,desc:'단맛 조절용. 먼저 적은 양을 넣고 취향에 맞춰 추가하는 구성을 권해요.',pair:'과즙 · 탄산수',badge:'무알코올 입력 0%'},
+{id:'lemonpeel',name:'레몬 껍질 / 웨지',cat:'가니시',abv:0,vol:0,desc:'향 장식용. 즙을 짜 넣었다면 ‘레몬즙’으로 양을 따로 기록하세요.',pair:'기본 위스키 하이볼',badge:'부피 자동 합산 안 함'},
+{id:'mint',name:'민트',cat:'가니시',abv:0,vol:0,desc:'취향에 따라 향 장식으로 사용하세요. 잎 자체는 액체 부피에 넣지 않습니다.',pair:'라임 · 탄산수',badge:'부피 자동 합산 안 함'},
+{id:'orangepeel',name:'오렌지 껍질',cat:'가니시',abv:0,vol:0,desc:'오렌지 향을 더하는 장식 아이디어. 주스와는 별개로 취급합니다.',pair:'버번 · 탄산수',badge:'부피 자동 합산 안 함'}
+];
+const recipes=[
+{id:'classic',name:'클래식 위스키 하이볼',kind:'official',label:'제조사 비율 참고',desc:'산토리의 위스키:탄산수 1:3~4 안내 중 1:4를 적용했어요.',items:[['whisky',30],['soda',120]],ice:120,garnish:'레몬 껍질 선택',steps:['잔과 재료를 미리 차갑게 준비합니다.','얼음을 넣고 위스키를 부은 뒤 가볍게 저어요.','탄산수를 넣고 아래에서 위로 한 번만 섞어요.'],source:sources.suntory},
+{id:'jgl',name:'제임슨 진저 & 라임',kind:'official',label:'제조사 비율 참고',desc:'제임슨 안내의 30mL:90mL 배합. 라임즙 양은 재면 따로 추가하세요.',items:[['jameson',30],['ginger',90]],ice:120,garnish:'라임 웨지 1개 · 즙 미합산',steps:['얼음을 넣은 잔에 제임슨을 부어요.','진저에일을 더하고 짧게 저어요.','라임 웨지를 짜 넣고 장식해요. 실제 즙은 따로 입력하세요.'],source:sources.jameson},
+{id:'lemonhigh',name:'레몬 소다 하이볼',kind:'custom',label:'응용 레시피',desc:'기본 배합에 레몬즙을 더한 간단한 구성.',items:[['whisky',30],['soda',120],['lemon',10]],ice:120,garnish:'레몬 웨지 선택',steps:['얼음을 담고 위스키와 레몬즙을 넣어요.','차가운 탄산수를 더한 뒤 가볍게 섞어요.']},
+{id:'yuzuhigh',name:'유자 하이볼',kind:'custom',label:'응용 레시피',desc:'유자청을 먼저 잘 풀어 달콤한 향을 더하는 구성.',items:[['whisky',30],['soda',120],['yuzu',15]],ice:120,garnish:'레몬 껍질 선택',steps:['위스키와 유자청을 먼저 잘 섞어요.','얼음과 탄산수를 넣고 가볍게 섞어요.']},
+{id:'bourboncola',name:'버번 콜라',kind:'custom',label:'롱드링크 응용',desc:'위스키 소다와는 다른 콜라 믹서 응용입니다. 버번 도수는 라벨에 맞춰 수정하세요.',items:[['bourbon',30],['cola',120],['lime',5]],ice:100,garnish:'라임 웨지 선택',steps:['얼음 위에 버번과 라임즙을 넣어요.','콜라를 천천히 붓고 살짝 섞어요.']},
+{id:'peachtea',name:'피치 티 하이볼',kind:'custom',label:'응용 레시피',desc:'홍차와 복숭아 리큐어를 섞는 구성. 리큐어에도 알코올이 있어요.',items:[['whisky',20],['peach',20],['tea',90],['soda',60]],ice:120,garnish:'레몬 웨지 선택',steps:['홍차를 미리 우려 차갑게 식혀요.','얼음에 위스키·리큐어·홍차를 넣어요.','탄산수를 더하고 가볍게 섞어요.']},
+{id:'plumhigh',name:'매실 소다',kind:'custom',label:'응용 레시피',desc:'매실주와 탄산수로 구성하는 가벼운 스타일의 배합 예시.',items:[['plum',45],['soda',120],['lemon',5]],ice:100,garnish:'레몬 껍질 선택',steps:['얼음을 담고 매실주와 레몬즙을 넣어요.','탄산수를 더하고 부드럽게 섞어요.']},
+{id:'zero',name:'유자 레몬 스파클링',kind:'zero',label:'무알코올 구성',desc:'술을 넣지 않는 버전. 모든 재료가 무알코올인 제품인지 확인하세요.',items:[['yuzu',15],['lemon',10],['soda',150]],ice:100,garnish:'민트 선택',steps:['유자청과 레몬즙을 먼저 섞어요.','얼음을 넣고 탄산수를 부어요.','민트가 있다면 장식해요.']}
+];
+let rows=[];
+let toastTimer;
+let lastReport='';
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function num(n,d=1){return Number(n).toLocaleString('ko-KR',{maximumFractionDigits:d});}
+function toast(s){$('#toast').textContent=s;$('#toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').hidden=true,3200);}
+function item(id){return library.find(x=>x.id===id);}
+function makeRow(id,vol){const x=item(id);return {name:x.name,volume:vol===undefined?x.vol:vol,abv:x.abv};}
+function tab(name,focus=false){
+document.querySelectorAll('[data-tab]').forEach(b=>{const active=b.dataset.tab===name;b.setAttribute('aria-selected',active);b.tabIndex=active?0:-1;if(active&&focus)b.focus();});
+document.querySelectorAll('.tabpanel').forEach(p=>p.hidden=p.id!=='panel-'+name);
+}
+document.querySelectorAll('[data-tab]').forEach((b,i,all)=>{
+b.onclick=()=>tab(b.dataset.tab);
+b.onkeydown=e=>{let next;if(e.key==='ArrowRight')next=(i+1)%all.length;else if(e.key==='ArrowLeft')next=(i+all.length-1)%all.length;else if(e.key==='Home')next=0;else if(e.key==='End')next=all.length-1;if(next!==undefined){e.preventDefault();tab(all[next].dataset.tab,true);}};
+});
+$('#openBook').onclick=()=>{tab('book',true);$('#bookSearch').focus();};
+function renderRows(){
+$('#ingredientRows').innerHTML=rows.map((r,i)=>`<div class="ingredientrow" data-row="${i}"><label><span class="sr">재료 ${i+1} 이름</span><input data-key="name" type="text" required maxlength="100" value="${esc(r.name)}" placeholder="재료 이름"></label><label><span class="sr">재료 ${i+1} 용량 mL</span><input data-key="volume" type="number" required min="0" max="100000" step="any" inputmode="decimal" value="${esc(r.volume)}"></label><label><span class="sr">재료 ${i+1} 도수 %</span><input data-key="abv" type="number" required min="0" max="100" step="any" inputmode="decimal" value="${esc(r.abv)}"></label><button class="danger" data-delete="${i}" aria-label="재료 ${i+1} 삭제">×</button></div>`).join('');
+}
+$('#ingredientRows').oninput=e=>{const k=e.target.dataset.key;if(!k)return;const i=Number(e.target.closest('[data-row]').dataset.row);rows[i][k]=e.target.value;update();};
+$('#ingredientRows').onclick=e=>{const b=e.target.closest('[data-delete]');if(!b)return;rows.splice(Number(b.dataset.delete),1);renderRows();update();};
+$('#addRow').onclick=()=>{if(rows.length>=100)return toast('재료는 최대 100개까지 넣을 수 있어요.');rows.push({name:'',volume:30,abv:0});renderRows();update();$('#ingredientRows .ingredientrow:last-child input').focus();};
+$('#clearRows').onclick=()=>{if(rows.length&&!confirm('현재 재료를 모두 비울까요?'))return;rows=[];renderRows();update();};
+const settingIds=['iceMass','initialWater','meltRate','meltPreset','horizon','timeSlider'];
+settingIds.forEach(id=>$('#'+id).addEventListener('input',()=>{
+if(id==='meltPreset'&&$('#meltPreset').value!=='custom')$('#meltRate').value=$('#meltPreset').value;
+if(id==='meltRate')$('#meltPreset').value=['10','25','45'].includes($('#meltRate').value)?$('#meltRate').value:'custom';
+if(id==='horizon'){$('#timeSlider').max=$('#horizon').value;if(+$('#timeSlider').value>+$('#horizon').value)$('#timeSlider').value=$('#horizon').value;}
+update();
+}));
+function getModel(){
+for(const r of rows){if(!String(r.name).trim())return {error:'재료 이름을 입력해 주세요. 이름이 없는 재료는 계산하지 않습니다.'};}
+for(const id of ['iceMass','initialWater','meltRate']){const el=$('#'+id);if(el.value.trim()===''||!el.checkValidity())return {error:'얼음과 물, 녹는 양에 0~10,000 사이의 숫자를 입력해 주세요.'};}
+for(const r of rows){if(String(r.volume).trim()===''||String(r.abv).trim()===''||!Number.isFinite(+r.volume)||!Number.isFinite(+r.abv)||+r.volume<0||+r.volume>100000||+r.abv<0||+r.abv>100)return {error:'재료 용량은 0~100,000mL, 도수는 0~100%로 입력해 주세요. 빈 숫자 칸도 확인하세요.'};}
+const water=+$('#initialWater').value,ice=+$('#iceMass').value,rate=+$('#meltRate').value;
+const volume=rows.reduce((s,r)=>s+(+r.volume),0)+water;
+const alcohol=rows.reduce((s,r)=>s+(+r.volume)*(+r.abv)/100,0);
+if(volume<=0)return {error:'계산하려면 재료 또는 이미 녹은 물의 용량이 0mL보다 커야 해요.'};
+return {volume,alcohol,ice,rate,at(t){const melt=Math.min(ice,rate*t/30);return {melt,remaining:Math.max(0,ice-melt),volume:volume+melt,abv:100*alcohol/(volume+melt)};}};
+}
+function update(){
+const selected=+$('#timeSlider').value,horizon=+$('#horizon').value;
+$('#timeLabel').textContent=selected?selected+'분 후':'지금';$('#previewTitle').textContent=selected?selected+'분 후의 한 잔':'지금의 한 잔';$('#horizonLabel').textContent=horizon+'분';
+const m=getModel();$('#inputError').textContent=m.error||'';
+if(m.error){
+$('#currentAbv').innerHTML='—<span> %</span>';['currentVol','alcoholVol','previewAbv','finalAbv'].forEach(id=>$('#'+id).textContent='—');
+['delta','previewDetails','meltEnd'].forEach(id=>$('#'+id).textContent='');$('#previewMeter').style.width='0%';
+$('#timeline').innerHTML='<tr><td colspan="5" style="text-align:center;white-space:normal">위 입력값을 확인하면 시간별 계산이 표시됩니다.</td></tr>';lastReport='';return;
+}
+const now=m.at(0),view=m.at(selected),finalAbv=100*m.alcohol/(m.volume+m.ice);
+$('#currentAbv').innerHTML=now.abv.toFixed(1)+'<span> %</span>';
+$('#currentVol').textContent=num(m.volume)+' mL';$('#alcoholVol').textContent=num(m.alcohol)+' mL';
+$('#previewAbv').textContent=view.abv.toFixed(1)+'%';
+$('#delta').textContent='지금보다 '+Math.max(0,now.abv-view.abv).toFixed(1)+'%p 낮음';
+$('#previewDetails').textContent='추가 물 '+num(view.melt)+'mL · 얼음 '+num(view.remaining)+'g 남음';
+$('#previewMeter').style.width=(now.abv>0?100*view.abv/now.abv:0)+'%';
+$('#finalAbv').textContent=finalAbv.toFixed(1)+'%';
+$('#meltEnd').textContent=m.ice===0?'현재 남은 얼음이 없어요.':m.rate===0?'속도가 0g이므로 현재 시나리오에서는 녹지 않아요. 위 값은 모두 녹였을 때의 가정값입니다.':'일정 속도 가정 시 약 '+num(30*m.ice/m.rate)+'분에 모두 녹음';
+let table='',report=[];
+for(let t=0;t<=horizon;t+=30){
+const p=m.at(t);
+table+=`<tr class="${t===selected?'selected':''}"><td>${t===0?'지금':t+'분 후'}</td><td>${num(p.melt)} mL</td><td>${num(p.remaining)} g</td><td>${num(p.volume)} mL</td><td class="abvcell">${p.abv.toFixed(1)}%</td></tr>`;
+report.push(`${t}분: ${p.abv.toFixed(1)}% / 추가 물 ${num(p.melt)}mL / 남은 얼음 ${num(p.remaining)}g`);
+}
+$('#timeline').innerHTML=table;
+lastReport='하이볼 노트\n'+rows.map(r=>`${r.name||'이름 없는 재료'} ${r.volume}mL · ${r.abv}%`).join('\n')+'\n이미 녹은 물 '+$('#initialWater').value+'mL\n현재 얼음 '+m.ice+'g · 가정한 속도 '+m.rate+'g/30분\n현재 도수 '+now.abv.toFixed(1)+'% / 순수 알코올 '+num(m.alcohol)+'mL\n\n'+report.join('\n')+'\n\n미음용·추가 투입 없음, 일정 융해 속도를 가정한 단순 추정입니다. 실제 온도·얼음 크기·잔 조건은 반영하지 않습니다.';
+}
+function renderBook(){
+const q=$('#bookSearch').value.trim().toLowerCase(),cat=$('#bookCategory').value;
+const filtered=library.filter(x=>(cat==='all'||x.cat===cat)&&[x.name,x.desc,x.pair].join(' ').toLowerCase().includes(q));
+$('#bookCount').textContent=library.length;
+$('#bookGrid').innerHTML=filtered.length?filtered.map(x=>`<article class="tile"><div><span class="tag">${esc(x.cat)}</span><span class="tag gold">${esc(x.badge)}</span></div><h3>${esc(x.name)}</h3><p>${esc(x.desc)}</p><p class="tiny"><strong>조합 아이디어</strong> · ${esc(x.pair)}</p>${x.source?`<a class="sourcelink" href="${esc(x.source)}" target="_blank" rel="noopener noreferrer">제조사 제품 정보 ↗</a>`:''}<div class="bottom"><span class="tiny muted">${x.cat==='가니시'?'향 장식용':num(x.vol)+'mL 기본 입력'}</span><button class="${x.cat==='가니시'?'':'primary'} small" data-add="${x.id}">${x.cat==='가니시'?'사용 팁':'계산기에 추가 +'}</button></div></article>`).join(''):'<div class="empty">검색 결과가 없어요. 다른 이름으로 찾아보세요.</div>';
+}
+$('#bookSearch').oninput=renderBook;$('#bookCategory').onchange=renderBook;
+$('#bookGrid').onclick=e=>{const b=e.target.closest('[data-add]');if(!b)return;const x=item(b.dataset.add);
+if(x.cat==='가니시')return toast('향 장식은 부피에 합산하지 않아요. 짠 즙은 과즙 재료로 추가하세요.');
+if(rows.length>=100)return toast('재료는 최대 100개까지 넣을 수 있어요.');
+rows.push(makeRow(x.id));renderRows();update();toast(x.name+' 추가 완료 · 도수 계산기에서 양을 수정하세요.');
+};
+function renderRecipes(){
+const q=$('#recipeSearch').value.trim().toLowerCase(),filter=$('#recipeFilter').value;
+const list=recipes.filter(r=>(filter==='all'||r.kind===filter)&&[r.name,r.desc,...r.items.map(([id])=>item(id).name)].join(' ').toLowerCase().includes(q));
+$('#recipeGrid').innerHTML=list.length?list.map(r=>{
+const volume=r.items.reduce((s,arr)=>s+arr[1],0),alcohol=r.items.reduce((s,[id,v])=>s+v*item(id).abv/100,0);
+return `<article class="tile"><div><span class="tag ${r.kind==='official'?'gold':''}">${esc(r.label)}</span></div><h3>${esc(r.name)}</h3><p>${esc(r.desc)}</p><ul>${r.items.map(([id,v])=>`<li>${esc(item(id).name)} ${v}mL · ${item(id).abv}%</li>`).join('')}<li>얼음 ${r.ice}g · 시뮬레이션용 제안</li><li>${esc(r.garnish)}</li></ul><ol>${r.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>${r.source?`<a class="sourcelink" target="_blank" rel="noopener noreferrer" href="${esc(r.source)}">제조사 배합 참고 ↗</a>`:''}<div class="bottom"><div><strong class="abv">${(100*alcohol/volume).toFixed(1)}<span style="font-size:14px">%</span></strong><div class="tiny muted">얼음 희석 전</div></div><button class="primary small" data-recipe="${r.id}">이 레시피 적용</button></div></article>`;
+}).join(''):'<div class="empty">찾는 레시피가 없어요. 다른 재료 이름으로 검색해 보세요.</div>';
+}
+$('#recipeSearch').oninput=renderRecipes;$('#recipeFilter').onchange=renderRecipes;
+$('#recipeGrid').onclick=e=>{const b=e.target.closest('[data-recipe]');if(!b)return;const r=recipes.find(x=>x.id===b.dataset.recipe);
+if(rows.length&&!confirm(r.name+' 레시피로 현재 재료를 교체할까요?\n얼음 무게는 '+r.ice+'g, 이미 녹은 물은 0mL로 설정합니다.\n녹는 속도 설정은 유지됩니다.'))return;
+rows=r.items.map(([id,v])=>makeRow(id,v));$('#iceMass').value=r.ice;$('#initialWater').value=0;renderRows();update();tab('calc',true);window.scrollTo({top:0,behavior:'auto'});toast(r.name+' 적용 완료 · 재료와 얼음 양을 조절해 보세요.');
+};
+function resetState(){
+rows=[makeRow('whisky',30),makeRow('soda',120)];
+$('#iceMass').value=120;$('#initialWater').value=0;$('#meltPreset').value='25';$('#meltRate').value=25;
+$('#horizon').value='180';$('#timeSlider').max=180;$('#timeSlider').value=30;
+$('#bookSearch').value='';$('#bookCategory').value='all';
+$('#recipeSearch').value='';$('#recipeFilter').value='all';
+renderRows();update();renderBook();renderRecipes();
+}
+$('#resetAll').onclick=()=>{if(!confirm('재료·얼음·시간·검색 조건을 모두 기본값으로 초기화할까요?'))return;resetState();tab('calc',true);window.scrollTo({top:0,behavior:'auto'});toast('전체 설정을 초기화했어요.');};
+function init(){resetState();}
+init();
+</script>
+</body>
+</html>

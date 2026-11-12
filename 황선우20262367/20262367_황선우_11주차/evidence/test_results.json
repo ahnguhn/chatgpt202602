@@ -1,0 +1,229 @@
+{
+  "environment": "Chromium headless + Playwright; HTML via set_content; timer tests use controlled browser clock; viewport and emulated touch, not physical devices.",
+  "tests": [
+    {
+      "id": "G01",
+      "case": "초기 화면",
+      "expected": "준비·0점·생명3·40초",
+      "actual": "ready/0/3/40.0초",
+      "passed": true
+    },
+    {
+      "id": "G02",
+      "case": "시작 전 키 입력",
+      "expected": "점수·생명 불변",
+      "actual": "0/3",
+      "passed": true
+    },
+    {
+      "id": "G03",
+      "case": "시작 버튼",
+      "expected": "진행 상태·선택 버튼 활성",
+      "actual": "running",
+      "passed": true
+    },
+    {
+      "id": "G04",
+      "case": "글자 의미와 색",
+      "expected": "항상 서로 다름",
+      "actual": "파랑/빨강",
+      "passed": true
+    },
+    {
+      "id": "G05",
+      "case": "정답 클릭",
+      "expected": "점수1·생명3",
+      "actual": "1/3",
+      "passed": true
+    },
+    {
+      "id": "G06",
+      "case": "잠금 중 추가 입력",
+      "expected": "점수1·생명3 유지",
+      "actual": "1/3",
+      "passed": true
+    },
+    {
+      "id": "G07",
+      "case": "오답 클릭",
+      "expected": "생명2·점수1",
+      "actual": "2/1",
+      "passed": true
+    },
+    {
+      "id": "G08",
+      "case": "키 길게 누름 repeat",
+      "expected": "점수·생명 불변",
+      "actual": "1/2",
+      "passed": true
+    },
+    {
+      "id": "G09",
+      "case": "숫자키 정답",
+      "expected": "점수2",
+      "actual": "2",
+      "passed": true
+    },
+    {
+      "id": "G10",
+      "case": "무관한 키 입력",
+      "expected": "점수·생명 불변",
+      "actual": "2/2",
+      "passed": true
+    },
+    {
+      "id": "G11",
+      "case": "일시정지 5초",
+      "expected": "시간 고정·일시정지",
+      "actual": "39.2초/paused",
+      "passed": true
+    },
+    {
+      "id": "G12",
+      "case": "정지 중 응답",
+      "expected": "점수·생명 불변",
+      "actual": "2/2",
+      "passed": true
+    },
+    {
+      "id": "G13",
+      "case": "P키 계속하기",
+      "expected": "진행 복귀·시간 감소",
+      "actual": "running/38.2초",
+      "passed": true
+    },
+    {
+      "id": "G14",
+      "case": "진행 중 처음부터 다시",
+      "expected": "점수0·생명3·40초",
+      "actual": "0/3/40.0초",
+      "passed": true
+    },
+    {
+      "id": "G15",
+      "case": "오답 3회 종료",
+      "expected": "실패·생명0",
+      "actual": "lost/0",
+      "passed": true
+    },
+    {
+      "id": "G16",
+      "case": "종료 후 입력·시간",
+      "expected": "점수·생명 변화 없음",
+      "actual": "0/0",
+      "passed": true
+    },
+    {
+      "id": "G17",
+      "case": "실패 후 다시 시작",
+      "expected": "진행·0점·생명3",
+      "actual": "running/0/3",
+      "passed": true
+    },
+    {
+      "id": "G18",
+      "case": "40초 동안 미응답",
+      "expected": "시간0·실패",
+      "actual": "0.0초/lost",
+      "passed": true
+    },
+    {
+      "id": "G19",
+      "case": "정답12개 한 판 완주",
+      "expected": "성공·12점",
+      "actual": "won/12",
+      "passed": true
+    },
+    {
+      "id": "G20",
+      "case": "12문제 출제 규칙",
+      "expected": "색 연속 중복 없음·뜻과색 다름",
+      "actual": "['green', 'purple', 'red', 'purple', 'green', 'red', 'purple', 'red', 'purple', 'green', 'blue', 'green']",
+      "passed": true
+    },
+    {
+      "id": "G21",
+      "case": "성공 후 다시 시작",
+      "expected": "진행·점수0·생명3",
+      "actual": "running/0/3",
+      "passed": true
+    },
+    {
+      "id": "G22",
+      "case": "진행 중 모바일로 크기 변경",
+      "expected": "가로 넘침 없음·점수 유지",
+      "actual": "{'scroll': 390, 'viewport': 390}",
+      "passed": true
+    },
+    {
+      "id": "G23",
+      "case": "모바일 버튼 경계·크기",
+      "expected": "버튼 화면 안·44px 이상",
+      "actual": "[{'x': 36, 'right': 190, 'w': 154, 'h': 50}, {'x': 200, 'right': 354, 'w': 154, 'h': 50}, {'x': 36, 'right': 190, 'w': 154, 'h': 50}, {'x': 200, 'right': 354, 'w': 154, 'h': 50}]",
+      "passed": true
+    },
+    {
+      "id": "G24",
+      "case": "320px 화면",
+      "expected": "문서 폭=화면 폭",
+      "actual": "320",
+      "passed": true
+    },
+    {
+      "id": "G25",
+      "case": "360px 화면",
+      "expected": "문서 폭=화면 폭",
+      "actual": "360",
+      "passed": true
+    },
+    {
+      "id": "G26",
+      "case": "768px 화면",
+      "expected": "문서 폭=화면 폭",
+      "actual": "768",
+      "passed": true
+    },
+    {
+      "id": "G27",
+      "case": "1440px 화면",
+      "expected": "문서 폭=화면 폭",
+      "actual": "1440",
+      "passed": true
+    },
+    {
+      "id": "G28",
+      "case": "터치 환경 정답 선택",
+      "expected": "점수1·진행",
+      "actual": "1/running",
+      "passed": true
+    },
+    {
+      "id": "G29",
+      "case": "터치 일시정지",
+      "expected": "일시정지·입력 비활성",
+      "actual": "paused",
+      "passed": true
+    },
+    {
+      "id": "G30",
+      "case": "같은 순간 두 번 클릭",
+      "expected": "점수1만 반영",
+      "actual": "1",
+      "passed": true
+    },
+    {
+      "id": "G31",
+      "case": "시작 연타 후 시간",
+      "expected": "타이머 중복 없이 약39초",
+      "actual": "39.0",
+      "passed": true
+    },
+    {
+      "id": "G32",
+      "case": "JavaScript 오류",
+      "expected": "pageerror 0건",
+      "actual": "[]",
+      "passed": true
+    }
+  ]
+}

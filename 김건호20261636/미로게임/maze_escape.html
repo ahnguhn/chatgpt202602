@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5f4ed">
+<title>곰곰 미로 — 60초 탈출</title>
+<style>
+:root{--paper:#f5f4ed;--ink:#263b36;--green:#21634f;--muted:#7a8880;--line:#e1e5da;--orange:#efad60}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;min-height:100svh}
+button{font:inherit;-webkit-tap-highlight-color:transparent}
+button:focus-visible,canvas:focus-visible{outline:3px solid #eeab56;outline-offset:5px}
+.app{max-width:520px;margin:auto;padding:24px 20px max(20px,env(safe-area-inset-bottom))}
+.topline{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800;letter-spacing:2px;color:var(--muted)}
+.tag{letter-spacing:1px;border:1px solid #d7dfd2;padding:5px 9px;border-radius:20px;color:var(--green)}
+h1{font-size:32px;letter-spacing:-1.6px;margin:14px 0 5px;line-height:1.2}
+.subtitle{font-size:13px;color:var(--muted);margin:0 0 20px;line-height:1.6}
+.status{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.status-label{font-size:11px;font-weight:800;letter-spacing:1px;color:var(--muted)}
+.timer{display:flex;align-items:baseline;gap:6px;font-variant-numeric:tabular-nums}
+#time{font-size:30px;font-weight:850;line-height:1}
+.unit{font-size:12px;color:var(--muted)}
+.moves{font-size:12px;color:var(--muted)}
+.moves strong{color:var(--ink)}
+.track{height:5px;background:#e3e7dc;border-radius:8px;overflow:hidden;margin-bottom:16px}
+#progress{height:100%;width:100%;background:var(--green);transition:background .2s;transform-origin:left}
+.danger #time{color:#c44b3e}
+.danger #progress{background:#c44b3e}
+.board-shell{position:relative;width:min(100%,48svh,420px);margin:0 auto;background:#fffef7;border:1px solid #d8dece;border-radius:20px;padding:12px;box-shadow:0 12px 36px #263b360a;overflow:hidden}
+canvas{display:block;width:100%;aspect-ratio:1;touch-action:none;border-radius:8px}
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:20px;background:#fafbf2ed;backdrop-filter:blur(5px);z-index:2}
+.overlay[hidden]{display:none}
+.hero-icon{font-size:42px;width:82px;height:82px;display:grid;place-items:center;background:#e7eddc;border-radius:26px;margin-bottom:17px}
+.overlay h2{font-size:25px;letter-spacing:-1px;margin:0 0 10px}
+.overlay p{font-size:13px;line-height:1.8;color:#6c7f72;margin:0 0 22px;white-space:pre-line}
+.primary{border:0;border-radius:12px;background:var(--green);color:white;padding:14px 26px;min-width:175px;font-weight:750;cursor:pointer;box-shadow:0 5px 0 #174a3a;transition:transform .1s,box-shadow .1s}
+.primary:active{transform:translateY(3px);box-shadow:0 2px 0 #174a3a}
+.legend{display:flex;justify-content:center;gap:22px;font-size:11px;color:var(--muted);margin:13px 0 17px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:#91b7a0}
+.dot.goal{background:var(--orange)}
+.controls{display:flex;align-items:center;justify-content:center;gap:25px}
+.control-note{font-size:12px;line-height:1.9;color:var(--muted);max-width:145px}
+.control-note strong{color:var(--ink);font-size:13px}
+kbd{display:inline-block;border:1px solid #d5dbcf;background:#fffdf7;border-bottom-width:2px;padding:0 4px;border-radius:4px;font-size:10px;font-family:inherit}
+.dpad{display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,40px);gap:4px;touch-action:none;user-select:none}
+.direction{border:1px solid #d8e0d1;background:#fffef8;border-radius:10px;color:var(--green);font-size:20px;font-weight:700;cursor:pointer;touch-action:none;box-shadow:0 3px 0 #dce3d5}
+.direction:disabled{opacity:.42;cursor:default}
+.direction:not(:disabled):active,.direction.pressed{background:#dce8d6;transform:translateY(2px);box-shadow:0 1px 0 #dce3d5}
+.direction[data-dir="up"]{grid-column:2;grid-row:1}
+.direction[data-dir="left"]{grid-column:1;grid-row:2}
+.direction[data-dir="down"]{grid-column:2;grid-row:3}
+.direction[data-dir="right"]{grid-column:3;grid-row:2}
+.dpad-center{grid-column:2;grid-row:2;display:grid;place-items:center;color:#a9b99f;font-size:15px}
+.footer{text-align:center;font-size:10px;letter-spacing:.7px;color:#9aa58e;margin-top:17px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+@media(max-height:740px){.app{padding-top:15px}.subtitle{margin-bottom:12px}h1{font-size:28px;margin-top:10px}.legend{margin:10px 0}.footer{margin-top:10px}.board-shell{width:min(100%,45svh,380px)}.dpad{grid-template-columns:repeat(3,40px);grid-template-rows:repeat(3,35px)}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important} .overlay{backdrop-filter:none}}
+</style>
+</head>
+<body>
+<main class="app">
+  <header>
+    <div class="topline"><span>GOMGOM / MINI GAME</span><span class="tag">60 SECOND CHALLENGE</span></div>
+    <h1>곰곰, 미로 탈출.</h1>
+    <p class="subtitle">길을 찾는 작은 모험. 60초 안에 출구에 도착하세요.</p>
+  </header>
+  <section id="game" aria-label="60초 미로 탈출 게임">
+    <div class="status">
+      <div><div class="status-label">TIME LEFT</div><div class="timer"><span id="time">60</span><span class="unit">초</span></div></div>
+      <div class="moves">이동 <strong id="moves">0</strong>회</div>
+    </div>
+    <div class="track" role="progressbar" aria-label="남은 시간" aria-valuemin="0" aria-valuemax="60" aria-valuenow="60" id="timebar"><div id="progress"></div></div>
+    <div class="board-shell">
+      <canvas id="maze" width="780" height="780" tabindex="0" aria-label="미로. WASD 또는 방향키로 이동합니다. 왼쪽 위에서 오른쪽 아래 출구를 찾으세요."></canvas>
+      <div class="overlay" id="overlay">
+        <div class="hero-icon" id="resultIcon" aria-hidden="true">🐻</div>
+        <h2 id="resultTitle">출구를 찾아볼까요?</h2>
+        <p id="resultText">왼쪽 위에서 출발해 오른쪽 아래로!
+시작할 때마다 새로운 미로가 펼쳐져요.</p>
+        <button class="primary" id="startButton" type="button">게임 시작하기 →</button>
+      </div>
+    </div>
+    <div class="legend"><span><i class="dot"></i>왼쪽 위 · 시작</span><span><i class="dot goal"></i>오른쪽 아래 · 도착</span></div>
+    <div class="controls">
+      <div class="control-note"><strong>한 칸씩, 출구를 향해.</strong><br><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> 또는 방향키<br>방향 버튼 · 미로에서 스와이프<br>버튼을 꾹 누르면 연속 이동</div>
+      <div class="dpad" aria-label="이동 버튼">
+        <button class="direction" type="button" data-dir="up" aria-label="위로 이동" disabled>↑</button>
+        <button class="direction" type="button" data-dir="left" aria-label="왼쪽으로 이동" disabled>←</button>
+        <span class="dpad-center" aria-hidden="true">✦</span>
+        <button class="direction" type="button" data-dir="right" aria-label="오른쪽으로 이동" disabled>→</button>
+        <button class="direction" type="button" data-dir="down" aria-label="아래로 이동" disabled>↓</button>
+      </div>
+    </div>
+    <div class="footer">A LITTLE MAZE. A LITTLE ADVENTURE.</div>
+    <p class="sr-only" id="announcement" role="status" aria-live="polite"></p>
+  </section>
+</main>
+<script>
+"use strict";
+(() => {
+  const SIZE = 13, LIMIT = 60000, STEP_DELAY = 115;
+  const canvas = document.getElementById("maze");
+  const ctx = canvas.getContext("2d");
+  const game = document.getElementById("game");
+  const overlay = document.getElementById("overlay");
+  const timeEl = document.getElementById("time");
+  const timebar = document.getElementById("timebar");
+  const progress = document.getElementById("progress");
+  const movesEl = document.getElementById("moves");
+  const startButton = document.getElementById("startButton");
+  const announcement = document.getElementById("announcement");
+  const buttons = [...document.querySelectorAll(".direction")];
+  const dirs = {
+    up:{dx:0,dy:-1,wall:0,opposite:2},
+    right:{dx:1,dy:0,wall:1,opposite:3},
+    down:{dx:0,dy:1,wall:2,opposite:0},
+    left:{dx:-1,dy:0,wall:3,opposite:1}
+  };
+  const keyMap = {w:"up",a:"left",s:"down",d:"right",
+    ArrowUp:"up",ArrowLeft:"left",ArrowDown:"down",ArrowRight:"right"};
+  const codeMap = {KeyW:"up",KeyA:"left",KeyS:"down",KeyD:"right"};
+  let cells = [], player = {x:0,y:0}, moves = 0, active = false;
+  let deadline = 0, raf = 0, previousMaze = "", cssSize = 360;
+  let heldKeys = [], pointerDirection = null, nextStep = 0, swipe = null;
+  let trail = new Set(), lastShownSecond = -1;
+  const sprite = new Image();
+  let spriteReady = false;
+  sprite.onload = () => {spriteReady = true; draw();};
+  // HTML 파일을 기준으로 aaa/gom.png를 불러옵니다.
+  sprite.src = "aaa/gom.png";
+  sprite.onerror = () => {spriteReady = false; draw();};
+
+  function newMaze() {
+    let signature;
+    // 직전 판과 같은 배열이 나오면 다시 생성합니다.
+    do {
+      cells = Array.from({length:SIZE*SIZE}, () => ({walls:[true,true,true,true],visited:false}));
+      const stack = [0];
+      cells[0].visited = true;
+      while (stack.length) {
+        const index = stack[stack.length-1], x = index % SIZE, y = Math.floor(index/SIZE);
+        const options = [];
+        for (const d of Object.values(dirs)) {
+          const nx=x+d.dx, ny=y+d.dy;
+          if(nx>=0 && ny>=0 && nx<SIZE && ny<SIZE && !cells[ny*SIZE+nx].visited)
+            options.push({index:ny*SIZE+nx, d});
+        }
+        if (!options.length) {stack.pop();continue;}
+        const choice = options[Math.floor(Math.random()*options.length)];
+        cells[index].walls[choice.d.wall] = false;
+        cells[choice.index].walls[choice.d.opposite] = false;
+        cells[choice.index].visited = true;
+        stack.push(choice.index);
+      }
+      signature = cells.map(c => c.walls.map(Number).join("")).join("");
+    } while (signature === previousMaze);
+    previousMaze = signature;
+  }
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    cssSize = rect.width;
+    const ratio = Math.min(window.devicePixelRatio || 1, 3);
+    canvas.width = Math.round(cssSize*ratio);
+    canvas.height = Math.round(cssSize*ratio);
+    ctx.setTransform(canvas.width/cssSize,0,0,canvas.height/cssSize,0,0);
+    draw();
+  }
+
+  function draw() {
+    if (!ctx || !cssSize) return;
+    const w=cssSize, pad=3, cell=(w-pad*2)/SIZE;
+    ctx.clearRect(0,0,w,w);
+    ctx.fillStyle="#fffef7";ctx.fillRect(0,0,w,w);
+    if (!cells.length) return;
+    const center=(x,y)=>({x:pad+(x+.5)*cell,y:pad+(y+.5)*cell});
+    // 발자국은 지나온 칸만 표시하며 벽과 통로는 변하지 않습니다.
+    for (const index of trail) {
+      const p=center(index%SIZE,Math.floor(index/SIZE));
+      ctx.fillStyle="#dce8d1";
+      ctx.beginPath();ctx.arc(p.x,p.y,Math.max(1.5,cell*.085),0,Math.PI*2);ctx.fill();
+    }
+    ctx.fillStyle="#e0eedb";
+    ctx.fillRect(pad+2,pad+2,cell-4,cell-4);
+    const goalX=pad+(SIZE-1)*cell, goalY=goalX;
+    ctx.fillStyle="#f7dcad";ctx.fillRect(goalX+2,goalY+2,cell-4,cell-4);
+    const goal=center(SIZE-1,SIZE-1);
+    ctx.fillStyle="#a96528";ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.font=`bold ${cell*.61}px system-ui`;ctx.fillText("⚑",goal.x,goal.y+cell*.025);
+    ctx.strokeStyle="#486356";ctx.lineWidth=Math.max(1.5,cell*.075);ctx.lineCap="round";
+    ctx.beginPath();
+    for(let y=0;y<SIZE;y++) for(let x=0;x<SIZE;x++){
+      const c=cells[y*SIZE+x], px=pad+x*cell, py=pad+y*cell;
+      if(c.walls[0]){ctx.moveTo(px,py);ctx.lineTo(px+cell,py);}
+      if(c.walls[3]){ctx.moveTo(px,py);ctx.lineTo(px,py+cell);}
+      if(y===SIZE-1 && c.walls[2]){ctx.moveTo(px,py+cell);ctx.lineTo(px+cell,py+cell);}
+      if(x===SIZE-1 && c.walls[1]){ctx.moveTo(px+cell,py);ctx.lineTo(px+cell,py+cell);}
+    }
+    ctx.stroke();
+    const p=center(player.x,player.y), size=cell*.83;
+    ctx.fillStyle="#ffffffc9";ctx.beginPath();ctx.arc(p.x,p.y,cell*.40,0,Math.PI*2);ctx.fill();
+    if(spriteReady){
+      const scale=Math.min(size/sprite.naturalWidth,size/sprite.naturalHeight);
+      const sw=sprite.naturalWidth*scale, sh=sprite.naturalHeight*scale;
+      ctx.drawImage(sprite,p.x-sw/2,p.y-sh/2,sw,sh);
+    } else {
+      ctx.font=`${size}px system-ui`;ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.fillText("🐻",p.x,p.y+cell*.04);
+    }
+  }
+
+  function clearInput(){
+    heldKeys=[];pointerDirection=null;swipe=null;
+    buttons.forEach(b=>b.classList.remove("pressed"));
+  }
+  function updateClock(){
+    const remaining=Math.max(0,deadline-Date.now());
+    const seconds=Math.ceil(remaining/1000);
+    if(seconds!==lastShownSecond){
+      lastShownSecond=seconds;timeEl.textContent=seconds;
+      timebar.setAttribute("aria-valuenow",seconds);
+      game.classList.toggle("danger",seconds<=10);
+      if(seconds===10) announcement.textContent="10초 남았습니다.";
+    }
+    progress.style.transform=`scaleX(${remaining/LIMIT})`;
+    return remaining;
+  }
+  function finish(won){
+    if(!active)return;
+    const remaining=Math.max(0,deadline-Date.now());
+    active=false;cancelAnimationFrame(raf);clearInput();updateClock();
+    buttons.forEach(b=>b.disabled=true);
+    const title=won?"미로 탈출 성공!":"앗, 시간이 다 됐어요!";
+    document.getElementById("resultIcon").textContent=won?"🎉":"⌛";
+    document.getElementById("resultTitle").textContent=title;
+    document.getElementById("resultText").textContent=won
+      ? `${((LIMIT-remaining)/1000).toFixed(1)}초 만에 도착 · ${moves}번 이동\n새로운 미로에도 도전해 보세요.`
+      : "괜찮아요, 다음엔 찾을 수 있어요.\n새로운 미로에서 다시 도전해 보세요.";
+    startButton.textContent="다시 시작하기 ↻";
+    overlay.hidden=false;
+    announcement.textContent=title;
+    startButton.focus({preventScroll:true});
+  }
+  function move(direction){
+    if(!active)return;
+    if(Date.now()>=deadline){finish(false);return;}
+    const d=dirs[direction];
+    if(!d || cells[player.y*SIZE+player.x].walls[d.wall])return;
+    player.x+=d.dx;player.y+=d.dy;
+    trail.add(player.y*SIZE+player.x);
+    moves++;movesEl.textContent=moves;draw();
+    if(player.x===SIZE-1 && player.y===SIZE-1)finish(true);
+  }
+  function frame(now){
+    if(!active)return;
+    if(updateClock()<=0){finish(false);return;}
+    const direction=pointerDirection || heldKeys[heldKeys.length-1]?.direction;
+    if(direction && now>=nextStep){
+      nextStep=now+STEP_DELAY;
+      move(direction);
+    }
+    if(active)raf=requestAnimationFrame(frame);
+  }
+  function start(){
+    cancelAnimationFrame(raf);clearInput();newMaze();
+    player={x:0,y:0};moves=0;trail=new Set([0]);movesEl.textContent="0";
+    lastShownSecond=-1;deadline=Date.now()+LIMIT;active=true;
+    overlay.hidden=true;buttons.forEach(b=>b.disabled=false);
+    updateClock();resize();
+    announcement.textContent="게임 시작! 60초 안에 오른쪽 아래 출구로 이동하세요.";
+    raf=requestAnimationFrame(frame);
+  }
+  startButton.addEventListener("click",start);
+
+  window.addEventListener("keydown",e=>{
+    const direction=codeMap[e.code] || keyMap[e.key] || keyMap[e.key.toLowerCase()];
+    if(!direction || !active)return;
+    e.preventDefault();
+    const id=e.code || e.key;
+    if(heldKeys.some(k=>k.id===id))return;
+    heldKeys.push({id,direction});
+    move(direction);nextStep=performance.now()+STEP_DELAY;
+  });
+  window.addEventListener("keyup",e=>{
+    heldKeys=heldKeys.filter(k=>k.id!==(e.code || e.key));
+  });
+  window.addEventListener("blur",clearInput);
+  document.addEventListener("visibilitychange",()=>{
+    clearInput();
+    if(active && Date.now()>=deadline)finish(false);
+  });
+
+  buttons.forEach(button=>{
+    button.addEventListener("pointerdown",e=>{
+      if(!active || pointerDirection)return;
+      e.preventDefault();
+      button.setPointerCapture(e.pointerId);
+      pointerDirection=button.dataset.dir;
+      button.classList.add("pressed");
+      move(pointerDirection);nextStep=performance.now()+STEP_DELAY;
+    });
+    const release=()=>{
+      if(button.classList.contains("pressed"))pointerDirection=null;
+      button.classList.remove("pressed");
+    };
+    button.addEventListener("pointerup",release);
+    button.addEventListener("pointercancel",release);
+    button.addEventListener("lostpointercapture",release);
+    // 키보드 Enter/Space 및 보조기술의 click 이벤트도 지원합니다.
+    button.addEventListener("click",e=>{if(e.detail===0)move(button.dataset.dir);});
+    button.addEventListener("contextmenu",e=>e.preventDefault());
+  });
+
+  canvas.addEventListener("pointerdown",e=>{
+    if(!active || swipe)return;
+    e.preventDefault();canvas.setPointerCapture(e.pointerId);
+    swipe={id:e.pointerId,x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY,moved:false};
+  });
+  canvas.addEventListener("pointermove",e=>{
+    if(!active || !swipe || swipe.id!==e.pointerId)return;
+    e.preventDefault();
+    const dx=e.clientX-swipe.x,dy=e.clientY-swipe.y;
+    const threshold=Math.max(14,cssSize/SIZE*.65);
+    if(Math.max(Math.abs(dx),Math.abs(dy))<threshold)return;
+    const direction=Math.abs(dx)>Math.abs(dy)?(dx>0?"right":"left"):(dy>0?"down":"up");
+    swipe.x=e.clientX;swipe.y=e.clientY;swipe.moved=true;
+    move(direction);
+  });
+  canvas.addEventListener("pointerup",e=>{
+    if(!swipe || swipe.id!==e.pointerId)return;
+    const gesture=swipe;swipe=null;
+    if(!active || gesture.moved)return;
+    // 마우스 클릭/터치한 칸이 인접한 칸이면 한 칸 이동합니다.
+    const r=canvas.getBoundingClientRect(),cell=(cssSize-6)/SIZE;
+    const x=Math.floor((e.clientX-r.left-3)/cell),y=Math.floor((e.clientY-r.top-3)/cell);
+    const dx=x-player.x,dy=y-player.y;
+    if(Math.abs(dx)+Math.abs(dy)===1)move(dx===1?"right":dx===-1?"left":dy===1?"down":"up");
+  });
+  canvas.addEventListener("pointercancel",()=>{swipe=null;});
+  canvas.addEventListener("lostpointercapture",()=>{swipe=null;});
+  canvas.addEventListener("contextmenu",e=>e.preventDefault());
+
+  if("ResizeObserver" in window)new ResizeObserver(resize).observe(canvas);
+  else window.addEventListener("resize",resize);
+  newMaze();resize();
+})();
+</script>
+</body>
+</html>

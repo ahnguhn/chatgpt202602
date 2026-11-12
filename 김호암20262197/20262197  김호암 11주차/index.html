@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>우주 별똥별 받기 게임</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Malgun Gothic', sans-serif; }
+        body { background-color: #1a1a2e; display: flex; justify-content: center; align-items: center; height: 100vh; touch-action: none; overflow: hidden; }
+        #gameArea { position: relative; width: 100%; max-width: 400px; height: 100%; max-height: 600px; background-color: #16213e; border: 2px solid #0f3460; overflow: hidden; display: flex; flex-direction: column; }
+        #uiLayer { padding: 10px 20px; display: flex; justify-content: space-between; background-color: #0f3460; color: white; font-weight: bold; font-size: 1.2rem; z-index: 10; }
+        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22, 33, 62, 0.9); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 20; }
+        .screen h1 { margin-bottom: 20px; font-size: 1.8rem; text-align: center; }
+        .screen p { margin-bottom: 30px; font-size: 1.1rem; }
+        .btn { padding: 12px 24px; font-size: 1.2rem; font-weight: bold; color: #1a1a2e; background-color: #e94560; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .btn:hover { background-color: #ff5c77; }
+        #player { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; font-size: 40px; display: flex; justify-content: center; align-items: center; background-image: url('assets/player.png'); background-size: cover; background-position: center; }
+        .star { position: absolute; width: 30px; height: 30px; font-size: 25px; display: flex; justify-content: center; align-items: center; background-image: url('assets/star.png'); background-size: cover; background-position: center; }
+    </style>
+</head>
+<body>
+
+<div id="gameArea">
+    <div id="uiLayer">
+        <span>점수: <span id="scoreDisplay">0</span></span>
+        <span>시간: <span id="timeDisplay">30</span>초</span>
+    </div>
+    <div id="player">🚀</div>
+    <div id="startScreen" class="screen">
+        <h1>우주 별똥별 받기</h1>
+        <p>30초 동안 15개의 별을 받으세요!</p>
+        <button class="btn" onclick="startGame()">게임 시작</button>
+    </div>
+    <div id="endScreen" class="screen" style="display: none;">
+        <h1 id="resultTitle">게임 종료</h1>
+        <p id="resultMessage">최종 점수: 0</p>
+        <button class="btn" onclick="startGame()">다시 시작</button>
+    </div>
+</div>
+
+<script>
+    let score = 0, timeLeft = 30, isPlaying = false, gameLoop, spawnLoop, timeLoop;
+    const player = document.getElementById('player'), gameArea = document.getElementById('gameArea');
+    let playerX = gameArea.clientWidth / 2 - 30;
+    let moveLeft = false, moveRight = false;
+    const playerSpeed = 7;
+
+    function startGame() {
+        score = 0; timeLeft = 30;
+        playerX = gameArea.clientWidth / 2 - 30;
+        player.style.left = playerX + 'px';
+        isPlaying = true;
+        document.getElementById('scoreDisplay').innerText = score;
+        document.getElementById('timeDisplay').innerText = timeLeft;
+        document.getElementById('startScreen').style.display = 'none';
+        document.getElementById('endScreen').style.display = 'none';
+        document.querySelectorAll('.star').forEach(star => star.remove());
+        
+        gameLoop = requestAnimationFrame(updateGame);
+        spawnLoop = setInterval(spawnStar, 800);
+        timeLoop = setInterval(() => {
+            if (!isPlaying) return;
+            timeLeft--;
+            document.getElementById('timeDisplay').innerText = timeLeft;
+            if (timeLeft <= 0) endGame();
+        }, 1000);
+    }
+
+    function spawnStar() {
+        if (!isPlaying) return;
+        const star = document.createElement('div');
+        star.classList.add('star');
+        star.innerText = '⭐';
+        const maxStarX = gameArea.clientWidth - 30;
+        star.style.left = Math.floor(Math.random() * maxStarX) + 'px';
+        star.style.top = '50px';
+        gameArea.appendChild(star);
+    }
+
+    function updateGame() {
+        if (!isPlaying) return;
+        if (moveLeft) playerX -= playerSpeed;
+        if (moveRight) playerX += playerSpeed;
+        
+        const maxPlayerX = gameArea.clientWidth - 60;
+        if (playerX < 0) playerX = 0;
+        if (playerX > maxPlayerX) playerX = maxPlayerX;
+        player.style.left = playerX + 'px';
+
+        document.querySelectorAll('.star').forEach(star => {
+            let starY = parseInt(star.style.top) || 0;
+            let starX = parseInt(star.style.left) || 0;
+            starY += 5;
+            star.style.top = starY + 'px';
+
+            if (starY > gameArea.clientHeight) star.remove();
+
+            if (starY + 30 > gameArea.clientHeight - 80 && starY < gameArea.clientHeight - 20 && starX + 30 > playerX && starX < playerX + 60) {
+                score++;
+                document.getElementById('scoreDisplay').innerText = score;
+                star.remove();
+            }
+        });
+        requestAnimationFrame(updateGame);
+    }
+
+    function endGame() {
+        isPlaying = false;
+        cancelAnimationFrame(gameLoop);
+        clearInterval(spawnLoop);
+        clearInterval(timeLoop);
+        const resultTitle = document.getElementById('resultTitle');
+        if (score >= 15) {
+            resultTitle.innerText = "🎉 미션 성공! 🎉";
+            resultTitle.style.color = "#4CAF50";
+        } else {
+            resultTitle.innerText = "💀 미션 실패 💀";
+            resultTitle.style.color = "#f44336";
+        }
+        document.getElementById('resultMessage').innerText = `최종 점수: ${score}점`;
+        document.getElementById('endScreen').style.display = 'flex';
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') moveLeft = true;
+        if (e.key === 'ArrowRight') moveRight = true;
+    });
+    document.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowLeft') moveLeft = false;
+        if (e.key === 'ArrowRight') moveRight = false;
+    });
+    
+    gameArea.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        let touch = e.touches[0];
+        let rect = gameArea.getBoundingClientRect();
+        playerX = touch.clientX - rect.left - 30; 
+    }, { passive: false });
+</script>
+</body>
+</html>

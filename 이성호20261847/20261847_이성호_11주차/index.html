@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JUST SWING · 타이밍 야구 · 20261847 이성호</title>
+<style>
+:root{--bg:#101b28;--panel:#1b2a3b;--ink:#f5f7f1;--muted:#adbeca;--lime:#d9f470;--line:#34475a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,"Malgun Gothic",sans-serif;line-height:1.5}button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visible,summary:focus-visible{outline:3px solid var(--lime);outline-offset:4px}button:disabled{cursor:default;opacity:.48}.wrap{width:min(1120px,100%);padding:27px 24px 30px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-size:19px;font-weight:900;letter-spacing:2px}.brand span{color:var(--lime)}.tag{color:var(--muted);font-size:11px;border:1px solid var(--line);border-radius:20px;padding:5px 11px}.heading{display:flex;justify-content:space-between;gap:16px;align-items:end;margin:24px 0 18px}h1{font-size:29px;letter-spacing:-1.1px;margin:0 0 5px}.heading p{font-size:13px;color:var(--muted);margin:0}.goal{color:var(--lime);font-size:12px;white-space:nowrap}.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 18px}.stat small{color:var(--muted);font-size:11px;display:block}.stat strong{font-size:27px;font-variant-numeric:tabular-nums}.stat em{font-style:normal;color:var(--muted);font-size:12px;margin-left:5px}.outdot{display:inline-block;width:12px;height:12px;background:#344a5e;border-radius:50%;margin-right:5px}.outdot.on{background:#ff906f}
+.stage{position:relative;aspect-ratio:16/8.4;border:1px solid #426070;border-radius:13px;overflow:hidden;background:#244c43;isolation:isolate}canvas{width:100%;height:100%;display:block;touch-action:manipulation}.stage-label{position:absolute;top:14px;left:16px;color:#ecf4ed;font-weight:800;font-size:11px;letter-spacing:2px;text-shadow:0 1px 4px #000}.live{position:absolute;right:15px;top:13px;color:#ecf4ed;font-size:11px;padding:4px 9px;background:#102535b8;border-radius:6px}.live i{display:inline-block;background:var(--lime);width:6px;height:6px;border-radius:50%;margin-right:5px}.overlay{position:absolute;inset:0;display:grid;place-items:center;background:#091724a8;backdrop-filter:blur(3px);padding:18px}.overlay[hidden]{display:none}.modal{text-align:center;width:min(415px,100%);background:#142639f2;border:1px solid #71816c;border-radius:13px;padding:25px}.overline{font-size:10px;letter-spacing:3px;color:var(--lime);font-weight:800}.modal h2{font-size:29px;line-height:1.3;margin:9px 0}.modal p{color:#c3d0d8;font-size:13px;margin:10px 0 19px}.primary{background:var(--lime);color:#172b26;border:0;border-radius:8px;padding:12px 23px;font-weight:900;min-height:46px}.secondary{background:transparent;color:var(--ink);border:1px solid #607388;border-radius:8px;padding:9px 15px;min-height:42px}.feedback{position:absolute;top:23%;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none;min-width:180px;filter:drop-shadow(0 2px 3px #102b27)}.feedback strong{display:block;font-size:clamp(23px,4vw,44px);font-weight:1000;font-style:italic;line-height:1.1;color:var(--lime)}.feedback small{color:white;font-size:12px}.feedback:empty{display:none}
+.timing{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:16px 18px;margin-top:13px}.timinghead{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;margin-bottom:11px}.timinghead b{font-size:12px}.timinghead span{color:var(--muted);font-size:11px}.track{height:21px;background:#0f1c29;border-radius:4px;position:relative;overflow:hidden}.zone{position:absolute;top:0;bottom:0}.zone.foul{background:#405e6a}.zone.good{background:#76976b}.zone.perfect{background:var(--lime)}.targetline{position:absolute;left:80%;top:0;bottom:0;width:2px;background:white}.marker{position:absolute;left:0%;top:1px;bottom:1px;width:4px;background:white;border-radius:2px;box-shadow:0 0 7px white}.legend{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:10px;margin-top:7px}.legend b{font-weight:500;color:var(--lime)}.controls{display:flex;gap:10px;align-items:center;margin:15px 0}.swing{flex:1;background:var(--lime);border:0;color:#142b25;border-radius:9px;font-size:17px;letter-spacing:1px;font-weight:900;min-height:55px}.swing small{font-size:11px;display:inline-block;margin-left:10px;font-weight:500}.help{color:var(--muted);font-size:11px;text-align:center;margin:0 0 20px}.below{display:grid;grid-template-columns:1fr 1fr;gap:13px}.rules,.history{background:var(--panel);border:1px solid var(--line);padding:17px 19px;border-radius:10px}h3{font-size:13px;margin:0 0 9px}.rules p{font-size:12px;line-height:1.8;color:var(--muted);margin:4px 0}.chips{display:flex;gap:7px;flex-wrap:wrap}.chip{padding:5px 8px;font-size:11px;border:1px solid #526477;border-radius:5px;color:#dce5eb}.chip.hr{border-color:#9bb75b;color:var(--lime)}.chip.miss{border-color:#b37366;color:#ffae95}.empty{font-size:12px;color:var(--muted);margin:0}.detail{font-size:11px;color:var(--muted);margin-top:15px}.detail summary{cursor:pointer}.detail p{line-height:1.8}.footer{font-size:10px;color:#8fa3b1;border-top:1px solid var(--line);padding-top:14px;margin-top:21px;display:flex;justify-content:space-between;gap:12px}
+@media(max-width:650px){.wrap{padding:18px 14px 25px}.top .tag{font-size:9px;padding:4px 7px}.brand{font-size:16px}.heading{display:block;margin-top:20px}h1{font-size:25px}.heading p{font-size:12px}.goal{margin-top:10px}.hud{gap:7px}.stat{padding:10px}.stat small{font-size:10px}.stat strong{font-size:22px}.stat em{font-size:10px}.outdot{width:9px;height:9px;margin-right:3px}.stage{aspect-ratio:1.16}.modal{padding:20px 15px}.modal h2{font-size:27px}.modal p{font-size:12px}.timing{padding:13px}.timinghead span{font-size:10px}.controls{flex-wrap:wrap}.swing small{display:block;margin:0;font-size:10px}.controls .secondary{padding:9px 12px}.below{grid-template-columns:1fr}.help{font-size:10px}.stage-label{font-size:9px;left:12px}.live{font-size:9px;right:10px}.feedback{top:26%}.footer{display:block}.legend{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.overlay{backdrop-filter:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="brand">JUST <span>SWING.</span></div><span class="tag">TIMING BASEBALL / 타이밍 야구</span></header>
+<section class="heading"><div><h1>한 번의 스윙, 완벽한 타이밍.</h1><p>공이 홈플레이트에 도착하는 순간, 스페이스바를 누르세요.</p></div><div class="goal">10구 안에 900점 · 3아웃 전까지 도전</div></section>
+<section class="hud" aria-label="게임 현황">
+<div class="stat"><small>SCORE / 점수</small><strong id="score">0</strong><em>/ 900</em></div>
+<div class="stat"><small>PITCH / 투구</small><strong id="pitch">0</strong><em>/ 10</em></div>
+<div class="stat"><small>OUT / 아웃</small><strong id="outs">0</strong><em>/ 3</em><div id="outdots" aria-hidden="true"></div></div>
+<div class="stat"><small>HOMERUN / 홈런</small><strong id="homers">0</strong><em>개</em></div>
+</section>
+<div class="stage" id="stage">
+<canvas id="field" aria-label="투수와 타자, 날아오는 공을 보여주는 야구장. 스윙 버튼 또는 스페이스바로 조작합니다." role="img"></canvas>
+<div class="stage-label">NIGHT GAME / 01</div><div class="live"><i></i><span id="stateLabel">경기 대기</span></div>
+<div id="feedback" class="feedback" aria-hidden="true"></div>
+<div class="overlay" id="overlay">
+<div class="modal"><div class="overline" id="overline">STEP UP TO THE PLATE</div><h2 id="modalTitle">타석에 설 준비됐나요?</h2><p id="modalText">밝은 연두색 구간에 흰 막대가 들어오면 스윙!<br>스페이스바 · 화면 터치 · 스윙 버튼<br>홈런 200점 / 안타 120점 / 파울 40점</p><button class="primary" id="start">경기 시작</button></div>
+</div>
+</div>
+<section class="timing" aria-label="타격 타이밍 가이드">
+<div class="timinghead"><b>SWING TIMING</b><span id="timingText">흰 막대가 연두색 중앙에 올 때!</span></div>
+<div class="track" id="track"><div class="zone foul" id="foulZone"></div><div class="zone good" id="goodZone"></div><div class="zone perfect" id="perfectZone"></div><div class="targetline"></div><div class="marker" id="marker"></div></div>
+<div class="legend"><span>투수 출발</span><b>홈플레이트 · 80% 지점</b><span>통과</span></div>
+</section>
+<div class="controls"><button class="swing" id="swing" disabled>스윙! <small>SPACE / TAP</small></button><button class="secondary" id="pause" disabled>일시정지</button><button class="secondary" id="restart" disabled>처음부터</button></div>
+<p class="help">PC: Space 타격 · P 일시정지 · Enter 시작/재도전 | 모바일: 야구장 또는 스윙 버튼 터치</p>
+<div class="below">
+<section class="rules"><h3>HOW TO PLAY / 경기 규칙</h3><p>총 10구. 구속이 조금씩 달라지므로 공과 막대를 보세요.<br>홈런 200점 · 안타 120점 · 파울 40점<br>너무 이르거나 늦으면 헛스윙, 놓친 공도 아웃 1개.<br><b style="color:#d9f470">10구 종료 시 900점 이상이면 승리.</b><br>3아웃이면 즉시 패배하며, 파울은 아웃이 아닙니다.</p></section>
+<section class="history"><h3>AT-BAT LOG / 타격 기록</h3><div id="history" class="chips"><p class="empty">경기를 시작하면 투구별 결과가 표시됩니다.</p></div><p class="empty" id="best" style="margin-top:12px">이 페이지 최고 기록: 0점</p></section>
+</div>
+<details class="detail"><summary>정확한 판정 기준과 사용 안내</summary><p>공의 비행 시간은 매 투구 1,200~1,600ms이며, 비행 시간의 80%가 정확한 타격 시점입니다. 오차 절댓값 45ms 이하는 홈런, 100ms 이하는 안타, 160ms 이하는 파울, 그 밖은 헛스윙입니다. 비행 종료까지 타격하지 않으면 놓침입니다. 한 투구에 한 번만 스윙할 수 있습니다. 키를 누른 채로 있어도 연속 타격되지 않습니다. 판정·애니메이션은 화면 프레임과 기기 성능에 따라 체감 차이가 날 수 있습니다.<br>탭을 이동하면 자동으로 일시정지합니다. 시작·재시작 시 점수와 아웃은 초기화되고, 최고 기록은 이 페이지를 닫거나 새로고침하기 전까지만 유지됩니다. 저장·외부 라이브러리·네트워크 연결을 사용하지 않습니다.</p></details>
+<div id="announce" role="status" aria-live="polite" class="help"></div>
+<footer class="footer"><span>20261847 이성호 · BUILT FOR ONE PERFECT SWING.</span><span>HTML · CSS · JavaScript / 외부 이미지 없이 직접 그린 야구장</span></footer>
+</div>
+<script>
+'use strict';
+const $=id=>document.getElementById(id),canvas=$('field'),ctx=canvas.getContext('2d');
+const RULES=Object.freeze({pitches:10,target:900,maxOuts:3,perfect:45,good:100,foul:160,gap:1150,minFlight:1200,maxFlight:1600});
+let phase='ready',resumePhase=null,pitchNo=0,score=0,outs=0,homers=0,best=0;
+let elapsed=0,gapElapsed=0,flight=1400,swingTaken=false,records=[],result=null,keys=new Set(),lastTime=null;
+let cssWidth=0,cssHeight=0;
+function announce(s){$('announce').textContent=s;}
+function updateHud(){
+ $('score').textContent=score;$('pitch').textContent=pitchNo;$('outs').textContent=outs;$('homers').textContent=homers;
+ $('outdots').replaceChildren();for(let i=0;i<3;i++){const x=document.createElement('span');x.className='outdot'+(i<outs?' on':'');$('outdots').append(x);}
+ $('best').textContent=`이 페이지 최고 기록: ${best}점`;
+ $('history').replaceChildren();if(!records.length){const p=document.createElement('p');p.className='empty';p.textContent='경기를 시작하면 투구별 결과가 표시됩니다.';$('history').append(p);}
+ for(const r of records){const chip=document.createElement('span');chip.className='chip'+(r.kind==='홈런'?' hr':r.out?' miss':'');chip.textContent=`${r.pitch}구 ${r.kind} +${r.points}`;$('history').append(chip);}
+ $('swing').disabled=phase!=='pitch';$('pause').disabled=!['pitch','result','paused'].includes(phase);
+ $('pause').textContent=phase==='paused'?'계속하기':'일시정지';$('restart').disabled=phase==='ready';
+ $('stateLabel').textContent=({ready:'경기 대기',pitch:'공이 옵니다',result:'다음 투구 준비',paused:'일시정지',ended:'경기 종료'})[phase];
+}
+function setZones(){
+ for(const [id,ms] of [['foulZone',RULES.foul],['goodZone',RULES.good],['perfectZone',RULES.perfect]]){
+  $(id).style.left=((.8-ms/flight)*100)+'%';$(id).style.width=(ms/flight*200)+'%';
+ }
+}
+function beginPitch(){pitchNo++;elapsed=0;gapElapsed=0;swingTaken=false;result=null;phase='pitch';flight=RULES.minFlight+Math.random()*(RULES.maxFlight-RULES.minFlight);$('feedback').replaceChildren();$('timingText').textContent='흰 막대가 연두색 중앙에 올 때!';setZones();updateHud();}
+function startGame(){
+ pitchNo=0;score=0;outs=0;homers=0;records=[];result=null;keys.clear();resumePhase=null;lastTime=performance.now();
+ $('overlay').hidden=true;beginPitch();announce('경기 시작. 스페이스바 또는 스윙 버튼으로 타격하세요.');
+}
+function classify(delta){const abs=Math.abs(delta);if(abs<=RULES.perfect)return {kind:'홈런',points:200,out:false};if(abs<=RULES.good)return {kind:'안타',points:120,out:false};if(abs<=RULES.foul)return {kind:'파울',points:40,out:false};return {kind:'헛스윙',points:0,out:true};}
+function swing(){
+ if(phase!=='pitch'||swingTaken)return;
+ // 입력 이벤트 발생 시각까지 시뮬레이션을 먼저 갱신해 프레임 간 오차를 줄인다.
+ tick(performance.now());
+ if(phase!=='pitch'||swingTaken)return;
+ swingTaken=true;const delta=elapsed-flight*.8;resolve({...classify(delta),delta});
+}
+function resolve(r){
+ if(phase!=='pitch')return;
+ score+=r.points;if(r.out)outs++;if(r.kind==='홈런')homers++;best=Math.max(best,score);
+ result={...r,pitch:pitchNo,at:elapsed};records.push(result);phase='result';gapElapsed=0;
+ $('feedback').replaceChildren();const title=document.createElement('strong');title.textContent=r.kind==='홈런'?'HOME RUN!':r.kind==='안타'?'BASE HIT!':r.kind==='파울'?'FOUL!':'OUT!';
+ if(r.out)title.style.color='#ffac8e';
+ const detail=document.createElement('small');const timing=r.delta==null?'스윙하지 못했어요':`정확한 순간보다 ${Math.round(Math.abs(r.delta))}ms ${r.delta<0?'빠름':'늦음'}`;
+ detail.textContent=`${r.kind} · +${r.points}점 · ${timing}`;$('feedback').append(title,detail);$('timingText').textContent=timing;
+ announce(`${pitchNo}구 ${r.kind}, ${r.points}점. 현재 ${score}점, ${outs}아웃.`);updateHud();
+}
+function finish(){
+ phase='ended';best=Math.max(best,score);const won=outs<RULES.maxOuts&&score>=RULES.target;
+ $('overline').textContent=won?'MISSION COMPLETE':'ONE MORE SWING';
+ $('modalTitle').textContent=won?'승리! 최고의 타이밍.':outs>=3?'3아웃, 경기 종료!':'아쉽지만 목표 미달!';
+ $('modalText').textContent=`${score}점 · ${pitchNo}구 · 홈런 ${homers}개 · ${outs}아웃. ${won?'900점 목표를 달성했어요.':'다시 도전해 900점을 넘겨 보세요.'}`;
+ $('start').textContent='다시 도전';$('overlay').hidden=false;updateHud();announce($('modalTitle').textContent+' '+$('modalText').textContent);$('start').focus({preventScroll:true});
+}
+function tick(now){
+ if(lastTime===null)lastTime=now;const dt=Math.max(0,now-lastTime);lastTime=now;
+ if(phase==='pitch'){elapsed+=dt;if(elapsed>=flight){elapsed=flight;resolve({kind:'놓침',points:0,out:true,delta:null});}}
+ else if(phase==='result'){gapElapsed+=dt;if(gapElapsed>=RULES.gap){if(outs>=RULES.maxOuts||pitchNo>=RULES.pitches)finish();else beginPitch();}}
+}
+function togglePause(){
+ if(phase==='paused'){phase=resumePhase;resumePhase=null;lastTime=performance.now();$('overlay').hidden=true;updateHud();announce('경기를 계속합니다.');return;}
+ if(!['pitch','result'].includes(phase))return;
+ tick(performance.now());if(!['pitch','result'].includes(phase))return;resumePhase=phase;phase='paused';
+ $('overline').textContent='TAKE A BREATH';$('modalTitle').textContent='잠시 쉬어가요.';$('modalText').textContent='공과 타이머가 멈췄어요. 계속하기를 누르면 같은 지점에서 이어집니다.';$('start').textContent='계속하기';$('overlay').hidden=false;updateHud();announce('일시정지');$('start').focus({preventScroll:true});
+}
+$('start').onclick=()=>phase==='paused'?togglePause():startGame();
+$('swing').onclick=swing;$('pause').onclick=togglePause;
+$('restart').onclick=()=>{if(phase==='ended')startGame();else if(phase!=='ready'){if(phase!=='paused')togglePause();if(confirm('현재 경기를 끝내고 처음부터 시작할까요?'))startGame();}};
+canvas.addEventListener('pointerdown',e=>{if(e.isPrimary!==false){e.preventDefault();swing();}});
+document.addEventListener('keydown',e=>{
+ if(!['Space','KeyP','Enter'].includes(e.code))return;
+ if(e.code==='Space'){e.preventDefault();if(e.repeat||keys.has(e.code))return;keys.add(e.code);swing();return;}
+ if(e.repeat)return;
+ if(e.code==='KeyP'){e.preventDefault();togglePause();}
+ if(e.code==='Enter'&&['ready','ended','paused'].includes(phase)){
+  // 포커스된 버튼의 기본 Enter 동작과 중복 실행하지 않는다.
+  if(e.target instanceof HTMLButtonElement)return;
+  e.preventDefault();phase==='paused'?togglePause():startGame();
+ }
+});
+document.addEventListener('keyup',e=>keys.delete(e.code));
+window.addEventListener('blur',()=>{keys.clear();if(['pitch','result'].includes(phase))togglePause();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){keys.clear();if(['pitch','result'].includes(phase))togglePause();}});
+function resize(){const r=canvas.getBoundingClientRect();cssWidth=r.width;cssHeight=r.height;const dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);}
+new ResizeObserver(resize).observe(canvas);
+function ellipse(x,y,rx,ry,color){ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill();}
+function path(points,color,stroke,width=1){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();if(color){ctx.fillStyle=color;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.stroke();}}
+function line(x1,y1,x2,y2,color,width){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();}
+function player(x,y,s,batter=false,sw=0){
+ ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+ ellipse(0,1,20,6,'#102e2c66');
+ line(-5,-23,-13,-3,'#f5edda',10);line(5,-23,14,-3,'#f5edda',10);
+ line(-15,-2,-7,-2,'#132637',6);line(12,-2,21,-2,'#132637',6);
+ path([[-13,-57],[12,-57],[14,-28],[-14,-28]],batter?'#e9eadc':'#e7a66d');
+ ctx.fillStyle=batter?'#264758':'#162f42';ctx.fillRect(-14,-29,28,5);
+ ellipse(0,-69,11,12,'#e9b184');ellipse(0,-77,13,7,batter?'#193b4e':'#a63232');
+ ctx.fillStyle=batter?'#193b4e':'#a63232';ctx.fillRect(1,-78,17,4);
+ if(batter){
+  const bx=sw?Math.cos(sw*3)*48:34,by=sw?-45+Math.sin(sw*3)*12:-85;
+  line(-10,-50,9,-48,'#e9eadc',9);line(11,-50,18,-54,'#e9b184',7);
+  line(16,-54,bx,by,'#dab77c',6);line(16,-54,21,-58,'#795135',4);
+  ctx.fillStyle='#264758';ctx.font='bold 12px sans-serif';ctx.fillText('7',-4,-36);
+ }else{line(-11,-51,-22,-39,'#e7a66d',8);line(11,-51,21,-66,'#e9b184',7);ellipse(21,-69,6,7,'#65422d');}
+ ctx.restore();
+}
+function ball(x,y,r,alpha=1){
+ ctx.save();ctx.globalAlpha=alpha;ellipse(x+3,y+7,r*1.3,r*.43,'#102c2b55');ellipse(x,y,r,r,'#fffdf0');
+ ctx.strokeStyle='#b94941';ctx.lineWidth=Math.max(1,r*.13);
+ ctx.beginPath();ctx.arc(x-r*.4,y,r*.64,-1.1,1.1);ctx.stroke();ctx.beginPath();ctx.arc(x+r*.4,y,r*.64,2,4.2);ctx.stroke();ctx.restore();
+}
+function render(){
+ if(!cssWidth||!cssHeight)return;
+ const w=cssWidth,h=cssHeight;ctx.clearRect(0,0,w,h);
+ // 고정 논리 좌표계를 화면에 맞춤: 모든 플레이 오브젝트는 안전 여백 안에 위치.
+ ctx.save();ctx.scale(w/1000,h/525);
+ const sky=ctx.createLinearGradient(0,0,0,260);sky.addColorStop(0,'#172d43');sky.addColorStop(1,'#3d6269');ctx.fillStyle=sky;ctx.fillRect(0,0,1000,525);
+ // 관중석과 조명
+ ctx.fillStyle='#203c48';ctx.fillRect(0,90,1000,112);
+ for(let row=0;row<4;row++){line(0,111+row*21,1000,111+row*21,'#38505b',3);
+ for(let i=0;i<49;i++)ellipse(12+i*21+(row%2)*5,102+row*21,2.5,3.5,(i+row)%3===0?'#d6c591':'#758a86');}
+ for(const x of [72,928]){line(x,95,x,34,'#809eaa',5);ctx.fillStyle='#b9c4b2';ctx.fillRect(x-29,25,58,17);
+ for(let i=0;i<6;i++)ellipse(x-24+i*10,33,3,4,'#fff1be');}
+ ctx.fillStyle='#16372f';ctx.fillRect(0,185,1000,340);
+ ellipse(500,356,580,198,'#315b48');ellipse(500,368,505,170,'#39694e');
+ // 芝のストライプ
+ ctx.save();ctx.beginPath();ctx.ellipse(500,368,505,170,0,0,Math.PI*2);ctx.clip();
+ for(let i=0;i<10;i++){ctx.fillStyle=i%2?'#3d705355':'#325c4955';ctx.fillRect(i*110,190,55,330);}ctx.restore();
+ // ダイヤモンド
+ path([[500,260],[730,353],[500,473],[270,353]],'#b28b62');
+ path([[500,278],[671,354],[500,437],[329,354]],'#396b4d');
+ line(500,473,166,329,'#e6dfc0',2);line(500,473,834,329,'#e6dfc0',2);
+ ellipse(500,338,47,18,'#b28b62');ctx.fillStyle='#ebe2c6';ctx.fillRect(489,335,22,4);
+ for(const [x,y] of [[500,263],[729,352],[270,352]])path([[x,y-5],[x+8,y],[x,y+5],[x-8,y]],'#fff1d1');
+ path([[490,463],[510,463],[510,473],[500,480],[490,473]],'#fff2d2');
+ // 横向きに見やすい打撃位置
+ const hit={x:746,y:405};
+ ellipse(hit.x,hit.y+19,43,13,'#b28b62');
+ path([[hit.x-12,hit.y+9],[hit.x+12,hit.y+9],[hit.x+12,hit.y+19],[hit.x,hit.y+26],[hit.x-12,hit.y+19]],'#fff3d1');
+ ctx.setLineDash([5,6]);line(500,328,hit.x,hit.y,'#d0e3be55',2);ctx.setLineDash([]);
+ // ヒットゾーン
+ ctx.strokeStyle='#d9f470a0';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(hit.x,hit.y,26,32,-.3,0,Math.PI*2);ctx.stroke();
+ player(500,337,.69,false);
+ const animPhase=phase==='paused'?resumePhase:phase;
+ const swingAnim=animPhase==='result'&&result&&result.kind!=='놓침'?Math.min(gapElapsed/430,1):0;
+ player(817,450,1.22,true,swingAnim);
+ // 外野手
+ player(255,249,.36);player(748,250,.36);player(500,224,.34);
+ const p=phase==='ready'||phase==='ended'?0:Math.min(elapsed/flight,1);
+ function pos(t){return {x:500+(hit.x-500)*(t/.8),y:316+(hit.y-316)*(t/.8)-25*Math.sin(t/.8*Math.PI)};}
+ if(animPhase==='pitch'){
+  const b=pos(p);for(let i=3;i>=1;i--){const t=Math.max(0,p-i*.019),v=pos(t);ball(v.x,v.y,3+t*7,.10);}
+  ball(b.x,b.y,3+p*7);
+ }else if(animPhase==='result'&&result){
+  const t=Math.min(gapElapsed/RULES.gap,1),base=pos(Math.min(result.at/flight,1));
+  if(!result.out){const fly=result.kind==='홈런'?1:result.kind==='안타'?.6:.35;ball(base.x-410*t*fly,base.y-270*Math.sin(t*1.8)*fly,Math.max(2,9-7*t));}
+  else if(t<.65)ball(Math.min(base.x+55*t,950),Math.min(base.y+70*t,493),7,1-t);
+ }
+ // 小さなグラウンド表示
+ ctx.fillStyle='#e5edcf';ctx.font='bold 10px sans-serif';ctx.fillText('HOME PLATE',697,469);
+ ctx.restore();
+ $('marker').style.left=Math.min(99.5,p*100)+'%';
+}
+function frame(now){tick(now);render();requestAnimationFrame(frame);}
+setZones();updateHud();resize();requestAnimationFrame(frame);
+</script>
+</body></html>

@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>11주차 바이브코딩 학생 프로그램</title>
+  <style>
+    :root {
+      --bg: #f3f6f8;
+      --paper: #ffffff;
+      --ink: #17384a;
+      --muted: #64747d;
+      --line: #d8e1e5;
+      --accent: #1f7a6c;
+      --accent-soft: #e8f3f0;
+      --shadow: 0 12px 28px rgba(23, 56, 74, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(31, 122, 108, .12), transparent 28rem),
+        var(--bg);
+    }
+
+    .wrap {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 52px 0 64px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 28px;
+      align-items: end;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .14em;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 52px);
+      line-height: 1.12;
+      letter-spacing: -.045em;
+    }
+
+    .intro {
+      margin: 15px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .count {
+      min-width: 112px;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.75);
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .count strong {
+      display: block;
+      color: var(--accent);
+      font-size: 30px;
+    }
+
+    .count span { color: var(--muted); font-size: 12px; }
+
+    .tools {
+      display: flex;
+      gap: 12px;
+      margin: 26px 0 22px;
+    }
+
+    .search {
+      width: min(520px, 100%);
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--paper);
+      color: var(--ink);
+      font: inherit;
+      outline: none;
+      box-shadow: 0 4px 15px rgba(23, 56, 74, .04);
+    }
+
+    .search:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(31, 122, 108, .12);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .student {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 92px;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: var(--paper);
+      color: inherit;
+      text-decoration: none;
+      box-shadow: 0 5px 18px rgba(23, 56, 74, .04);
+      transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+    }
+
+    .student:hover,
+    .student:focus-visible {
+      transform: translateY(-3px);
+      border-color: rgba(31, 122, 108, .55);
+      box-shadow: var(--shadow);
+      outline: none;
+    }
+
+    .number {
+      display: grid;
+      place-items: center;
+      flex: 0 0 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .student-info { min-width: 0; flex: 1; }
+    .student-name { display: block; font-size: 17px; font-weight: 800; }
+    .student-id { display: block; margin-top: 5px; color: var(--muted); font-size: 13px; }
+    .open { color: var(--accent); font-size: 20px; font-weight: 700; }
+
+    .empty {
+      display: none;
+      padding: 48px 20px;
+      border: 1px dashed var(--line);
+      border-radius: 18px;
+      color: var(--muted);
+      text-align: center;
+      background: rgba(255,255,255,.55);
+    }
+
+    footer {
+      margin-top: 30px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 580px) {
+      .wrap { width: min(100% - 22px, 1160px); padding-top: 32px; }
+      header { grid-template-columns: 1fr; align-items: start; }
+      .count { justify-self: start; min-width: 98px; padding: 12px 16px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div>
+        <p class="eyebrow">11주차 주차학습</p>
+        <h1>학생 개발 프로그램</h1>
+        <p class="intro">학생 이름이나 학번을 검색한 뒤 카드를 선택하면 제출한 프로그램이 새 창에서 열립니다.</p>
+      </div>
+      <div class="count"><strong id="visibleCount">31</strong><span>프로그램</span></div>
+    </header>
+
+    <div class="tools">
+      <input id="search" class="search" type="search" placeholder="이름 또는 학번 검색" aria-label="이름 또는 학번 검색">
+    </div>
+
+    <section id="grid" class="grid" aria-label="학생 프로그램 목록">
+      <a class="student" data-key="강동환 20261828" href="./강동환20261828/index5.html" target="_blank"><span class="number">01</span><span class="student-info"><span class="student-name">강동환</span><span class="student-id">20261828</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="고우혁 20261653" href="./고우혁20261653/20261653_고우혁_11주차/index.html" target="_blank"><span class="number">02</span><span class="student-info"><span class="student-name">고우혁</span><span class="student-id">20261653</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="권도원 20222012" href="./권도원20222012/권도원/afterburn_stages.html" target="_blank"><span class="number">03</span><span class="student-info"><span class="student-name">권도원</span><span class="student-id">20222012</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="김건호 20261636" href="./김건호20261636/미로게임/maze_escape.html" target="_blank"><span class="number">04</span><span class="student-info"><span class="student-name">김건호</span><span class="student-id">20261636</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="김규민 20261848" href="./김규민20261848/neon_run_switchback.html" target="_blank"><span class="number">05</span><span class="student-info"><span class="student-name">김규민</span><span class="student-id">20261848</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="김나정 20231347" href="./김나정20231347/moon_runner_fixed.html" target="_blank"><span class="number">06</span><span class="student-info"><span class="student-name">김나정</span><span class="student-id">20231347</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="김연수 20261888" href="./김연수20261888/20261888_김연수_11주차/index.html" target="_blank"><span class="number">07</span><span class="student-info"><span class="student-name">김연수</span><span class="student-id">20261888</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="김준현 20262358" href="./김준현20262358/학번20262358_이름김준현_11주차/index.html" target="_blank"><span class="number">08</span><span class="student-info"><span class="student-name">김준현</span><span class="student-id">20262358</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="김지완 20232384" href="./김지완20232384/index.html.html" target="_blank"><span class="number">09</span><span class="student-info"><span class="student-name">김지완</span><span class="student-id">20232384</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="김호암 20262197" href="./김호암20262197/20262197  김호암 11주차/index.html" target="_blank"><span class="number">10</span><span class="student-info"><span class="student-name">김호암</span><span class="student-id">20262197</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="박세원 20251422" href="./박세원20251422/index.html" target="_blank"><span class="number">11</span><span class="student-info"><span class="student-name">박세원</span><span class="student-id">20251422</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="배민지 20251951" href="./배민지20251951/20251951_배민지_11주차.html" target="_blank"><span class="number">12</span><span class="student-info"><span class="student-name">배민지</span><span class="student-id">20251951</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="서조원 20262376" href="./서조원20262376/index.html" target="_blank"><span class="number">13</span><span class="student-info"><span class="student-name">서조원</span><span class="student-id">20262376</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="아크마드조노브사만다르 20243090" href="./아크마드조노브사만다르20243090/student_budget_app/index.html" target="_blank"><span class="number">14</span><span class="student-info"><span class="student-name">아크마드조노브 사만다르</span><span class="student-id">20243090</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="양가애 20262015" href="./양가애20262015/20262015_양가애_11주차/index.html" target="_blank"><span class="number">15</span><span class="student-info"><span class="student-name">양가애</span><span class="student-id">20262015</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="오서영 20251937" href="./오서영20251937/index.html" target="_blank"><span class="number">16</span><span class="student-info"><span class="student-name">오서영</span><span class="student-id">20251937</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="오지현 20241579" href="./오지현20241579/20241579_오지현_11주차/index.html" target="_blank"><span class="number">17</span><span class="student-info"><span class="student-name">오지현</span><span class="student-id">20241579</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="유지연 20261454" href="./유지연20261454/20261454_유지연_11주차/index.html" target="_blank"><span class="number">18</span><span class="student-info"><span class="student-name">유지연</span><span class="student-id">20261454</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="이경우 20261861" href="./이경우20261861/학번_이름_11주차/index.html" target="_blank"><span class="number">19</span><span class="student-info"><span class="student-name">이경우</span><span class="student-id">20261861</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="이성우 20262674" href="./이성우20262674/highball_note/index.html" target="_blank"><span class="number">20</span><span class="student-info"><span class="student-name">이성우</span><span class="student-id">20262674</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="이성호 20261847" href="./이성호20261847/20261847_이성호_11주차/index.html" target="_blank"><span class="number">21</span><span class="student-info"><span class="student-name">이성호</span><span class="student-id">20261847</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="이승기 20262118" href="./이승기20262118/index.html" target="_blank"><span class="number">22</span><span class="student-info"><span class="student-name">이승기</span><span class="student-id">20262118</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="이승민 20261858" href="./이승민20261858/20261858_이승민_11주차/index.html" target="_blank"><span class="number">23</span><span class="student-info"><span class="student-name">이승민</span><span class="student-id">20261858</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="이찬민 20261587" href="./이찬민20261587/퀴즈 앱/quiz_studio.html" target="_blank"><span class="number">24</span><span class="student-info"><span class="student-name">이찬민</span><span class="student-id">20261587</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="이호승 20262041" href="./이호승20262041/dutch_pay_updated.html" target="_blank"><span class="number">25</span><span class="student-info"><span class="student-name">이호승</span><span class="student-id">20262041</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="임유석 20262521" href="./임유석20262521/20262521_임유석_11주차/index.html" target="_blank"><span class="number">26</span><span class="student-info"><span class="student-name">임유석</span><span class="student-id">20262521</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="전윤호 20261477" href="./전윤호20261477/campus_match_v2.html" target="_blank"><span class="number">27</span><span class="student-info"><span class="student-name">전윤호</span><span class="student-id">20261477</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="정수민 20262008" href="./정수민20262008/20262008_정수민_11주차/index.html" target="_blank"><span class="number">28</span><span class="student-info"><span class="student-name">정수민</span><span class="student-id">20262008</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="함현지 20261482" href="./함현지20261482/cheese_rush/index.html.html" target="_blank"><span class="number">29</span><span class="student-info"><span class="student-name">함현지</span><span class="student-id">20261482</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="황선우 20262367" href="./황선우20262367/20262367_황선우_11주차/index.html" target="_blank"><span class="number">30</span><span class="student-info"><span class="student-name">황선우</span><span class="student-id">20262367</span></span><span class="open">↗</span></a>
+      <a class="student" data-key="황승현 20262364" href="./황승현20262364/gamst_game/index.html" target="_blank"><span class="number">31</span><span class="student-info"><span class="student-name">황승현</span><span class="student-id">20262364</span></span><span class="open">↗</span></a>
+    </section>
+
+    <p id="empty" class="empty">검색 결과가 없습니다.</p>
+    <footer>대학생활을 위한 ChatGPT · 11주차 바이브코딩 제출 프로그램</footer>
+  </main>
+
+  <script>
+    const search = document.querySelector('#search');
+    const cards = [...document.querySelectorAll('.student')];
+    const visibleCount = document.querySelector('#visibleCount');
+    const empty = document.querySelector('#empty');
+
+    search.addEventListener('input', () => {
+      const keyword = search.value.trim().toLowerCase().replace(/\s+/g, '');
+      let count = 0;
+
+      cards.forEach(card => {
+        const key = card.dataset.key.toLowerCase().replace(/\s+/g, '');
+        const visible = key.includes(keyword);
+        card.hidden = !visible;
+        if (visible) count += 1;
+      });
+
+      visibleCount.textContent = count;
+      empty.style.display = count ? 'none' : 'block';
+    });
+  </script>
+</body>
+</html>

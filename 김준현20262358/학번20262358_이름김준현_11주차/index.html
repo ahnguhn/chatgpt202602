@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>별빛 수집가 · Starlight Collector</title>
+<style>
+:root{color-scheme:dark;--bg:#080d1c;--panel:#111a2d;--line:#26324b;--text:#eef4ff;--muted:#9caecb;--mint:#82f4d0;--gold:#ffda7a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 18% 0%,#15233c,transparent 58%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visible{outline:3px solid var(--gold);outline-offset:4px}button:disabled{opacity:.4;cursor:default}
+.app{max-width:1120px;margin:auto;padding:30px 24px 24px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:13px}.logo{width:43px;height:43px;display:grid;place-items:center;color:var(--mint);border:1px solid #37506a;border-radius:13px;background:#17263a;font-size:26px}h1{margin:0;font-size:23px;letter-spacing:-1px}.eyebrow{font-size:10px;letter-spacing:2.4px;color:var(--mint);font-weight:750;margin-bottom:5px}.badge{border:1px solid #304459;border-radius:30px;padding:8px 12px;color:var(--muted);font-size:12px}.intro{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:20px}.intro h2{font-size:30px;line-height:1.35;letter-spacing:-1.3px;margin:0 0 7px}.intro p{font-size:14px;color:var(--muted);margin:0;line-height:1.7}.intro .index{font-size:11px;color:#6e839f;letter-spacing:2px;white-space:nowrap}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;margin-bottom:12px}.stat{border:1px solid var(--line);border-radius:13px;background:#111b2c;padding:12px 17px;min-width:0}.label{font-size:11px;color:var(--muted);margin-bottom:5px}.value{font-size:23px;line-height:1.2;font-weight:800;font-variant-numeric:tabular-nums}.value small{font-size:13px;font-weight:500;color:var(--muted)}#score{color:var(--gold)}#life{color:#ff9eae;letter-spacing:4px}.pause{background:#152236;color:var(--text);border:1px solid #30415d;border-radius:13px;padding:0 18px;font-size:13px}
+.field{position:relative;width:100%;aspect-ratio:1.85;overflow:hidden;border:1px solid #33425d;border-radius:19px;background:#080f21;box-shadow:0 22px 70px #0004;isolation:isolate}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#081020b8,#0a1428ed);text-align:center;padding:24px;backdrop-filter:blur(4px)}.overlay[hidden]{display:none}.orb{font-size:46px;color:var(--gold);text-shadow:0 0 30px #ffc96b88;margin-bottom:10px}.kicker{font-size:10px;font-weight:700;color:var(--mint);letter-spacing:3px;margin-bottom:10px}.overlay h2{font-size:clamp(25px,4vw,39px);letter-spacing:-1.4px;margin:0 0 12px}.overlay p{max-width:450px;margin:0 0 20px;font-size:14px;line-height:1.85;color:#b8c8df;white-space:pre-line}.primary{border:0;background:var(--mint);color:#0c2b2a;font-weight:800;padding:14px 32px;border-radius:10px;box-shadow:0 5px 22px #82f4d01c;min-width:180px}.primary:hover{background:#b3ffe7}.hint{font-size:11px;color:#8ea3c0;margin-top:15px}.progress{height:4px;background:#1b2941}.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--mint),var(--gold));transition:width .2s}
+.below{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--muted);font-size:12px;padding:12px 2px}.legend{display:flex;gap:18px}.legend b{font-weight:500}.gold{color:var(--gold)}.red{color:#ff909c}.blue{color:#8dcaff}.controls{display:none;gap:12px;margin:2px 0 14px}.move{width:50%;padding:15px;border:1px solid #30445e;border-radius:12px;background:#17243a;color:#dceaff;user-select:none;touch-action:none}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}.card{padding:17px 19px;background:#101a2b;border:1px solid #24324b;border-radius:13px}.card .num{font-size:10px;letter-spacing:1.5px;color:var(--mint);margin-bottom:8px}.card h3{font-size:14px;margin:0 0 6px}.card p{font-size:12px;line-height:1.7;color:var(--muted);margin:0}footer{font-size:10px;color:#647b98;display:flex;justify-content:space-between;gap:12px;margin-top:22px;letter-spacing:.5px}
+@media(pointer:coarse){.controls{display:flex}}
+@media(max-width:620px){.app{padding:19px 14px}.top{margin-bottom:22px}h1{font-size:19px}.badge{font-size:10px;padding:7px 9px}.logo{width:37px;height:37px}.eyebrow{font-size:8px}.intro h2{font-size:25px}.intro .index{display:none}.intro p{font-size:12px}.stats{gap:7px;grid-template-columns:1fr 1fr 1fr auto}.stat{padding:10px}.label{font-size:10px}.value{font-size:20px}.value small{font-size:11px}.pause{padding:0 11px;font-size:11px}#life{font-size:17px;letter-spacing:1px}.field{aspect-ratio:3/3.65;border-radius:15px}.overlay{padding:18px}.overlay h2{font-size:29px}.overlay p{font-size:13px}.orb{font-size:39px}.cards{grid-template-columns:1fr;gap:8px;margin-top:10px}.card{padding:13px 16px;display:grid;grid-template-columns:40px 1fr;column-gap:8px}.card .num{grid-row:span 2;margin-top:3px}.card h3{font-size:13px;margin-bottom:3px}.card p{font-size:11px}.below{font-size:10px;align-items:flex-start}.legend{gap:11px}.below .keyboard{display:none}.controls{display:flex}footer{font-size:9px}.hint{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.progress>div{transition:none}}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="top"><div class="brand"><div class="logo" aria-hidden="true">✧</div><div><div class="eyebrow">A LITTLE SPACE ADVENTURE</div><h1>별빛 수집가</h1></div></div><span class="badge">설치 없이 · 바로 플레이</span></header>
+<section class="intro"><div><h2>작은 우주선, 반짝이는 미션.</h2><p>별빛을 모으고 운석을 피해, 나만의 작은 우주를 밝혀보세요.</p></div><div class="index">MISSION 01 / STARLIGHT</div></section>
+<section class="stats" aria-label="게임 상태">
+<div class="stat"><div class="label">모은 별</div><div class="value"><span id="score">0</span> <small>/ 25</small></div></div>
+<div class="stat"><div class="label">남은 시간</div><div class="value"><span id="time">60</span><small> 초</small></div></div>
+<div class="stat"><div class="label">우주선 체력</div><div class="value" id="life" aria-label="체력 3">♥♥♥</div></div>
+<button class="pause" id="pause" disabled aria-label="일시정지">Ⅱ 멈춤</button>
+</section>
+<section class="field" aria-label="게임 영역">
+<canvas id="game" tabindex="0" aria-label="방향키 또는 A, D로 이동하세요. 모바일에서는 우주선을 드래그하거나 아래 이동 버튼을 누르세요."></canvas>
+<div class="overlay" id="overlay">
+<div class="orb" id="orb" aria-hidden="true">✦</div>
+<div class="kicker" id="kicker">READY FOR TAKEOFF?</div>
+<h2 id="title">별빛을 찾아 떠나볼까요?</h2>
+<p id="message">60초 안에 별 25개를 모으면 미션 성공!
+운석을 피하세요. 체력이 모두 소진되면 종료됩니다.
+파란 보호막을 얻으면 충돌을 한 번 막아줘요.</p>
+<button class="primary" id="action">게임 시작하기 →</button>
+<div class="hint" id="overlayHint">PC: ← → / A D · 모바일: 드래그 또는 이동 버튼</div>
+</div>
+</section>
+<div class="progress" role="progressbar" aria-label="별 수집 진행도" aria-valuemin="0" aria-valuemax="25" aria-valuenow="0" id="progress"><div id="bar"></div></div>
+<div class="below"><div class="legend"><b class="gold">✦ 별 +1</b><b class="red">● 운석 −1 체력</b><b class="blue">◇ 보호막</b></div><span class="keyboard">일시정지: P / Esc</span></div>
+<div class="controls" aria-label="터치 이동"><button class="move" id="left" aria-label="왼쪽으로 이동">← 왼쪽</button><button class="move" id="right" aria-label="오른쪽으로 이동">오른쪽 →</button></div>
+<div class="cards">
+<article class="card"><div class="num">01 / GOAL</div><h3>별 25개를 모으세요</h3><p>60초 안에 목표 달성! 놓친 별은 감점되지 않아요.</p></article>
+<article class="card"><div class="num">02 / MOVE</div><h3>가볍게 좌우로 이동</h3><p>방향키·A/D, 터치 드래그 또는 하단 버튼으로 조작해요.</p></article>
+<article class="card"><div class="num">03 / SURVIVE</div><h3>운석은 피하고, 보호막은 챙기고</h3><p>별 10개, 20개를 모을 때마다 조금 더 빨라져요.</p></article>
+</div>
+<footer><span>20262358 김준현 · STARLIGHT COLLECTOR</span><span>외부 라이브러리 없음 · 오프라인 실행</span></footer>
+<div id="announcement" role="status" aria-live="polite" class="hint"></div>
+</main>
+<script>
+'use strict';
+(() => {
+const $ = id => document.getElementById(id);
+const canvas = $('game'), ctx = canvas.getContext('2d');
+const TARGET=25, DURATION=60;
+let W=900,H=490, state='ready', score=0, life=3, remaining=DURATION;
+let player={x:450,y:430,r:22}, items=[], particles=[], texts=[], shield=false, invulnerable=0;
+let spawnClock=0, shieldClock=0, elapsed=0, last=0, backgroundTime=0, dragId=null;
+const keys=new Set(), holds=new Map();
+const dust=Array.from({length:75},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.2+.4,phase:Math.random()*6.3}));
+const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+function resize(){
+ const rect=canvas.getBoundingClientRect(), oldH=H;
+ H=W*rect.height/Math.max(1,rect.width);
+ const dpr=Math.min(window.devicePixelRatio||1,2);
+ canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);
+ ctx.setTransform(canvas.width/W,0,0,canvas.height/H,0,0);
+ player.y=H-58; player.x=clamp(player.x,28,W-28);
+ for(const it of items) it.y=it.y/oldH*H;
+ for(const p of particles) p.y=p.y/oldH*H;
+ for(const t of texts) t.y=t.y/oldH*H;
+}
+new ResizeObserver(resize).observe(canvas);
+function updateHud(){
+ $('score').textContent=score;$('time').textContent=Math.ceil(remaining);
+ $('life').textContent='♥'.repeat(life)+'♡'.repeat(3-life);$('life').setAttribute('aria-label','체력 '+life);
+ $('bar').style.width=score/TARGET*100+'%';$('progress').setAttribute('aria-valuenow',score);
+ $('time').style.color=remaining<=10?'#ff9eae':'';
+}
+function clearInput(){keys.clear();holds.clear();dragId=null;}
+function showOverlay(title,message,button,kicker,orb){
+ $('title').textContent=title;$('message').textContent=message;$('action').textContent=button;
+ $('kicker').textContent=kicker;$('orb').textContent=orb;$('overlay').hidden=false;
+}
+function start(){
+ state='playing';score=0;life=3;remaining=DURATION;elapsed=0;items=[];particles=[];texts=[];
+ spawnClock=.15;shieldClock=7;shield=false;invulnerable=0;player.x=W/2;clearInput();
+ $('overlay').hidden=true;$('pause').disabled=false;$('pause').textContent='Ⅱ 멈춤';$('pause').setAttribute('aria-label','일시정지');
+ $('announcement').textContent=''; updateHud();canvas.focus({preventScroll:true});
+}
+function pause(){
+ if(state!=='playing')return;
+ state='paused';clearInput();$('pause').textContent='▶ 계속';$('pause').setAttribute('aria-label','계속하기');
+ showOverlay('잠깐, 우주 휴식 시간','시간과 운석이 멈췄어요.\n준비가 되면 다시 탐험을 이어가세요.','계속하기 →','MISSION PAUSED','Ⅱ');
+ $('action').focus({preventScroll:true});
+}
+function resume(){
+ if(state!=='paused')return;
+ state='playing';$('overlay').hidden=true;$('pause').textContent='Ⅱ 멈춤';$('pause').setAttribute('aria-label','일시정지');clearInput();canvas.focus({preventScroll:true});
+}
+function end(win,reason){
+ if(state!=='playing')return;
+ state=win?'won':'lost';clearInput();$('pause').disabled=true;
+ const used=(DURATION-remaining).toFixed(1);
+ showOverlay(win?'우주를 반짝이게 했어요!':'다시 한 번, 별을 향해',win?`${used}초 만에 별 25개 수집 완료!\n작은 우주선의 멋진 탐험이었어요.`:`${reason}\n이번 탐험에서 별 ${score}개를 모았어요. 다시 도전해 볼까요?`,'다시 시작하기 ↻',win?'MISSION COMPLETE':'TRY ANOTHER FLIGHT',win?'✦':'☄');
+ $('announcement').textContent=win?'미션 성공!':'게임 종료. '+reason;
+ $('action').focus({preventScroll:true});
+}
+$('action').addEventListener('click',()=>state==='paused'?resume():start());
+$('pause').addEventListener('click',()=>state==='paused'?resume():pause());
+function burst(x,y,color,n=14){
+ for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=30+Math.random()*150;particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,t:.6,max:.6,color});}
+}
+function floatText(x,y,text,color){texts.push({x,y,text,color,t:.85});}
+function spawn(type){
+ const r=type==='rock'?20+Math.random()*9:type==='shield'?17:16;
+ const stage=Math.floor(score/10);
+ items.push({type,x:36+Math.random()*(W-72),y:-40,r,
+ speed:(type==='rock'?H*.24:H*.21)*(1+stage*.15)*( .9+Math.random()*.25),
+ rotation:Math.random()*6.3,spin:Math.random()*2-1,shape:Array.from({length:9},()=>.78+Math.random()*.22)});
+}
+function update(dt){
+ elapsed+=dt;remaining=Math.max(0,DURATION-elapsed);invulnerable=Math.max(0,invulnerable-dt);
+ let dir=(keys.has('ArrowRight')||keys.has('d')?1:0)-(keys.has('ArrowLeft')||keys.has('a')?1:0);
+ for(const v of holds.values())dir+=v;
+ player.x=clamp(player.x+clamp(dir,-1,1)*520*dt,28,W-28);
+ spawnClock-=dt;shieldClock-=dt;
+ if(spawnClock<=0){spawn('star');if(Math.random()<.69)spawn('rock');spawnClock+=.68-Math.floor(score/10)*.065;}
+ if(shieldClock<=0){spawn('shield');shieldClock=10;}
+ for(let i=items.length-1;i>=0;i--){
+  const it=items[i];it.y+=it.speed*dt;it.rotation+=it.spin*dt;
+  if(Math.hypot(it.x-player.x,it.y-player.y)<it.r+player.r-5){
+   if(it.type==='rock'){
+    if(invulnerable>0)continue;
+    if(shield){shield=false;floatText(player.x,player.y-35,'보호막 방어!','#9bdcff');burst(it.x,it.y,'#8dcaff');}
+    else{life--;floatText(player.x,player.y-35,'체력 −1','#ff9eae');burst(it.x,it.y,'#ff9eae');}
+    invulnerable=1.25;
+   }else if(it.type==='star'){score++;burst(it.x,it.y,'#ffda7a',10);floatText(it.x,it.y,'+1','#ffda7a');}
+   else{shield=true;burst(it.x,it.y,'#8dcaff',10);floatText(it.x,it.y,'보호막 ON','#8dcaff');}
+   items.splice(i,1);updateHud();
+   if(score>=TARGET){end(true);return;}if(life<=0){end(false,'운석에 부딪혀 체력이 모두 소진됐어요.');return;}
+  }else if(it.y>H+50)items.splice(i,1);
+ }
+ particles=particles.filter(p=>(p.t-=dt)>0);for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;}
+ texts=texts.filter(t=>(t.t-=dt)>0);for(const t of texts)t.y-=42*dt;
+ updateHud();if(remaining<=0)end(false,'60초의 탐험 시간이 끝났어요.');
+}
+function star(x,y,r,rotation=0){
+ ctx.beginPath();for(let i=0;i<10;i++){let a=rotation-Math.PI/2+i*Math.PI/5,rr=i%2?r*.43:r;ctx.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr);}ctx.closePath();
+}
+function draw(){
+ ctx.clearRect(0,0,W,H);
+ const bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#0b1227');bg.addColorStop(1,'#101f36');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+ const glow=ctx.createRadialGradient(W*.75,H*.25,0,W*.75,H*.25,W*.5);glow.addColorStop(0,'#34426a35');glow.addColorStop(1,'#34426a00');ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
+ for(const s of dust){ctx.globalAlpha=.3+.4*(Math.sin(backgroundTime+s.phase)*.5+.5);ctx.fillStyle='#c2dcff';ctx.beginPath();ctx.arc(s.x*W,((s.y+backgroundTime*.006)%1)*H,s.r,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+ ctx.strokeStyle='#789ad00c';ctx.lineWidth=1;for(let x=0;x<W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+ ctx.fillStyle='#9ab0d440';ctx.font='10px system-ui';ctx.textAlign='left';ctx.fillText('SECTOR 01 / DEEP SPACE',23,29);
+ if(state==='playing'||state==='paused'){ctx.textAlign='right';ctx.fillText('LEVEL 0'+(Math.floor(score/10)+1),W-23,29);}
+ for(const it of items){
+ ctx.save();ctx.translate(it.x,it.y);ctx.rotate(it.rotation);
+ if(it.type==='star'){ctx.fillStyle='#ffda7a';ctx.shadowColor='#ffc65c';ctx.shadowBlur=17;star(0,0,it.r);ctx.fill();}
+ else if(it.type==='shield'){ctx.strokeStyle='#8dcaff';ctx.fillStyle='#4998e533';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,-it.r);ctx.lineTo(it.r,0);ctx.lineTo(0,it.r);ctx.lineTo(-it.r,0);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#d7eeff';ctx.fillRect(-5,-1,10,2);ctx.fillRect(-1,-5,2,10);}
+ else{ctx.fillStyle='#a27986';ctx.strokeStyle='#df9da4';ctx.lineWidth=1.5;ctx.beginPath();it.shape.forEach((v,i)=>{const a=i/9*Math.PI*2;ctx.lineTo(Math.cos(a)*it.r*v,Math.sin(a)*it.r*v);});ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#705c70';ctx.beginPath();ctx.arc(-6,-4,it.r*.23,0,7);ctx.fill();ctx.beginPath();ctx.arc(7,6,it.r*.15,0,7);ctx.fill();}
+ ctx.restore();
+ }
+ ctx.save();ctx.translate(player.x,player.y);
+ if(invulnerable>0&&Math.floor(invulnerable*12)%2)ctx.globalAlpha=.35;
+ if(shield){ctx.strokeStyle='#8dcaff';ctx.fillStyle='#79c4ff16';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,35,0,7);ctx.fill();ctx.stroke();}
+ const flame=state==='playing'?Math.sin(backgroundTime*35)*4:0;
+ ctx.fillStyle='#82f4d0';ctx.shadowBlur=15;ctx.shadowColor='#82f4d0';ctx.beginPath();ctx.moveTo(-8,15);ctx.lineTo(0,37+flame);ctx.lineTo(8,15);ctx.fill();ctx.shadowBlur=0;
+ ctx.fillStyle='#e1edff';ctx.beginPath();ctx.moveTo(0,-27);ctx.lineTo(23,19);ctx.lineTo(0,12);ctx.lineTo(-23,19);ctx.closePath();ctx.fill();
+ ctx.fillStyle='#607eae';ctx.beginPath();ctx.moveTo(0,-27);ctx.lineTo(0,12);ctx.lineTo(-23,19);ctx.closePath();ctx.fill();
+ ctx.fillStyle='#82f4d0';ctx.beginPath();ctx.ellipse(0,-5,5,8,0,0,7);ctx.fill();ctx.restore();
+ for(const p of particles){ctx.globalAlpha=p.t/p.max;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,2.7,0,7);ctx.fill();}ctx.globalAlpha=1;
+ for(const t of texts){ctx.globalAlpha=Math.min(1,t.t*3);ctx.fillStyle=t.color;ctx.font='bold 17px system-ui';ctx.textAlign='center';ctx.fillText(t.text,t.x,t.y);}ctx.globalAlpha=1;
+}
+function frame(now){
+ const dt=Math.min((now-last)/1000,.05)||0;last=now;
+ if(state!=='paused')backgroundTime+=dt;
+ if(state==='playing')update(dt);draw();requestAnimationFrame(frame);
+}
+window.addEventListener('keydown',e=>{
+ const k=e.key.length===1?e.key.toLowerCase():e.key;
+ if(['ArrowLeft','ArrowRight','a','d'].includes(k)){
+  if(state==='playing'){e.preventDefault();keys.add(k);}return;
+ }
+ if((k==='p'||k==='Escape')&&!e.repeat){if(state==='playing'){e.preventDefault();pause();}else if(state==='paused'){e.preventDefault();resume();}}
+});
+window.addEventListener('keyup',e=>keys.delete(e.key.length===1?e.key.toLowerCase():e.key));
+function moveTo(e){const rect=canvas.getBoundingClientRect();player.x=clamp((e.clientX-rect.left)/rect.width*W,28,W-28);}
+canvas.addEventListener('pointerdown',e=>{if(state!=='playing')return;e.preventDefault();dragId=e.pointerId;canvas.setPointerCapture(e.pointerId);moveTo(e);});
+canvas.addEventListener('pointermove',e=>{if(state==='playing'&&e.pointerId===dragId)moveTo(e);});
+for(const name of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(name,e=>{if(e.pointerId===dragId)dragId=null;});
+for(const [id,dir] of [['left',-1],['right',1]]){
+ const b=$(id);
+ b.addEventListener('pointerdown',e=>{if(state!=='playing')return;e.preventDefault();b.setPointerCapture(e.pointerId);holds.set(e.pointerId,dir);});
+ for(const name of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(name,e=>holds.delete(e.pointerId));
+}
+window.addEventListener('blur',()=>{clearInput();pause();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){clearInput();pause();}});
+resize();updateHud();requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

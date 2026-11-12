@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>랜덤 뽑기 · 발표자와 당번 선정</title>
+<style>
+:root{--ink:#18253d;--muted:#54637a;--primary:#4659d7;--line:#dce3ef;--bg:#f4f6fb;--error:#b42318}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6}
+main{max-width:1140px;margin:auto;padding:44px 24px 60px}
+header{margin-bottom:26px}
+.eyebrow{font-size:.8rem;letter-spacing:.1em;color:var(--primary);font-weight:800}
+h1{font-size:clamp(2rem,5vw,2.7rem);margin:6px 0}
+h2{font-size:1.16rem;margin:0 0 14px}
+p{margin:8px 0}
+.subtitle,.hint{color:var(--muted)}
+.hint{font-size:.88rem}
+.steps{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.steps span{background:#e9edff;border-radius:6px;padding:6px 11px;font-size:.88rem;color:#3445a3}
+.layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:22px;align-items:start}
+.card{background:white;border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 8px 28px #18253d05}
+.section+.section{margin-top:26px;padding-top:24px;border-top:1px solid var(--line)}
+label{font-weight:650}
+input[type=text],input[type=number]{min-width:0;width:100%;border:1px solid #aebbd0;border-radius:9px;padding:11px 12px;font:inherit;color:var(--ink);background:white}
+input[aria-invalid=true]{border:2px solid var(--error)}
+input[type=checkbox]{width:21px;height:21px;accent-color:var(--primary);flex-shrink:0;cursor:pointer}
+button{min-height:44px;border:1px solid var(--line);border-radius:9px;background:white;padding:9px 14px;color:var(--ink);font:inherit;font-weight:650;cursor:pointer}
+button:hover{background:#f0f3fc}
+button.primary{background:var(--primary);border-color:var(--primary);color:white}
+button.primary:hover{background:#3647bb}
+button.danger{color:var(--error)}
+button:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:3px solid #db9400;outline-offset:3px}
+.input-row{display:flex;gap:8px;margin-top:7px}
+.input-row input{flex:1}
+.input-row button{flex-shrink:0}
+.error{color:var(--error);font-size:.88rem;margin:6px 0 0;font-weight:600;overflow-wrap:anywhere}
+.error:empty{display:none}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.stat{border:1px solid var(--line);border-radius:7px;padding:5px 10px;font-size:.9rem}
+.stat strong{color:var(--primary)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.toolbar button{font-size:.88rem}
+.candidates{list-style:none;padding:0;margin:0;max-height:410px;overflow:auto}
+.candidate{padding:12px 0;border-top:1px solid #edf0f6}
+.candidate:first-child{border-top:0}
+.candidate-main{display:flex;align-items:center;gap:10px}
+.candidate-label{display:flex;align-items:center;gap:10px;flex:1;min-width:0;min-height:44px;cursor:pointer}
+.name{overflow-wrap:anywhere;font-weight:600}
+.actions{display:flex;gap:5px;flex-shrink:0}
+.actions button{padding:7px 10px;font-size:.86rem}
+.edit-form{display:flex;gap:8px;flex-wrap:wrap}
+.edit-form input{flex:1 1 150px}
+.empty{padding:22px 14px;text-align:center;background:#f7f9fd;border-radius:10px;color:var(--muted)}
+.count-field{display:grid;grid-template-columns:1fr 110px;gap:12px;align-items:center}
+.draw-actions{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+.draw-actions .primary{flex:1}
+.results{margin:20px 0 0;padding:0;list-style:none;counter-reset:draw}
+.result-item{display:flex;align-items:center;gap:14px;border:1px solid #dce2ff;background:#f6f7ff;border-radius:12px;padding:16px;margin-bottom:10px}
+.order{display:grid;place-items:center;background:var(--primary);color:white;border-radius:50%;width:36px;height:36px;flex-shrink:0;font-weight:800}
+.winner{font-size:1.4rem;font-weight:800;overflow-wrap:anywhere;min-width:0}
+.result-status{font-weight:650;margin-top:16px}
+.result-meta{color:var(--muted);font-size:.9rem}
+.reset-row{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
+.reset-row p{margin:0}
+footer{color:var(--muted);font-size:.85rem;margin-top:24px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:760px){main{padding:26px 16px 40px}.layout{grid-template-columns:1fr}.card{padding:20px}.reset-row{align-items:flex-start}}
+@media(max-width:390px){.candidate-main{flex-wrap:wrap}.actions{margin-left:auto}.input-row{flex-wrap:wrap}.input-row button{width:100%}.count-field{grid-template-columns:1fr 85px}}
+@media(prefers-reduced-motion:no-preference){button{transition:background .15s}}
+
+/* 테마는 현재 페이지에서만 유지하며 브라우저에 저장하지 않습니다. */
+.header-top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+#theme-toggle{flex-shrink:0}
+body.dark{
+  color-scheme:dark;
+  --ink:#edf2ff;--muted:#b4c0d5;--primary:#a5b4fc;
+  --line:#3c4961;--bg:#111827;--error:#ffb4ab;
+}
+body.dark .card{background:#1c2638;box-shadow:none}
+body.dark .steps span{background:#2c375b;color:#dbe2ff}
+body.dark input[type=text],body.dark input[type=number]{background:#111b2d;border-color:#7788a3;color:var(--ink)}
+body.dark input::placeholder{color:#a8b5ca}
+body.dark input[aria-invalid=true]{border-color:var(--error)}
+body.dark button{background:#253249;color:var(--ink)}
+body.dark button:hover{background:#34445e}
+body.dark button.primary{background:#a5b4fc;border-color:#a5b4fc;color:#182044}
+body.dark button.primary:hover{background:#c0caff}
+body.dark button.danger{color:var(--error)}
+body.dark .candidate{border-color:var(--line)}
+body.dark .empty{background:#152035;color:var(--muted)}
+body.dark .result-item{background:#26324e;border-color:#495d87}
+body.dark .order{background:#a5b4fc;color:#182044}
+body.dark :focus-visible{outline-color:#ffd166}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="header-top">
+<div class="eyebrow">CLASSROOM RANDOM PICKER</div>
+<button type="button" id="theme-toggle" aria-pressed="false" aria-label="다크 모드" aria-describedby="theme-help">다크 모드 켜기</button>
+</div>
+<span id="theme-help" class="sr-only">다크 모드를 켜거나 끕니다. 테마 설정은 저장되지 않습니다.</span>
+<h1>랜덤 뽑기</h1>
+<p class="subtitle">발표자, 청소 당번, 오늘의 메뉴까지. 후보를 등록하고 필요한 수만큼 뽑아보세요.</p>
+<nav class="steps" aria-label="사용 순서">
+<span>① 후보 등록</span><span>② 참여 후보 선택</span><span>③ 뽑을 인원 설정</span><span>④ 결과 확인</span>
+</nav>
+</header>
+<div class="layout">
+<section class="card" aria-label="후보 입력과 참여 설정">
+<div class="section">
+<h2>① 후보 등록</h2>
+<form id="add-form" novalidate>
+<label for="name-input">이름 또는 항목</label>
+<div class="input-row">
+<input id="name-input" type="text" placeholder="예: 김민수, 피자, 보드게임" autocomplete="off" aria-describedby="name-help name-error">
+<button class="primary" type="submit">추가</button>
+</div>
+<p id="name-help" class="hint">한 번에 하나씩 입력하세요. 동명이인은 김민수(1), 김민수(2)처럼 구분해주세요.</p>
+<p id="name-error" class="error" role="alert"></p>
+</form>
+</div>
+<div class="section">
+<h2>② 참여 후보 선택</h2>
+<div class="stats" aria-live="polite" aria-atomic="true">
+<span class="stat">전체 후보 <strong id="total-count">0</strong></span>
+<span class="stat">참여 중 <strong id="active-count">0</strong></span>
+</div>
+<div class="toolbar">
+<button type="button" id="select-all" disabled>전체 선택</button>
+<button type="button" id="deselect-all" disabled>전체 해제</button>
+</div>
+<p class="hint">체크한 후보만 추첨에 참여합니다. 새 후보는 참여 상태로 등록됩니다.</p>
+<p id="candidate-error" class="error" role="alert"></p>
+<p id="empty-list" class="empty">후보를 먼저 등록해주세요.</p>
+<ul id="candidate-list" class="candidates" aria-label="등록된 후보"></ul>
+</div>
+</section>
+<section class="card" aria-label="추첨 설정과 결과">
+<div class="section">
+<h2>③ 뽑을 인원 설정</h2>
+<form id="draw-form" novalidate>
+<div class="count-field">
+<label for="draw-count">뽑을 인원 / 항목 수</label>
+<input id="draw-count" type="number" min="1" step="1" value="1" inputmode="numeric" aria-describedby="count-help count-error">
+</div>
+<p id="count-help" class="hint">참여 후보 수 이하의 정수를 입력하세요. 한 번의 추첨에서 중복으로 뽑히지 않습니다.</p>
+<p id="count-error" class="error" role="alert"></p>
+<div class="draw-actions">
+<button type="submit" class="primary" id="draw-button">랜덤 뽑기</button>
+<button type="button" id="redraw-button" disabled>다시 뽑기</button>
+</div>
+</form>
+<p class="hint">다시 뽑기는 이전 당첨자도 포함한 현재 참여 후보 전체를 대상으로 합니다.</p>
+</div>
+<div class="section">
+<h2>④ 결과 확인</h2>
+<div id="result-announcement" role="status" aria-live="polite" aria-atomic="true">
+<p id="result-status" class="result-status">아직 추첨 전입니다.</p>
+<p id="result-meta" class="result-meta"></p>
+</div>
+<p id="result-placeholder" class="empty">후보와 인원을 설정한 후 ‘랜덤 뽑기’를 눌러주세요.</p>
+<ol id="results" class="results" aria-label="당첨 결과"></ol>
+<p class="hint">결과의 번호는 순위가 아니라 추첨 순서입니다.</p>
+</div>
+<div class="reset-row">
+<p class="hint">처음부터 새로 시작하려면<br>전체 내용을 초기화하세요.</p>
+<button type="button" id="reset-button" class="danger">전체 초기화</button>
+</div>
+</section>
+</div>
+<footer>입력 내용은 저장되지 않으며 새로고침하면 사라집니다. 외부 연결 없이 이 파일 안에서만 작동합니다.</footer>
+<p id="action-status" class="sr-only" role="status" aria-live="polite"></p>
+</main>
+<script>
+"use strict";
+(() => {
+  const $ = id => document.getElementById(id);
+  const elements = {
+    name: $("name-input"), nameError: $("name-error"),
+    list: $("candidate-list"), empty: $("empty-list"),
+    candidateError: $("candidate-error"), count: $("draw-count"),
+    countError: $("count-error"), results: $("results"),
+    resultStatus: $("result-status"), resultMeta: $("result-meta"),
+    placeholder: $("result-placeholder"), redraw: $("redraw-button"),
+    selectAll: $("select-all"), deselectAll: $("deselect-all")
+  };
+  // 실행 중인 메모리에만 보관하며 저장소나 서버는 사용하지 않습니다.
+  let candidates = [];
+  let nextId = 1;
+  let editingId = null;
+  let hasResult = false;
+  let drawNumber = 0;
+
+  function announce(message) {
+    $("action-status").textContent = message;
+  }
+  function setError(input, output, message) {
+    output.textContent = message;
+    if (message) input.setAttribute("aria-invalid", "true");
+    else input.removeAttribute("aria-invalid");
+  }
+  function validateName(value, exceptId = null) {
+    if (!value) return "이름 또는 항목을 입력해주세요.";
+    if (candidates.some(candidate => candidate.id !== exceptId && candidate.name === value)) {
+      return "이미 등록된 이름입니다. 구분할 수 있는 이름을 입력해주세요.";
+    }
+    return "";
+  }
+  function updateStats() {
+    $("total-count").textContent = String(candidates.length);
+    const activeCount = candidates.filter(candidate => candidate.active).length;
+    $("active-count").textContent = String(activeCount);
+    elements.selectAll.disabled = candidates.length === 0;
+    elements.deselectAll.disabled = candidates.length === 0;
+    // 최대값은 브라우저와 보조 기술에 전달하고, 직접 입력은 별도로 검증합니다.
+    if (activeCount > 0) elements.count.max = String(activeCount);
+    else elements.count.removeAttribute("max");
+  }
+  function clearDrawErrors() {
+    elements.candidateError.textContent = "";
+    setError(elements.count, elements.countError, "");
+  }
+  function invalidateResult() {
+    const previousResult = hasResult;
+    hasResult = false;
+    elements.results.replaceChildren();
+    elements.redraw.disabled = true;
+    elements.resultMeta.textContent = "";
+    if (previousResult || drawNumber > 0) {
+      elements.resultStatus.textContent = "설정이 변경되었습니다. 다시 추첨해주세요.";
+    } else {
+      elements.resultStatus.textContent = "아직 추첨 전입니다.";
+    }
+    elements.placeholder.hidden = false;
+    elements.placeholder.textContent = "현재 후보와 설정으로 ‘랜덤 뽑기’를 눌러주세요.";
+  }
+  function changed() {
+    clearDrawErrors();
+    updateStats();
+    invalidateResult();
+  }
+  function makeButton(text, className, listener) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = text;
+    if (className) button.className = className;
+    button.addEventListener("click", listener);
+    return button;
+  }
+
+  function renderCandidates() {
+    elements.list.replaceChildren();
+    elements.empty.hidden = candidates.length !== 0;
+    candidates.forEach(candidate => {
+      const item = document.createElement("li");
+      item.className = "candidate";
+
+      if (editingId === candidate.id) {
+        const form = document.createElement("form");
+        form.className = "edit-form";
+        form.noValidate = true;
+        const label = document.createElement("label");
+        label.className = "sr-only";
+        label.htmlFor = `edit-${candidate.id}`;
+        label.textContent = "후보 이름 수정";
+        const input = document.createElement("input");
+        input.id = label.htmlFor;
+        input.type = "text";
+        input.value = candidate.name;
+        input.autocomplete = "off";
+        const error = document.createElement("p");
+        error.id = `edit-error-${candidate.id}`;
+        error.className = "error";
+        error.setAttribute("role", "alert");
+        input.setAttribute("aria-describedby", error.id);
+        const save = document.createElement("button");
+        save.type = "submit";
+        save.className = "primary";
+        save.textContent = "저장";
+        const cancel = makeButton("취소", "", () => {
+          editingId = null;
+          renderCandidates();
+          $(`edit-button-${candidate.id}`).focus();
+        });
+        form.append(label, input, save, cancel);
+        form.addEventListener("submit", event => {
+          event.preventDefault();
+          const value = input.value.trim();
+          const message = validateName(value, candidate.id);
+          setError(input, error, message);
+          if (message) { input.focus(); return; }
+          const actuallyChanged = candidate.name !== value;
+          candidate.name = value;
+          editingId = null;
+          if (actuallyChanged) changed();
+          renderCandidates();
+          $(`edit-button-${candidate.id}`).focus();
+          announce("후보 이름을 수정했습니다.");
+        });
+        input.addEventListener("input", () => setError(input, error, ""));
+        input.addEventListener("keydown", event => {
+          if (event.key === "Escape") { event.preventDefault(); cancel.click(); }
+        });
+        item.append(form, error);
+      } else {
+        const row = document.createElement("div");
+        row.className = "candidate-main";
+        const label = document.createElement("label");
+        label.className = "candidate-label";
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = candidate.active;
+        checkbox.id = `candidate-${candidate.id}`;
+        checkbox.setAttribute("aria-label", `${candidate.name} 추첨 참여`);
+        checkbox.addEventListener("change", () => {
+          candidate.active = checkbox.checked;
+          changed();
+        });
+        const name = document.createElement("span");
+        name.className = "name";
+        name.textContent = candidate.name;
+        label.append(checkbox, name);
+        const actions = document.createElement("div");
+        actions.className = "actions";
+        const edit = makeButton("수정", "", () => {
+          editingId = candidate.id;
+          renderCandidates();
+          const input = $(`edit-${candidate.id}`);
+          input.focus();
+          input.select();
+        });
+        edit.id = `edit-button-${candidate.id}`;
+        edit.setAttribute("aria-label", `${candidate.name} 수정`);
+        const remove = makeButton("삭제", "danger", () => {
+          const oldIndex = candidates.findIndex(entry => entry.id === candidate.id);
+          candidates = candidates.filter(entry => entry.id !== candidate.id);
+          changed();
+          renderCandidates();
+          const focusCandidate = candidates[Math.min(oldIndex, candidates.length - 1)];
+          if (focusCandidate) {
+            const target = $(`candidate-${focusCandidate.id}`) || $(`edit-${focusCandidate.id}`);
+            if (target) target.focus();
+          } else elements.name.focus();
+          announce(`${candidate.name} 후보를 삭제했습니다.`);
+        });
+        remove.setAttribute("aria-label", `${candidate.name} 삭제`);
+        actions.append(edit, remove);
+        row.append(label, actions);
+        item.append(row);
+      }
+      elements.list.append(item);
+    });
+    updateStats();
+  }
+
+  $("add-form").addEventListener("submit", event => {
+    event.preventDefault();
+    const value = elements.name.value.trim();
+    const message = validateName(value);
+    setError(elements.name, elements.nameError, message);
+    if (message) { elements.name.focus(); return; }
+    // 수정 중인 입력을 잃지 않도록 먼저 수정을 마치도록 안내합니다.
+    if (editingId !== null) {
+      setError(elements.name, elements.nameError, "수정 중인 후보를 먼저 저장하거나 취소해주세요.");
+      $(`edit-${editingId}`).focus();
+      return;
+    }
+    candidates.push({ id: nextId++, name: value, active: true });
+    elements.name.value = "";
+    changed();
+    renderCandidates();
+    elements.name.focus();
+    announce(`${value} 후보를 추가했습니다.`);
+  });
+  elements.name.addEventListener("input", () => setError(elements.name, elements.nameError, ""));
+
+  function setAll(active) {
+    const actuallyChanged = candidates.some(candidate => candidate.active !== active);
+    candidates.forEach(candidate => { candidate.active = active; });
+    // 목록을 재생성하지 않아 수정 중인 입력과 키보드 위치를 유지합니다.
+    candidates.forEach(candidate => {
+      const checkbox = $(`candidate-${candidate.id}`);
+      if (checkbox) checkbox.checked = active;
+    });
+    if (actuallyChanged) changed();
+    announce(active ? "모든 후보를 선택했습니다." : "모든 후보의 선택을 해제했습니다.");
+  }
+  elements.selectAll.addEventListener("click", () => setAll(true));
+  elements.deselectAll.addEventListener("click", () => setAll(false));
+  elements.count.addEventListener("input", () => {
+    clearDrawErrors();
+    invalidateResult();
+  });
+
+  function draw() {
+    clearDrawErrors();
+    if (editingId !== null) {
+      elements.candidateError.textContent = "수정 중인 후보를 먼저 저장하거나 취소해주세요.";
+      $(`edit-${editingId}`).focus();
+      return;
+    }
+    const active = candidates.filter(candidate => candidate.active);
+    if (active.length === 0) {
+      elements.candidateError.textContent = "추첨에 참여할 후보를 1명 이상 선택해주세요.";
+      const firstCheckbox = elements.list.querySelector('input[type="checkbox"]');
+      (firstCheckbox || elements.name).focus();
+      return;
+    }
+    const raw = elements.count.value.trim();
+    const count = Number(raw);
+    if (raw === "" || !Number.isSafeInteger(count) || count < 1) {
+      setError(elements.count, elements.countError, "뽑을 인원은 1 이상의 정수로 입력해주세요.");
+      elements.count.focus();
+      return;
+    }
+    if (count > active.length) {
+      setError(elements.count, elements.countError, "뽑을 인원은 참여 후보 수를 초과할 수 없습니다.");
+      elements.count.focus();
+      return;
+    }
+    // 피셔–예이츠 셔플: 원래 후보 목록이 아닌 복사본만 섞습니다.
+    const shuffled = [...active];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const winners = shuffled.slice(0, count);
+    elements.results.replaceChildren();
+    winners.forEach((winner, index) => {
+      const item = document.createElement("li");
+      item.className = "result-item";
+      const number = document.createElement("span");
+      number.className = "order";
+      number.setAttribute("aria-label", `추첨 순서 ${index + 1}`);
+      number.textContent = String(index + 1);
+      const name = document.createElement("span");
+      name.className = "winner";
+      name.textContent = winner.name;
+      item.append(number, name);
+      elements.results.append(item);
+    });
+    drawNumber++;
+    hasResult = true;
+    elements.redraw.disabled = false;
+    elements.placeholder.hidden = true;
+    elements.resultStatus.textContent =
+      `${drawNumber}회차 추첨 완료 · ${count}개 선정: ${winners.map(winner => winner.name).join(", ")}`;
+    const percent = (count / active.length * 100).toLocaleString("ko-KR", { maximumFractionDigits: 2 });
+    elements.resultMeta.textContent =
+      `참여 후보 ${active.length}개 중 ${count}개 선정 · 후보별 당첨 확률 ${count}/${active.length} (약 ${percent}%)`;
+  }
+  $("draw-form").addEventListener("submit", event => {
+    event.preventDefault();
+    draw();
+  });
+  elements.redraw.addEventListener("click", draw);
+  $("reset-button").addEventListener("click", () => {
+    if (!window.confirm("등록된 후보, 설정, 추첨 결과를 모두 초기화할까요?")) return;
+    candidates = [];
+    nextId = 1;
+    editingId = null;
+    hasResult = false;
+    drawNumber = 0;
+    elements.name.value = "";
+    elements.count.value = "1";
+    setError(elements.name, elements.nameError, "");
+    clearDrawErrors();
+    invalidateResult();
+    elements.placeholder.textContent = "후보와 인원을 설정한 후 ‘랜덤 뽑기’를 눌러주세요.";
+    renderCandidates();
+    elements.name.focus();
+    announce("모든 내용이 초기화되었습니다.");
+  });
+  const themeToggle = $("theme-toggle");
+  themeToggle.addEventListener("click", () => {
+    const darkEnabled = document.body.classList.toggle("dark");
+    themeToggle.setAttribute("aria-pressed", String(darkEnabled));
+    themeToggle.textContent = darkEnabled ? "다크 모드 끄기" : "다크 모드 켜기";
+    announce(darkEnabled ? "다크 모드가 켜졌습니다." : "다크 모드가 꺼졌습니다.");
+  });
+  renderCandidates();
+})();
+</script>
+</body>
+</html>

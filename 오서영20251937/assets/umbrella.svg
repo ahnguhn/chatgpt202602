@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<!-- 직접 제작한 우산 아이템 일러스트 -->
+<path d="M32 5v43q0 12 10 9 6-2 4-9" fill="none" stroke="#3c5368" stroke-width="4" stroke-linecap="round"/>
+<path d="M4 32a28 26 0 0 1 56 0q-7-7-14 0-7-7-14 0-7-7-14 0-7-7-14 0Z" fill="#f6b86b" stroke="#b47740" stroke-width="2.5" stroke-linejoin="round"/>
+<path d="M32 6Q18 13 18 32m14-26q14 7 14 26" fill="none" stroke="#fff0ca" stroke-width="2"/>
+<circle cx="32" cy="5" r="3" fill="#3c5368"/>
+</svg>

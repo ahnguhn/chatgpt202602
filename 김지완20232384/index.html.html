@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DEAD CENTER · 30초 사격장</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1016;--panel:#131c26;--line:#293746;--muted:#91a2b5;--white:#edf5ff;--mint:#a6ffce;--red:#ff6868}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--white);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100svh;padding:32px 20px}
+button{font:inherit;cursor:pointer}button:focus-visible{outline:3px solid var(--mint);outline-offset:5px}
+.wrap{max-width:1040px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}
+.eyebrow{font-size:11px;letter-spacing:3px;color:var(--mint);font-weight:800}.brand{font-size:27px;font-weight:900;letter-spacing:-1px;margin:5px 0}.sub{font-size:13px;color:var(--muted)}
+.sound{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:10px 14px;color:var(--muted);white-space:nowrap}
+.stats{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px;margin-bottom:16px}.stat{padding:17px 21px;background:var(--panel);border:1px solid var(--line);border-radius:12px}.label{color:var(--muted);font-size:12px;letter-spacing:1px}.value{font-size:34px;font-weight:850;font-variant-numeric:tabular-nums;margin-top:5px}.value small{font-size:14px;color:var(--muted);margin-left:5px}.mint{color:var(--mint)}.timer.danger{color:var(--red)}
+.arena-shell{border:1px solid #354556;border-radius:16px;overflow:hidden;background:#101a23;box-shadow:0 20px 70px #0004}
+.bar{height:4px;background:#233241}.bar-fill{height:100%;width:100%;background:var(--mint);transform-origin:left;will-change:transform}
+.arena{height:clamp(340px,55vh,520px);position:relative;overflow:hidden;touch-action:manipulation;user-select:none;-webkit-user-select:none;background:radial-gradient(ellipse at 50% 35%,#263a49a0,transparent 70%),linear-gradient(#ffffff06 1px,transparent 1px),linear-gradient(90deg,#ffffff06 1px,transparent 1px),#101a23;background-size:auto,40px 40px,40px 40px;isolation:isolate}
+.arena.playing{cursor:crosshair}.arena:before{content:"";position:absolute;inset:16px;border:1px solid #97b5d014;pointer-events:none}.range-label{position:absolute;top:18px;left:22px;color:#688196;font-size:10px;letter-spacing:2px;pointer-events:none}.range-number{position:absolute;right:22px;bottom:17px;color:#688196;font-size:10px;letter-spacing:2px;pointer-events:none}
+.overlay{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:24px;background:#0b141bd9;backdrop-filter:blur(7px);text-align:center}.overlay[hidden]{display:none}.modal{max-width:490px;width:100%}.badge{display:inline-block;border:1px solid #a6ffce40;background:#a6ffce0a;border-radius:30px;padding:7px 12px;color:var(--mint);font-size:11px;letter-spacing:2px}
+h1{font-size:clamp(28px,5vw,46px);line-height:1.2;letter-spacing:-1.5px;margin:20px 0 14px}p{color:#a9b9c9;line-height:1.8;font-size:14px;margin:0 0 24px}.primary{background:var(--mint);border:0;border-radius:8px;color:#0a2818;padding:15px 38px;min-height:50px;font-weight:850;box-shadow:0 5px 24px #a6ffce14}.primary:hover{background:#c2ffde}.key-note{font-size:11px;color:#70879a;margin-top:16px}
+.target{position:absolute;width:88px;height:88px;padding:0;border:0;border-radius:50%;background:transparent;filter:drop-shadow(0 8px 10px #0008);animation:appear .14s ease-out;z-index:2;touch-action:manipulation;cursor:crosshair;-webkit-tap-highlight-color:transparent}
+.target svg{display:block;width:100%;height:100%;pointer-events:none}.target:focus-visible{outline-color:white;outline-offset:6px}.target.expiring{filter:drop-shadow(0 0 12px #ff626280)}@keyframes appear{from{transform:scale(.45);opacity:.2}to{transform:scale(1);opacity:1}}
+.pop{position:absolute;z-index:4;font-size:22px;font-weight:900;pointer-events:none;color:var(--mint);text-shadow:0 2px 8px #000;white-space:nowrap;animation:float .65s ease-out forwards;transform:translate(-50%,-50%)}.pop.miss{font-size:14px;color:#f49c9c}.pop small{font-size:12px;display:block;text-align:center;margin-top:3px}@keyframes float{from{opacity:1;margin-top:0}to{opacity:0;margin-top:-45px}}
+.shot{position:absolute;width:26px;height:26px;border:2px solid #e5f6ff99;border-radius:50%;pointer-events:none;z-index:3;animation:shot .25s ease-out forwards}@keyframes shot{to{transform:scale(2);opacity:0}}
+.footer{display:flex;justify-content:space-between;gap:14px;margin-top:17px;font-size:12px;color:var(--muted);line-height:1.8}.footer strong{color:#d5e6f6;font-weight:650}.legend{display:flex;gap:14px;flex-wrap:wrap}.dot{color:var(--mint)}.result-score{font-size:64px;font-weight:900;letter-spacing:-3px;color:var(--mint);margin:0 0 18px;font-variant-numeric:tabular-nums}.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 23px}.result-grid div{background:#ffffff06;padding:12px 8px;border-radius:8px;font-size:11px;color:var(--muted)}.result-grid strong{display:block;color:white;font-size:20px;margin-bottom:5px}.result-title{font-size:27px;margin:15px 0 8px}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0)}
+@media(max-width:600px){body{padding:20px 12px}.brand{font-size:22px}.sub{font-size:11px}.sound{padding:8px;font-size:11px}.stats{gap:8px}.stat{padding:13px 12px}.value{font-size:27px}.label{font-size:10px}.value small{font-size:11px}.footer{flex-direction:column;gap:5px}.arena{height:clamp(350px,53svh,510px)}}
+@media(prefers-reduced-motion:reduce){.target{animation:none}.pop{animation-duration:.1s}.shot{display:none}}
+
+/* 외부 이미지 없이 내장 SVG로 그린 1인칭 총 */
+.weapon-wrap{position:absolute;bottom:-12px;left:50%;width:190px;height:180px;transform:translateX(-50%);z-index:5;pointer-events:none;filter:drop-shadow(0 8px 10px #0009)}
+.weapon{width:100%;height:100%;transform-origin:50% 100%;will-change:transform}
+.weapon svg{display:block;width:100%;height:100%}
+.muzzle-flash{opacity:0}
+.weapon.firing{animation:gun-recoil 180ms ease-out}
+.weapon.firing .muzzle-flash{animation:muzzle-light 100ms ease-out}
+@keyframes gun-recoil{0%{transform:translateY(0) rotate(0)}22%{transform:translateY(13px) rotate(-4deg)}55%{transform:translateY(5px) rotate(1deg)}100%{transform:translateY(0) rotate(0)}}
+@keyframes muzzle-light{0%,55%{opacity:1}100%{opacity:0}}
+@media(max-width:600px){.weapon-wrap{width:140px;height:135px;bottom:-9px}}
+@media(prefers-reduced-motion:reduce){.weapon.firing{animation:none}.weapon.firing .muzzle-flash{animation-duration:60ms}}
+
+
+/* 명중하거나 시간이 초과된 과녁이 바닥의 축을 중심으로 뒤로 넘어집니다. */
+.target.falling{
+  pointer-events:none;
+  transform-origin:50% 100%;
+  animation:target-fall-back 440ms cubic-bezier(.35,.05,.7,1) forwards;
+  will-change:transform,opacity;
+}
+.target.falling.hit-fall{filter:drop-shadow(0 0 10px #a6ffce60)}
+@keyframes target-fall-back{
+  0%{transform:perspective(550px) rotateX(0deg);opacity:1}
+  16%{transform:perspective(550px) rotateX(-9deg);opacity:1}
+  80%{transform:perspective(550px) rotateX(83deg);opacity:.8}
+  100%{transform:perspective(550px) rotateX(98deg);opacity:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .target.falling{animation:target-fall-fade 120ms ease-out forwards}
+  @keyframes target-fall-fade{to{opacity:0}}
+}
+
+/* 5연속 명중마다 표시되는 콤보 축하 문구: 클릭 판정은 통과합니다. */
+.combo-milestone{
+  position:absolute;left:50%;top:42%;z-index:8;
+  width:max-content;max-width:96%;pointer-events:none;text-align:center;
+  font-size:clamp(42px,9vw,88px);font-weight:950;font-style:italic;
+  line-height:1.1;letter-spacing:-2px;color:#baffd7;
+  text-shadow:0 3px 0 #164332,0 0 30px #83ffc480,0 8px 25px #000a;
+  transform:translate(-50%,-50%);opacity:0;
+}
+.combo-milestone[hidden]{display:none}
+.combo-milestone.active{animation:combo-celebrate 1000ms ease-out both}
+@keyframes combo-celebrate{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.45) rotate(-7deg)}
+  16%{opacity:1;transform:translate(-50%,-50%) scale(1.12) rotate(-3deg)}
+  28%,72%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(-3deg)}
+  100%{opacity:0;transform:translate(-50%,-72%) scale(1.08) rotate(-3deg)}
+}
+@media(prefers-reduced-motion:reduce){
+  .combo-milestone.active{animation:combo-celebrate-fade 1000ms ease-out both}
+  @keyframes combo-celebrate-fade{0%,100%{opacity:0}15%,80%{opacity:1}}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="top"><div><div class="eyebrow">30 SECOND CHALLENGE</div><div class="brand">DEAD CENTER<span class="mint">.</span></div><div class="sub">조준하고, 명중하고, 기록을 넘어서세요.</div></div><button id="sound" class="sound" type="button" aria-pressed="false">사운드 OFF</button></header>
+<section class="stats" aria-label="게임 현황">
+<div class="stat"><div class="label">SCORE · 현재 점수</div><div class="value mint" id="score">0</div></div>
+<div class="stat"><div class="label">COMBO · 연속 명중</div><div class="value"><span id="combo">0</span><small>COMBO</small></div></div>
+<div class="stat"><div class="label">TIME · 남은 시간</div><div class="value timer" id="timer">30.0<small>초</small></div></div>
+</section>
+<div class="arena-shell"><div class="bar"><div class="bar-fill" id="progress"></div></div>
+<div class="arena" id="arena" aria-label="사격 영역">
+<div class="range-label">LIVE RANGE / 01</div><div class="range-number">AIM • CLICK • REPEAT</div>
+<div id="combo-milestone" class="combo-milestone" aria-hidden="true" hidden></div>
+<div class="weapon-wrap" aria-hidden="true">
+<div class="weapon" id="weapon">
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="gunMetal" x1="0" x2="1"><stop stop-color="#17212d"/><stop offset=".45" stop-color="#63778b"/><stop offset=".55" stop-color="#8192a2"/><stop offset="1" stop-color="#202d3c"/></linearGradient>
+<linearGradient id="gunTop" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#a5b6c5"/><stop offset="1" stop-color="#35485d"/></linearGradient>
+<linearGradient id="glove" x1="0" x2="1"><stop stop-color="#182821"/><stop offset=".5" stop-color="#42584a"/><stop offset="1" stop-color="#25372c"/></linearGradient>
+<radialGradient id="flashGlow"><stop stop-color="#fffbd0" stop-opacity=".9"/><stop offset="1" stop-color="#ffb539" stop-opacity="0"/></radialGradient>
+</defs>
+<g class="muzzle-flash">
+<ellipse cx="100" cy="32" rx="49" ry="32" fill="url(#flashGlow)"/>
+<path d="M100 0 106 20 122 9 115 28 138 32 114 39 122 54 105 45 100 65 94 45 77 54 85 38 64 32 86 26 79 10 94 20Z" fill="#ffc84a"/>
+<path d="M100 13 105 28 119 32 105 37 100 50 95 37 82 32 95 28Z" fill="#fff9cf"/>
+</g>
+<!-- 장갑과 손잡이 -->
+<path d="M8 200 29 164 65 141 83 150 96 190 91 200Z" fill="url(#glove)" stroke="#15231c" stroke-width="3"/>
+<path d="M192 200 170 160 135 139 117 151 105 192 110 200Z" fill="url(#glove)" stroke="#15231c" stroke-width="3"/>
+<path d="M79 112 121 112 133 200 68 200Z" fill="#192430" stroke="#0c131c" stroke-width="3"/>
+<path d="M82 152H119M80 164H121M78 176H123M76 188H125" stroke="#3b4b5a" stroke-width="4"/>
+<!-- 슬라이드와 총열 -->
+<path d="M83 41 117 41 132 137 120 158 80 158 68 137Z" fill="url(#gunMetal)" stroke="#101a24" stroke-width="3"/>
+<path d="M88 43 112 43 120 132 80 132Z" fill="url(#gunTop)" stroke="#8b9caf" stroke-width="1"/>
+<path d="M83 47 76 130 81 141M117 47 124 130 119 141" fill="none" stroke="#142232" stroke-width="3"/>
+<path d="M84 112H116M83 119H117M82 126H118" stroke="#273b4e" stroke-width="3"/>
+<rect x="90" y="36" width="20" height="12" rx="3" fill="#1c2937" stroke="#8b9caf" stroke-width="2"/>
+<rect x="97" y="32" width="6" height="8" rx="1" fill="#b5ffd5"/>
+<path d="M87 141V135H113V141" fill="none" stroke="#15202b" stroke-width="7"/>
+<path d="M87 135V141M113 135V141" stroke="#b5ffd5" stroke-width="3"/>
+<path d="M82 152H118" stroke="#94a9b9" stroke-width="2"/>
+</svg>
+</div></div>
+
+<div class="overlay" id="start-screen"><div class="modal">
+<div class="badge">READY TO SHOOT?</div><h1>당신의 30초,<br>몇 발이나 맞힐 수 있나요?</h1>
+<p>무작위로 나타나는 과녁을 클릭하거나 터치하세요.<br>직전 명중 후 <strong class="mint">1초 안에 다시 명중</strong>하면 콤보 보너스!</p>
+<button class="primary" id="start" type="button">게임 시작 →</button>
+<div class="key-note">설치 없이 바로 플레이 · 마우스 / 터치 지원</div>
+</div></div>
+<div class="overlay" id="end-screen" hidden><div class="modal">
+<div class="badge">MISSION COMPLETE</div><h2 class="result-title">30초 사격 완료!</h2>
+<div class="result-score" id="final-score">0</div>
+<div class="result-grid"><div><strong id="final-hits">0</strong>명중 횟수</div><div><strong id="final-combo">0</strong>최대 콤보</div><div><strong id="final-accuracy">0%</strong>명중률</div></div>
+<p id="record" style="margin-bottom:18px"></p>
+<button class="primary" id="restart" type="button">다시 시작 →</button>
+</div></div>
+</div></div>
+<footer class="footer"><div class="legend"><span><span class="dot">●</span> 명중 <strong>+100점</strong></span><span>콤보 추가 <strong>+25 × (콤보 − 1)</strong></span></div><div>과녁은 1.4초 후 사라집니다 · 빗나감 / 시간 초과: 0점, 콤보 초기화</div></footer>
+<div class="sr-only" id="announce" role="status" aria-live="polite"></div>
+</main>
+<script>
+"use strict";
+(() => {
+const $ = id => document.getElementById(id);
+const arena = $("arena"), scoreEl = $("score"), comboEl = $("combo"), timerEl = $("timer");
+const DURATION = 30000, TARGET_LIFE = 1400, COMBO_WINDOW = 1000;
+let running = false, score = 0, combo = 0, maxCombo = 0, hits = 0, shots = 0;
+let lastHit = -Infinity, endAt = 0, frame = 0, spawnTimer = 0, target = null;
+let soundOn = false, audio = null, best = 0;
+try { best = Number(localStorage.getItem("deadCenterBest")) || 0; } catch {}
+const targetSvg = `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#edf5f7" stroke="#b9c8cd" stroke-width="2"/><circle cx="50" cy="50" r="38" fill="#f25b5d"/><circle cx="50" cy="50" r="28" fill="#edf5f7"/><circle cx="50" cy="50" r="18" fill="#f25b5d"/><circle cx="50" cy="50" r="8" fill="#941f2e"/><path d="M50 2v18M50 80v18M2 50h18M80 50h18" stroke="#1a2c38" stroke-width="1.5" opacity=".45"/><circle cx="50" cy="50" r="2" fill="#fff"/></svg>`;
+
+function initAudio() {
+  try {
+    if (!audio) { const C = window.AudioContext || window.webkitAudioContext; if (C) audio = new C(); }
+    if (audio && audio.state === "suspended") audio.resume().catch(() => {});
+  } catch {}
+}
+function beep(kind) {
+  if (!soundOn || !audio) return;
+  try {
+    const o = audio.createOscillator(), g = audio.createGain(), now = audio.currentTime;
+    o.type = kind === "hit" ? "triangle" : "sine";
+    const freq = kind === "hit" ? 650 + Math.min(combo, 12) * 50 : kind === "end" ? 420 : 160;
+    o.frequency.setValueAtTime(freq, now);
+    o.frequency.exponentialRampToValueAtTime(kind === "hit" ? freq * 1.4 : freq * .5, now + .1);
+    g.gain.setValueAtTime(.065, now); g.gain.exponentialRampToValueAtTime(.001, now + .16);
+    o.connect(g); g.connect(audio.destination); o.start(now); o.stop(now + .17);
+  } catch {}
+}
+$("sound").addEventListener("click", () => {
+  soundOn = !soundOn;
+  $("sound").textContent = "사운드 " + (soundOn ? "ON" : "OFF");
+  $("sound").setAttribute("aria-pressed", String(soundOn));
+  if (soundOn) initAudio();
+});
+let milestoneTimer = 0;
+function clearMilestone() {
+  clearTimeout(milestoneTimer);
+  const el = $("combo-milestone");
+  el.classList.remove("active");
+  el.hidden = true;
+}
+function celebrateCombo(count) {
+  if (count <= 0 || count % 5 !== 0) return;
+  clearMilestone();
+  const el = $("combo-milestone");
+  el.textContent = count + "combo";
+  el.hidden = false;
+  void el.offsetWidth;
+  el.classList.add("active");
+  milestoneTimer = setTimeout(clearMilestone, 1050);
+  $("announce").textContent = count + "연속 콤보!";
+}
+function showScore() { scoreEl.textContent = score.toLocaleString("ko-KR"); comboEl.textContent = combo; }
+function popup(x, y, text, subtitle = "", miss = false) {
+  const el = document.createElement("div");
+  el.className = "pop" + (miss ? " miss" : "");
+  el.style.left = Math.max(65, Math.min(arena.clientWidth - 65, x)) + "px";
+  el.style.top = Math.max(60, y) + "px";
+  el.textContent = text;
+  if (subtitle) { const s = document.createElement("small"); s.textContent = subtitle; el.appendChild(s); }
+  arena.appendChild(el); setTimeout(() => el.remove(), 700);
+}
+let recoilTimer = 0;
+function animateGun() {
+  const gun = $("weapon");
+  clearTimeout(recoilTimer);
+  gun.classList.remove("firing");
+  // 연속 사격 시에도 매번 반동 애니메이션을 처음부터 재생합니다.
+  void gun.offsetWidth;
+  gun.classList.add("firing");
+  recoilTimer = setTimeout(() => gun.classList.remove("firing"), 190);
+}
+function shotEffect(x, y) {
+  animateGun();
+  const el = document.createElement("div"); el.className = "shot";
+  el.style.left = (x - 13) + "px"; el.style.top = (y - 13) + "px";
+  arena.appendChild(el); setTimeout(() => el.remove(), 300);
+}
+function removeTarget() { if (target) { target.el.remove(); target = null; } }
+function toppleTarget(hit = false) {
+  if (!target) return;
+  const el = target.el;
+  target = null; // 넘어진 과녁은 즉시 판정에서 제외하여 중복 득점을 막습니다.
+  el.disabled = true;
+  el.tabIndex = -1;
+  el.setAttribute("aria-hidden", "true");
+  el.classList.remove("expiring");
+  el.classList.add("falling");
+  if (hit) el.classList.add("hit-fall");
+  const cleanUp = () => el.remove();
+  el.addEventListener("animationend", cleanUp, {once:true});
+  setTimeout(cleanUp, 600); // 애니메이션이 중단되어도 잔상이 남지 않게 정리합니다.
+}
+function scheduleSpawn() {
+  clearTimeout(spawnTimer);
+  if (running) spawnTimer = setTimeout(spawnTarget, 140);
+}
+function spawnTarget() {
+  if (!running) return;
+  const now = performance.now();
+  if (now >= endAt) { finish(); return; }
+  removeTarget();
+  // 모바일의 좁은 사격 영역에서는 과녁을 더 작게 표시합니다.
+  // PC의 기존 크기 계산은 그대로 유지합니다.
+  const mobile = window.matchMedia("(max-width: 600px), (hover: none) and (pointer: coarse)").matches;
+  const size = mobile
+    ? Math.min(54, Math.max(38, arena.clientWidth * .12))
+    : Math.min(88, Math.max(64, arena.clientWidth * .17));
+  const margin = 14;
+  const x = margin + Math.random() * Math.max(0, arena.clientWidth - size - margin * 2);
+  // 과녁이 총 이미지에 가려지지 않도록 하단을 비워 둡니다.
+  const gunClearance = window.matchMedia("(max-width: 600px)").matches ? 132 : 177;
+  const y = 38 + Math.random() * Math.max(0, arena.clientHeight - size - 38 - gunClearance);
+  const el = document.createElement("button");
+  el.type = "button"; el.className = "target"; el.setAttribute("aria-label", "과녁 맞히기");
+  el.innerHTML = targetSvg; el.style.width = el.style.height = size + "px";
+  el.style.left = x + "px"; el.style.top = y + "px";
+  target = { el, expires: now + TARGET_LIFE, x, y, size };
+  arena.appendChild(el);
+}
+function expireTarget() {
+  if (!target) return;
+  const { x, y, size } = target;
+  toppleTarget(false); combo = 0; lastHit = -Infinity; showScore();
+  popup(x + size / 2, y + size / 2, "TIME OUT", "0점", true);
+  scheduleSpawn();
+}
+function tick(now) {
+  if (!running) return;
+  const remaining = Math.max(0, endAt - now);
+  timerEl.innerHTML = (remaining / 1000).toFixed(1) + "<small>초</small>";
+  timerEl.classList.toggle("danger", remaining <= 5000);
+  $("progress").style.transform = "scaleX(" + remaining / DURATION + ")";
+  if (remaining <= 0) { finish(); return; }
+  if (combo && now - lastHit > COMBO_WINDOW) { combo = 0; showScore(); }
+  if (target) {
+    if (now >= target.expires) expireTarget();
+    else if (target.expires - now < 350) target.el.classList.add("expiring");
+  }
+  frame = requestAnimationFrame(tick);
+}
+arena.addEventListener("click", e => {
+  if (!running || e.target.closest(".overlay")) return;
+  const now = performance.now();
+  if (now >= endAt) { finish(); return; }
+  if (target && now >= target.expires) expireTarget();
+  const button = e.target.closest(".target");
+  const rect = arena.getBoundingClientRect();
+  const x = e.detail === 0 && button ? button.offsetLeft + button.offsetWidth / 2 : e.clientX - rect.left;
+  const y = e.detail === 0 && button ? button.offsetTop + button.offsetHeight / 2 : e.clientY - rect.top;
+  shots++; shotEffect(x, y);
+  if (target && button === target.el) {
+    const t = target;
+    combo = now - lastHit <= COMBO_WINDOW ? combo + 1 : 1;
+    lastHit = now; maxCombo = Math.max(maxCombo, combo);
+    const bonus = 25 * (combo - 1), points = 100 + bonus;
+    score += points; hits++;
+    celebrateCombo(combo);
+    popup(t.x + t.size / 2, t.y + t.size / 2, "+" + points, bonus ? combo + " COMBO · 보너스 +" + bonus : "정확한 명중");
+    toppleTarget(true); showScore(); beep("hit"); scheduleSpawn();
+  } else {
+    combo = 0; lastHit = -Infinity; showScore(); popup(x, y, "MISS", "0점", true); beep("miss");
+  }
+});
+function start() {
+  if (running) return;
+  initAudio(); clearTimeout(spawnTimer); cancelAnimationFrame(frame); removeTarget();
+  arena.querySelectorAll(".pop,.shot,.target.falling").forEach(el => el.remove());
+  clearMilestone();
+  score = combo = maxCombo = hits = shots = 0; lastHit = -Infinity;
+  showScore(); timerEl.innerHTML = "30.0<small>초</small>"; timerEl.classList.remove("danger");
+  $("progress").style.transform = "scaleX(1)";
+  $("start-screen").hidden = true; $("end-screen").hidden = true;
+  running = true; arena.classList.add("playing");
+  endAt = performance.now() + DURATION;
+  $("announce").textContent = "게임 시작. 30초 동안 과녁을 맞히세요.";
+  spawnTarget(); frame = requestAnimationFrame(tick);
+  // 시작 버튼이 숨겨진 후에도 키보드 사용자가 게임 영역으로 이동할 수 있도록 합니다.
+  arena.tabIndex = -1; arena.focus({preventScroll:true});
+}
+function finish() {
+  if (!running) return;
+  running = false; clearMilestone(); cancelAnimationFrame(frame); clearTimeout(spawnTimer); removeTarget();
+  arena.classList.remove("playing");
+  arena.querySelectorAll(".pop,.shot,.target.falling").forEach(el => el.remove());
+  timerEl.innerHTML = "0.0<small>초</small>"; $("progress").style.transform = "scaleX(0)";
+  $("final-score").textContent = score.toLocaleString("ko-KR") + "점";
+  $("final-hits").textContent = hits; $("final-combo").textContent = maxCombo;
+  $("final-accuracy").textContent = (shots ? Math.round(hits / shots * 100) : 0) + "%";
+  const isRecord = score > best; best = Math.max(best, score);
+  try { localStorage.setItem("deadCenterBest", String(best)); } catch {}
+  $("record").textContent = (isRecord ? "새로운 최고 기록! · " : "이 브라우저 최고 기록 · ") + best.toLocaleString("ko-KR") + "점";
+  $("end-screen").hidden = false; beep("end");
+  $("announce").textContent = "게임 종료. 최종 점수 " + score + "점, 최대 콤보 " + maxCombo;
+  $("restart").focus({preventScroll:true});
+}
+$("start").addEventListener("click", start);
+$("restart").addEventListener("click", start);
+// 탭 전환 중에도 시간은 실제 경과 시간으로 계산합니다.
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && running && performance.now() >= endAt) finish();
+});
+// 화면 크기 변경 시 과녁이 영역 바깥으로 나가지 않게 재배치합니다.
+window.addEventListener("resize", () => {
+  if (running && target) {
+    const t = target;
+    t.x = Math.max(8, Math.min(t.x, arena.clientWidth - t.size - 8));
+    const gunClearance = window.matchMedia("(max-width: 600px)").matches ? 132 : 177;
+    t.y = Math.max(8, Math.min(t.y, arena.clientHeight - t.size - gunClearance));
+    t.el.style.left = t.x + "px"; t.el.style.top = t.y + "px";
+  }
+});
+})();
+</script>
+</body>
+</html>

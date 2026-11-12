@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>30초 표적 찾기</title>
+<style>
+
+:root{color-scheme:dark;--text:#f1f5ed;--muted:#a6b8b2;--accent:#f4b35d}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:28px;background:radial-gradient(ellipse at 50% 0%,#24433d 0%,#10231f 55%,#0a1614 100%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+button{font:inherit;touch-action:manipulation}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:5px}
+.game{width:min(100%,1080px)}
+.game-header{display:flex;align-items:center;justify-content:space-between;gap:26px;margin-bottom:22px}
+.eyebrow{margin:0 0 8px;color:var(--accent);font-size:11px;font-weight:800;letter-spacing:3px}
+h1{margin:0;font-size:clamp(26px,4vw,38px);letter-spacing:-1.5px}
+.description{margin:9px 0 0;color:var(--muted);font-size:14px;line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:390px;flex-shrink:0}
+.stat{min-width:0;padding:13px 15px;border:1px solid #ffffff14;border-radius:14px;background:#ffffff06;text-align:center}
+.stat-label{display:block;margin-bottom:5px;color:var(--muted);font-size:11px;font-weight:600}
+.stat-value{display:block;font-size:clamp(21px,3.2vw,29px);font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2}
+#combo{color:var(--accent)}
+#time{color:#91d6c3}
+#time.danger{color:#ff8c7f}
+.arena-shell{padding:9px;border:1px solid #59756a;border-radius:28px;background:linear-gradient(135deg,#3b5449,#172e27);box-shadow:0 24px 70px #0005,inset 0 1px #ffffff1a}
+.arena{position:relative;height:clamp(300px,59vh,580px);overflow:hidden;isolation:isolate;border:1px solid #0a1713;border-radius:20px;background:radial-gradient(ellipse at 50% 35%,#315047 0%,#1c342d 60%,#10241e 100%);box-shadow:inset 0 0 80px #0006}
+.range-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(#c9edd008 1px,transparent 1px),linear-gradient(90deg,#c9edd008 1px,transparent 1px);background-size:48px 48px}
+.range-lanes{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0%,transparent calc(25% - 1px),#d2e6ba10 calc(25% - 1px),#d2e6ba10 25%);mask-image:linear-gradient(transparent,#000)}
+.range-label{position:absolute;top:17px;left:20px;color:#d4e4d16b;font-size:10px;font-weight:700;letter-spacing:2px;pointer-events:none}
+.live-indicator{position:absolute;top:17px;right:20px;display:flex;align-items:center;gap:7px;color:#d4e4d16b;font-size:10px;font-weight:700;letter-spacing:1px;pointer-events:none}
+.live-indicator::before{content:"";width:6px;height:6px;border-radius:50%;background:#80c4a8;box-shadow:0 0 10px #80c4a866}
+.range-floor{position:absolute;bottom:0;left:0;right:0;height:15%;border-top:1px solid #b9a17433;background:repeating-linear-gradient(90deg,#0000 0px,#0000 94px,#0002 95px,#0002 97px),linear-gradient(#8e745123,#443a242e);pointer-events:none}
+#target{position:absolute;top:0;left:0;z-index:1;width:clamp(60px,12vw,84px);height:clamp(60px,12vw,84px);padding:0;border:0;border-radius:50%;background:transparent;cursor:crosshair;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;touch-action:none;will-change:transform}
+#target img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;filter:drop-shadow(0 7px 8px #0009)}
+.hit-feedback{position:absolute;z-index:2;inset:0;display:grid;place-content:center;justify-items:center;gap:8px;opacity:0;pointer-events:none}
+.hit-feedback img{width:clamp(110px,25vw,180px);height:clamp(110px,25vw,180px);object-fit:contain;filter:drop-shadow(0 5px 15px #0009)}
+#earned{padding:7px 14px;border:1px solid #f4b35d55;border-radius:8px;background:#10231fe6;color:#ffd693;font-size:22px;font-weight:900}
+.overlay{position:absolute;z-index:3;inset:0;display:grid;place-items:center;padding:22px;background:#091c16a6;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);text-align:center}
+.intro-card{width:min(100%,420px)}
+.intro-mark{display:grid;place-items:center;width:66px;height:66px;margin:0 auto 18px;border:1px solid #f4b35d66;border-radius:50%;background:#f4b35d0c;color:var(--accent);font-size:40px;line-height:1}
+.overlay h2{margin:0 0 12px;font-size:clamp(25px,5vw,34px);letter-spacing:-1px}
+.overlay p{margin:0 0 24px;color:#c4d4cc;font-size:14px;line-height:1.8;white-space:pre-line}
+.primary{min-height:52px;min-width:190px;padding:14px 30px;border:1px solid #ffd296;border-radius:12px;background:linear-gradient(#fac478,#efa951);color:#302314;font-weight:850;cursor:pointer;box-shadow:0 6px 22px #0003;transition:filter .15s,transform .15s}
+.primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.primary:active{transform:translateY(1px)}
+.game-footer{display:flex;justify-content:space-between;gap:12px;margin-top:16px;color:#9cb1a7;font-size:12px;line-height:1.6}
+.help{margin:0}
+.footer-badge{color:#d4b684;white-space:nowrap}
+[hidden]{display:none!important}
+@media(max-width:700px){
+ body{padding:16px;align-items:center}
+ .game-header{display:block;margin-bottom:14px}
+ .eyebrow{font-size:9px;margin-bottom:5px}
+ h1{font-size:28px}
+ .description{font-size:12px;margin-top:5px}
+ .stats{width:100%;gap:8px;margin-top:16px;grid-template-columns:repeat(3,minmax(0,1fr))}
+ .stat{padding:10px 5px;border-radius:11px}
+ .stat-label{font-size:10px}
+ .stat-value{font-size:24px}
+ .arena-shell{padding:6px;border-radius:23px}
+ .arena{height:clamp(220px,calc(100vh - 310px),520px);height:clamp(220px,calc(100dvh - 310px),520px);border-radius:17px}
+ .range-label{left:13px;top:13px;font-size:8px}
+ .live-indicator{right:13px;top:13px;font-size:8px}
+ .game-footer{font-size:10px;margin-top:12px;gap:8px}
+ .intro-mark{width:48px;height:48px;font-size:30px;margin-bottom:12px}
+ .overlay p{font-size:12px;margin-bottom:18px}
+ .primary{min-height:48px;padding:11px 24px}
+}
+@media(max-height:520px) and (orientation:landscape){
+ body{padding:12px}
+ .game-header{display:flex;gap:12px;margin-bottom:10px}
+ .description,.eyebrow{display:none}
+ h1{font-size:22px;white-space:nowrap}
+ .stats{width:340px;margin:0}
+ .stat{padding:7px}
+ .stat-value{font-size:20px}
+ .arena{height:clamp(210px,calc(100dvh - 145px),420px)}
+ .intro-mark{display:none}
+ .overlay h2{font-size:24px;margin-bottom:6px}
+ .overlay p{margin-bottom:12px}
+}
+@media(prefers-reduced-motion:reduce){.primary{transition:none}}
+
+
+/* 게임 화면 밖의 고정 높이 알림 공간: 명중 효과가 표적을 가리지 않습니다. */
+.feedback-tray{
+  position:relative;
+  height:78px;
+  margin-top:10px;
+  overflow:hidden;
+  border:1px solid #ffffff10;
+  border-radius:14px;
+  background:#ffffff03;
+  isolation:isolate;
+}
+.feedback-hint{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  color:#9cb1a7;
+  font-size:12px;
+  transition:opacity .12s;
+}
+.feedback-tray.is-active .feedback-hint{opacity:0}
+.feedback-tray .hit-feedback{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  background:#112720;
+}
+.feedback-tray .hit-feedback img{
+  width:58px;
+  height:58px;
+  flex:0 0 58px;
+  object-fit:contain;
+}
+.feedback-tray #earned{font-size:20px}
+@media(max-width:700px){
+  .feedback-tray{height:66px;margin-top:8px}
+  .feedback-tray .hit-feedback img{width:48px;height:48px;flex-basis:48px}
+  .feedback-tray #earned{font-size:16px;padding:6px 10px}
+  .feedback-hint{font-size:11px}
+  .arena{height:clamp(220px,calc(100vh - 384px),520px);height:clamp(220px,calc(100dvh - 384px),520px)}
+}
+@media(max-height:520px) and (orientation:landscape){
+  .feedback-tray{height:50px;margin-top:6px}
+  .feedback-tray .hit-feedback img{width:40px;height:40px;flex-basis:40px}
+  .arena{height:clamp(180px,calc(100dvh - 205px),420px)}
+}
+@media(prefers-reduced-motion:reduce){.feedback-hint{transition:none}}
+
+</style>
+</head>
+<body>
+<main class="game">
+  <header class="game-header">
+    <div class="heading">
+      <p class="eyebrow">THE SHOOTING RANGE</p>
+      <h1>30초 캐주얼 사격장</h1>
+      <p class="description">움직이는 표적을 맞히고, 나만의 최고 점수에 도전하세요.</p>
+    </div>
+    <section class="stats" aria-label="게임 현황">
+    <div class="stat"><span class="stat-label">현재 점수</span><span id="score" class="stat-value">0</span></div>
+    <div class="stat"><span class="stat-label">콤보</span><span id="combo" class="stat-value">0</span></div>
+    <div class="stat"><span class="stat-label">남은 시간</span><span id="time" class="stat-value">30.0</span></div>
+    </section>
+  </header>
+  <div class="arena-shell">
+  <section id="arena" class="arena" aria-label="표적 게임 영역">
+    <div class="range-grid" aria-hidden="true"></div>
+    <div class="range-lanes" aria-hidden="true"></div>
+    <div class="range-floor" aria-hidden="true"></div>
+    <span class="range-label" aria-hidden="true">RANGE 01 / FREE PRACTICE</span>
+    <span class="live-indicator" aria-hidden="true">30 SEC CHALLENGE</span>
+    <button id="target" type="button" aria-label="표적 맞히기" hidden>
+      <img src="assets/aim.webp" alt="" draggable="false">
+    </button>
+    <div id="overlay" class="overlay">
+      <div class="intro-card">
+        <div class="intro-mark" aria-hidden="true">◎</div>
+        <h2 id="overlayTitle">사격 준비 완료!</h2>
+        <p id="overlayMessage" aria-live="polite">30초 동안 움직이는 표적을 맞히세요.<br>1초 안에 연속으로 맞히면 콤보 보너스!</p>
+        <button id="startButton" class="primary" type="button">게임 시작</button>
+      </div>
+    </div>
+  </section>
+  </div>
+  <div class="feedback-tray" aria-label="명중 효과">
+    <span class="feedback-hint" aria-hidden="true">표적을 맞히고 콤보를 이어가세요</span>
+    <div id="feedback" class="hit-feedback" aria-hidden="true">
+      <img src="assets/kill.webp" alt="" draggable="false">
+      <span id="earned"></span>
+    </div>
+  </div>
+  <footer class="game-footer">
+    <p class="help">클릭 / 터치로 명중 · 기본 100점<br>1초 내 연속 명중 시 (콤보 − 1) × 20점 보너스</p>
+    <span class="footer-badge">정확하게, 더 빠르게.</span>
+  </footer>
+</main>
+<script>
+"use strict";
+const DURATION = 30000;
+const COMBO_WINDOW = 1000;
+const BASE_SCORE = 100;
+const BONUS_STEP = 20;
+const arena = document.getElementById("arena");
+const target = document.getElementById("target");
+const scoreElement = document.getElementById("score");
+const comboElement = document.getElementById("combo");
+const timeElement = document.getElementById("time");
+const feedback = document.getElementById("feedback");
+const earnedElement = document.getElementById("earned");
+const overlay = document.getElementById("overlay");
+const overlayTitle = document.getElementById("overlayTitle");
+const overlayMessage = document.getElementById("overlayMessage");
+const startButton = document.getElementById("startButton");
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+let playing = false;
+let score = 0;
+let combo = 0;
+let lastHitAt = null;
+let deadline = 0;
+let frameId = null;
+let feedbackAnimation = null;
+let targetX = 0;
+let targetY = 0;
+let velocityX = 0;
+let velocityY = 0;
+let lastFrameAt = 0;
+
+function updateStats() {
+  scoreElement.textContent = score.toLocaleString("ko-KR");
+  comboElement.textContent = combo;
+}
+function moveTarget() {
+  const padding = 10;
+  const maxX = Math.max(padding, arena.clientWidth - target.offsetWidth - padding);
+  const maxY = Math.max(padding, arena.clientHeight - target.offsetHeight - padding);
+  targetX = padding + Math.random() * (maxX - padding);
+  targetY = padding + Math.random() * (maxY - padding);
+  const angle = Math.random() * Math.PI * 2;
+  const speed = reducedMotion.matches ? 32 : 95;
+  velocityX = Math.cos(angle) * speed;
+  velocityY = Math.sin(angle) * speed;
+  renderTarget();
+}
+function renderTarget() {
+  target.style.transform = `translate3d(${targetX}px, ${targetY}px, 0)`;
+}
+function animateTarget(deltaSeconds) {
+  const padding = 10;
+  const maxX = Math.max(padding, arena.clientWidth - target.offsetWidth - padding);
+  const maxY = Math.max(padding, arena.clientHeight - target.offsetHeight - padding);
+  targetX += velocityX * deltaSeconds;
+  targetY += velocityY * deltaSeconds;
+  if (targetX <= padding || targetX >= maxX) {
+    targetX = Math.min(maxX, Math.max(padding, targetX));
+    velocityX *= -1;
+  }
+  if (targetY <= padding || targetY >= maxY) {
+    targetY = Math.min(maxY, Math.max(padding, targetY));
+    velocityY *= -1;
+  }
+  renderTarget();
+}
+function showFeedback(points, bonus) {
+  earnedElement.textContent = bonus > 0 ? `+${points} · ${combo} COMBO!` : `+${points}`;
+  feedbackAnimation?.cancel();
+  const tray = feedback.parentElement;
+  tray.classList.add("is-active");
+  const keyframes = [
+    {opacity:1},
+    {opacity:1,offset:0.7},
+    {opacity:0}
+  ];
+  feedbackAnimation = feedback.animate(keyframes, {
+    duration:420,
+    easing:"ease-out"
+  });
+  feedbackAnimation.onfinish = () => tray.classList.remove("is-active");
+}
+function finishGame() {
+  if (!playing) return;
+  playing = false;
+  cancelAnimationFrame(frameId);
+  frameId = null;
+  target.hidden = true;
+  feedbackAnimation?.cancel();
+  feedback.parentElement.classList.remove("is-active");
+  timeElement.textContent = "0.0";
+  timeElement.classList.add("danger");
+  overlayTitle.textContent = "게임 종료!";
+  overlayMessage.textContent = `최종 점수: ${score.toLocaleString("ko-KR")}점`;
+  startButton.textContent = "다시 시작";
+  overlay.hidden = false;
+  startButton.focus({preventScroll:true});
+}
+function tick() {
+  if (!playing) return;
+  const now = performance.now();
+  const deltaSeconds = Math.min(0.04, Math.max(0, (now - lastFrameAt) / 1000));
+  lastFrameAt = now;
+  const remaining = Math.max(0, deadline - now);
+  timeElement.textContent = (Math.ceil(remaining / 100) / 10).toFixed(1);
+  timeElement.classList.toggle("danger", remaining <= 5000);
+  if (lastHitAt !== null && now - lastHitAt > COMBO_WINDOW && combo !== 0) {
+    combo = 0;
+    comboElement.textContent = "0";
+  }
+  if (remaining <= 0) {
+    finishGame();
+    return;
+  }
+  animateTarget(deltaSeconds);
+  frameId = requestAnimationFrame(tick);
+}
+function startGame() {
+  if (playing) return;
+  cancelAnimationFrame(frameId);
+  feedbackAnimation?.cancel();
+  feedback.parentElement.classList.remove("is-active");
+  score = 0;
+  combo = 0;
+  lastHitAt = null;
+  updateStats();
+  timeElement.textContent = "30.0";
+  timeElement.classList.remove("danger");
+  overlay.hidden = true;
+  target.hidden = false;
+  moveTarget();
+  lastFrameAt = performance.now();
+  deadline = lastFrameAt + DURATION;
+  playing = true;
+  target.focus({preventScroll:true});
+  frameId = requestAnimationFrame(tick);
+}
+function hitTarget() {
+  if (!playing) return;
+  const now = performance.now();
+  if (now >= deadline) {
+    finishGame();
+    return;
+  }
+  const isCombo = lastHitAt !== null && now - lastHitAt <= COMBO_WINDOW;
+  combo = isCombo ? combo + 1 : 1;
+  lastHitAt = now;
+  const bonus = (combo - 1) * BONUS_STEP;
+  const points = BASE_SCORE + bonus;
+  score += points;
+  updateStats();
+  showFeedback(points, bonus);
+  moveTarget();
+}
+startButton.addEventListener("click", startGame);
+target.addEventListener("pointerdown", event => {
+  if (!event.isPrimary || event.button !== 0) return;
+  event.preventDefault();
+  hitTarget();
+});
+target.addEventListener("click", event => {
+  if (event.detail === 0) hitTarget();
+});
+const resizeObserver = new ResizeObserver(() => {
+  if (playing) moveTarget();
+});
+resizeObserver.observe(arena);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && playing && performance.now() >= deadline) finishGame();
+});
+</script>
+</body>
+</html>
